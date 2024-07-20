@@ -34,27 +34,28 @@ class OrderListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Order.objects.filter(sender=self.request.user)
+        return Order.objects.filter(sender=self.request.user )
 
-    def create(self, request, *arrgs, **kwargs):
-        print(request.data)
+    def create(self, request, *arrgs, **kwargs): 
         try:
             items_data = request.data.get('items', [])
-            receiver_id = request.data.get('receiver')
+            receiver_id = request.data.get('receiver') 
             location = request.data.get('location')
             receiver = Restaurant.objects.get(id=receiver_id)
- 
-            sender = request.user
+            print("receiver",receiver)
+            sender =  request.user.id
             total_price = request.data.get('total_price')
             
             order_data = {
-                'sender': sender.id,
+                'sender': sender,
                 'receiver': receiver.id,
                 'status': 'pending',
                 'total_price': total_price,
                 'items': items_data,
                 'location':location
             }
+
+            print("order_data", order_data)
 
             serializer = self.get_serializer(data=order_data)
             serializer.is_valid(raise_exception=True)
@@ -71,8 +72,8 @@ class OrderListCreateView(generics.ListCreateAPIView):
             )
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
         except Restaurant.DoesNotExist:
+            # print(serializer)
             return Response({'error': 'Receiver restaurant does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
         
         except Exception as e:

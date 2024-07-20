@@ -59,7 +59,8 @@ INSTALLED_APPS = [
     'corsheaders', 
     'chat',
     'food',
-    'ride.apps.RideConfig'
+    'ride.apps.RideConfig',
+    
 
 ]
 

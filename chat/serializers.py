@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from accounts.models import CustomUser
 from accounts.serializers import UserSerializer
-from .models import Message, Connection, RideRequest
+from .models import DriverOnline, Message, Connection, RideRequest
 
 class SearchSerializer(UserSerializer):
     status = serializers.SerializerMethodField()
@@ -92,3 +92,25 @@ class RideRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = RideRequest
         fields = '__all__'
+
+
+class TripSerializer(serializers.ModelSerializer):
+    sender = UserSerializer()
+    receiver = UserSerializer()
+
+    class Meta:
+        model = Connection
+        fields = [
+            'id',
+            'sender',
+            'receiver', 
+            'status'
+
+        ]
+
+
+
+class DriverOnlineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DriverOnline
+        fields = ['driver', 'phone', 'location', 'latitude', 'longitude','is_online']

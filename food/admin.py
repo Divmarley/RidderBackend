@@ -1,5 +1,10 @@
 from django.contrib import admin
 from .models import Restaurant, Image, Rating, Location, Details, FoodMenu
+ 
+# from .models import FoodOrder
+
+# admin.site.register(FoodOrder)
+
 
 admin.site.register(Restaurant)
 admin.site.register(Image)

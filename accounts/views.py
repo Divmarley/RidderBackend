@@ -1,5 +1,6 @@
  
 from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404
 from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -9,8 +10,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.exceptions import ObjectDoesNotExist
 
 from accounts import send_verification_code
+from chat.models import DriverOnline
 from .models import CustomUser, DriverProfile, PersonalInfo, Profile, RiderProfile, Upload, VehicleInfo,Document
-from .serializers import DocumentSerializer, DriverProfileSerializer, DriverSerializer, PersonalInfoSerializer, RegisterSerializer, RiderProfileSerializer, UploadSerializer, UserSerializer, VehicleInfoSerializer, VerifyLoginSerializer, ProfileSerializer
+from .serializers import CreateAllDataSerializer, DocumentSerializer, DriverProfileSerializer, DriverSerializer, PersonalInfoSerializer, RegisterSerializer, RiderProfileSerializer, UploadSerializer, UserSerializer, VehicleInfoSerializer, VerifyLoginSerializer, ProfileSerializer
 
 class RegisterView(APIView):
     permission_classes = (AllowAny,)
@@ -18,9 +20,7 @@ class RegisterView(APIView):
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
-            user = serializer.save()
-            
-
+            user = serializer.save() 
             # Generate and save verification code
             verification_code = user.generate_verification_code()
 
@@ -36,13 +36,23 @@ class RegisterView(APIView):
             # Generate access token
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
+            
+            # Create DriverOnline instance    
+            DriverOnline.objects.create(
+                driver=user,
+                phone=request.data.get('phone'),  # Ensure phone number is part of registration data
+                location=request.data.get('location'),  # Default location, adjust as needed
+                latitude=request.data.get('latitude'),     # Default latitude, adjust as needed
+                longitude=request.data.get('longitude'),   # Default longitude, adjust as needed
+                rideType='Car'
+            )
 
             return Response({
                 'detail': 'User created successfully',
                 'access_token': access_token,
                 'verification_code': verification_code
             }, status=status.HTTP_201_CREATED)
-        print("serializer.errors",)
+        # print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TokenObtainView(APIView):
@@ -181,15 +191,20 @@ class VerifyLoginView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ProfileView(generics.RetrieveUpdateAPIView):
-    queryset = Profile.objects.all()
+    queryset = RiderProfile.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = ProfileSerializer
 
     def get_object(self):
-        return self.request.user.profile
+        print('self',self.request.user.thumbnail)   
+        lol =RiderProfile.objects.filter(user = self.request.user) 
+        return RiderProfile.objects.filter(user = self.request.user)
+        # return Response(self.request.user, status=status.HTTP_400_BAD_REQUEST)
+    
+    
 
     def update(self, request, *args, **kwargs):
-        print(request.data)
+         
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
@@ -259,7 +274,25 @@ class RiderProfileViewSet(viewsets.ModelViewSet):
 class DeleteUserView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def delete(self, request, user_id, format=None):
-        user = get_object_or_404(CustomUser, id=user_id)
+    def delete(self, request, format=None):
+        user = get_object_or_404(CustomUser, id=request.user.id)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class CreateAllDataView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = CreateAllDataSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+
+
+    

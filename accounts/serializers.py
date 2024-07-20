@@ -105,8 +105,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     profile_picture = Base64ImageField(max_length=None, use_url=True, required=False)
 
     class Meta:
-        model = Profile
-        fields = ['profile_picture', 'access_token']
+        model = CustomUser
+        fields = ['profile_picture']
 
 class DriverSerializer(serializers.ModelSerializer):
     class Meta:
@@ -132,3 +132,27 @@ class UploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Upload
         fields = ['id', 'driver', 'upload_file']
+
+
+class CreateAllDataSerializer(serializers.Serializer):
+    personal_info = PersonalInfoSerializer()
+    vehicle_info = VehicleInfoSerializer()
+    documents = DocumentSerializer(many=True)
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+
+        personal_info_data = validated_data.pop('personal_info')
+        personal_info = PersonalInfo.objects.create(driver=user, **personal_info_data)
+
+        vehicle_info_data = validated_data.pop('vehicle_info')
+        vehicle_info = VehicleInfo.objects.create(driver=user, **vehicle_info_data)
+
+        documents_data = validated_data.pop('documents')
+        documents = [Document.objects.create(driver=user, **doc_data) for doc_data in documents_data]
+
+        return {
+            'personal_info': personal_info,
+            'vehicle_info': vehicle_info,
+            'documents': documents
+        }

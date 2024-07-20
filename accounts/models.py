@@ -105,35 +105,65 @@ class Profile(models.Model):
 
 class DriverProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='driver_profile')
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     # license_number = models.CharField(max_length=50, unique=True)
     # vehicle_registration_number = models.CharField(max_length=50, unique=True)
     # vehicle_model = models.CharField(max_length=100)
     # vehicle_color = models.CharField(max_length=30)
     # available = models.BooleanField(default=True)
     # completed_trips = models.PositiveIntegerField(default=0)
-    # access_token = models.CharField(max_length=255, blank=True, null=True)
+    access_token = models.CharField(max_length=255, blank=True, null=True)
     
     def __str__(self):
         return f"{self.user.name} - Driver Profile"
+    
+    def update_profile_picture_from_base64(self, base64_data):
+        if base64_data:
+            format, imgstr = base64_data.split(';base64,')
+            ext = format.split('/')[-1]
+            data = ContentFile(base64.b64decode(imgstr), name=f'{self.user.id}.{ext}')
+            self.profile_picture = data
+            self.save()
 
 class RiderProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='rider_profile')
     payment_method = models.CharField(max_length=50, blank=True, null=True)
     preferred_driver_rating = models.FloatField(default=0)
     access_token = models.CharField(max_length=255, blank=True, null=True)
-
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    
     def __str__(self):
         return f"{self.user.name} - Rider Profile"
+    
+    def update_profile_picture_from_base64(self, base64_data):
+        if base64_data:
+            format, imgstr = base64_data.split(';base64,')
+            ext = format.split('/')[-1]
+            data = ContentFile(base64.b64decode(imgstr), name=f'{self.user.id}.{ext}')
+            self.profile_picture = data
+            self.save()
+
+# @receiver(post_save, sender=CustomUser)
+# def create_auth_token(sender, instance=None, created=False, **kwargs):
+#     if created:
+#         DriverProfile.objects.create(user=instance)
+#         refresh = RefreshToken.for_user(instance)
+#         instance.profile.access_token = str(refresh.access_token)
+#         instance.profile.save()
 
 @receiver(post_save, sender=CustomUser)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
-        DriverProfile.objects.create(user=instance)
+        if instance.account_type == 'driver':
+            profile = DriverProfile.objects.create(user=instance)
+        elif instance.account_type == 'user':
+            profile = RiderProfile.objects.create(user=instance)
+        # else:
+        #     profile = Profile.objects.create(user=instance)
+        
         refresh = RefreshToken.for_user(instance)
-        print("instance",instance)
-        # instance.profile.access_token = str(refresh.access_token)
-        instance.save()
-
+        profile.access_token = str(refresh.access_token)
+        profile.save()
 
 class PersonalInfo(models.Model):
     driver = models.ForeignKey(CustomUser, related_name="driver_info", on_delete=models.CASCADE)
@@ -162,3 +192,4 @@ class Document(models.Model):
 class Upload(models.Model):
     driver = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     upload_file = models.FileField(upload_to='uploads/')
+    

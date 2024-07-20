@@ -14,6 +14,7 @@ from food.serializers import OrderSerializer
 from .models import Connection, Message
 
 from .serializers import (
+	TripSerializer,
 	UserSerializer, 
 	SearchSerializer, 
 	RequestSerializer, 
@@ -116,11 +117,32 @@ class ChatConsumer(WebsocketConsumer):
 
 		elif data_source == 'driver.accepted':
 			self.receive_start_trip(data)
+		
+		elif data_source == 'driver.arrived':
+			self.receive_driver_arrived(data)
 
 		elif data_source == 'trip.start':
 			self.receive_start_trip(data)
 
-		
+		elif data_source == 'foodOrder.create':
+			self.receive_food_order_create(data)
+
+	def receive_food_order_create(self, data):
+		user = self.scope['user']
+		restaurant_id = data.get('restaurant_id')
+		food_items = data.get('food_items')
+
+		# Assuming you have a model for FoodOrder and serializer defined
+		# Replace with your actual models and serializers
+		food_order = Order.objects.create(
+			user=user,
+			restaurant_id=restaurant_id,
+			food_items=food_items
+		)
+
+		serialized_order = OrderSerializer(food_order).data
+		self.send_group(user.phone, 'foodOrder.create', serialized_order)
+		self.send_group('552297798', 'foodOrder.create', serialized_order)
 
 	def receive_order_create(self, data):
 		user = self.scope['user']
@@ -155,7 +177,10 @@ class ChatConsumer(WebsocketConsumer):
 		order.save()
 
 		serialized_order = OrderSerializer(order)
-		self.send_group(order.user.phone, 'order.accept', serialized_order.data)
+		self.send_group(order.sender.phone, 'order.accept', serialized_order.data)
+		self.send_group(
+			order.receiver.phone, 'request.accept', serialized_order.data
+		)
 
 	def receive_order_decline(self, data):
 		order_id = data.get('order_id')
@@ -319,6 +344,7 @@ class ChatConsumer(WebsocketConsumer):
 		connection.save()
 		
 		serialized = RequestSerializer(connection)
+		print(serialized.data)
 		# Send accepted request to sender
 		self.send_group(
 			connection.sender.phone, 'request.accept', serialized.data
@@ -345,6 +371,9 @@ class ChatConsumer(WebsocketConsumer):
 				'user': connection.receiver
 			}
 		)
+		self.send_group(
+			connection.sender.phone, 'friend.new', serialized_friend.data)
+		
 		self.send_group(
 			connection.receiver.phone, 'friend.new', serialized_friend.data)
 
@@ -435,8 +464,38 @@ class ChatConsumer(WebsocketConsumer):
 		# Send updated user data including new thumbnail 
 		self.send_group(self.phone, 'thumbnail', serialized.data)
 
-	def receive_start_trip(self, data): 
+	def receive_driver_arrived(self, data):
+		print('receive_driver_arrived ',data)
 		phone = data.get('phone')
+		# Fetch connection object
+		try:
+			connection = Connection.objects.get(
+				sender__phone=phone,
+				receiver=self.scope['user']
+			)
+		except Connection.DoesNotExist:
+			print('Error: connection  doesnt exists')
+			return
+		# Update the connection
+		connection.status = 'Driver Arrived'
+		connection.save()
+		
+		serialized = TripSerializer(connection)
+
+		# Send accepted request to sender
+		self.send_group(
+			connection.sender.phone, 'driver.arrived', serialized.data
+		)
+		# Send accepted request to receiver
+		self.send_group(
+			connection.receiver.phone, 'driver.arrived', serialized.data
+		)
+
+
+	def receive_start_trip(self, data): 
+		print("data: ",	data)
+		phone = data.get('phone')
+
 		# Fetch connection object
 		try:
 			connection = Connection.objects.get(
@@ -450,7 +509,8 @@ class ChatConsumer(WebsocketConsumer):
 		connection.status = 'Trip Started'
 		connection.save()
 		
-		serialized = RequestSerializer(connection)
+		serialized = TripSerializer(connection)
+
 		# Send accepted request to sender
 		self.send_group(
 			connection.sender.phone, 'trip.start', serialized.data
@@ -459,8 +519,6 @@ class ChatConsumer(WebsocketConsumer):
 		self.send_group(
 			connection.receiver.phone, 'trip.start', serialized.data
 		)
-
-
 
 
 	#--------------------------------------------

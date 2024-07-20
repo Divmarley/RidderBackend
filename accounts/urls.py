@@ -29,6 +29,8 @@ urlpatterns = [
     path('profile/', ProfileView.as_view(), name='profile'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('delete-user/<int:user_id>/', DeleteUserView.as_view(), name='delete-user'),
+    path('delete-user/', DeleteUserView.as_view(), name='delete-user'),
+    path('create-all/', CreateAllDataView.as_view(), name='create-all'),
     path('', include(router.urls)),
+
 ]

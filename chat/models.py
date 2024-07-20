@@ -23,6 +23,20 @@ class Connection(models.Model):
 
     def __str__(self):
         return f'{self.sender.phone} -> {self.receiver.phone}'
+    
+class FoodConnection(models.Model):
+    sender = models.ForeignKey(CustomUser, related_name='sent_food_connections',on_delete=models.CASCADE)
+    receiver = models.ForeignKey(CustomUser,related_name='received_food_connections',on_delete=models.CASCADE)
+    food_items = models.JSONField() 
+    location = models.CharField(max_length=300)
+    status = models.CharField(max_length=300)
+    accepted = models.BooleanField(default=False)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    
+
+    def __str__(self):
+        return f'{self.sender.phone} -> {self.receiver.phone}'
 
 class Message(models.Model):
     connection = models.ForeignKey(
@@ -47,7 +61,19 @@ class RideRequest(models.Model):
     latitude = models.FloatField()
     longitude = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
+    
     # Add any other fields as needed
 
     def __str__(self):
         return f'Ride request from {self.rider.phone} to {self.driver.phone} at ({self.latitude}, {self.longitude})'
+
+class DriverOnline(models.Model):
+    driver = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_driver')
+    phone = models.CharField(max_length=15, unique=True)
+    location = models.CharField(max_length=100,null=True, blank=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6,null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6,null=True, blank=True)
+    is_online = models.BooleanField(default=False)  # New field
+
+    def __str__(self):
+        return f"Driver {self.id} - {self.phone}"

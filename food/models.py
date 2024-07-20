@@ -28,11 +28,11 @@ class FoodMenu(models.Model):
     image = models.URLField()
 
 class Restaurant(models.Model):
+    user= models.ForeignKey(CustomUser, related_name='restaurant_owner', on_delete  = models.CASCADE)   # TODO  
     AVAILABLE_CHOICES = [
         ('open', 'Open'),
         ('closed', 'Closed'),
     ]
-    
     available = models.CharField(max_length=6, choices=AVAILABLE_CHOICES)
     image = models.OneToOneField(Image, on_delete=models.CASCADE)
     rating = models.OneToOneField(Rating, on_delete=models.CASCADE)
@@ -42,6 +42,8 @@ class Restaurant(models.Model):
     is_open = models.BooleanField()
     about_us = models.TextField(null=True, blank=True)
     delivery_fee = models.FloatField(null=True, blank=True)
+    def __str__(self):
+        return self.user.name
 
 
 class Order(models.Model):
@@ -65,8 +67,8 @@ class Order(models.Model):
     location= models.CharField(max_length=300)
     total_price = models.FloatField()
 
-    def __str__(self):
-        return f'Order from {self.sender} to {self.receiver} - {self.status}'
+    # def __str__(self):
+    #     return f'Order from {self.sender} to {self.receiver} - {self.status}'
     
 
 class OrderItem(models.Model):
@@ -76,3 +78,27 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f'OrderItem {self.id} for Order {self.order.id}: {self.item_id.name}'
+    
+
+
+# from django.db import models
+# from django.contrib.auth import get_user_model
+
+# User = get_user_model()
+
+# class FoodOrder(models.Model):  
+#     sender = models.ForeignKey(CustomUser, related_name='sent_food_connections',on_delete=models.CASCADE)
+#     receiver = models.ForeignKey(CustomUser,related_name='received_food_connections',on_delete=models.CASCADE)
+#     food_items = models.JSONField() 
+#     location = models.CharField(max_length=300)
+#     status = models.CharField(max_length=300)
+#     accepted = models.BooleanField(default=False)
+#     updated = models.DateTimeField(auto_now=True)
+#     created = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return f'{self.sender.phone} -> {self.receiver.phone}'
+
+
+#     def __str__(self):
+#         return f"Food Order for {self.sender.name} - to {self.receiver.name}"
