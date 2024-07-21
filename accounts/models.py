@@ -8,6 +8,7 @@ from django.dispatch import receiver
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.files.base import ContentFile
 from django.contrib.auth.models import PermissionsMixin
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, email=None, phone=None, password=None, account_type=None, **extra_fields):
         if not email and not phone:
@@ -26,7 +27,6 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('Superuser must have an email address')
 
         return self.create_user(email, phone=None, password=password, **extra_fields)
-
 
 def upload_thumbnail(instance, filename):
     
@@ -54,6 +54,7 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     verification_code = models.CharField(max_length=4, null=True, blank=True)
+    push_token=  models.CharField(max_length=255, null=True, blank=True)
     thumbnail  = models.ImageField(
 		upload_to=upload_thumbnail,
 		null=True,

@@ -111,6 +111,7 @@ class TripSerializer(serializers.ModelSerializer):
 
 
 class DriverOnlineSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = DriverOnline
-        fields = ['driver', 'phone', 'location', 'latitude', 'longitude','is_online']
+        fields = ['driver', 'phone', 'location', 'latitude', 'longitude','is_online','push_token']

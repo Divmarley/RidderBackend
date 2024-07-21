@@ -44,6 +44,7 @@ class RegisterView(APIView):
                 location=request.data.get('location'),  # Default location, adjust as needed
                 latitude=request.data.get('latitude'),     # Default latitude, adjust as needed
                 longitude=request.data.get('longitude'),   # Default longitude, adjust as needed
+                push_token=request.data.get('push_token'),
                 rideType='Car'
             )
 

@@ -35,6 +35,7 @@ class DriverOnlineListCreateAPIView(generics.ListCreateAPIView):
         latitude = request.data.get('latitude')
         longitude = request.data.get('longitude')
         is_online = request.data.get('is_online')
+        push_token= 'ExponentPushToken[wTSDtiIf2tHiOFsx5GxybU]'
 
         # Check if a driver with the given phone number already exists
         existing_driver = DriverOnline.objects.filter(phone=phone).first()
@@ -42,6 +43,7 @@ class DriverOnlineListCreateAPIView(generics.ListCreateAPIView):
             # If exists, update the existing driver entry
             serializer = self.serializer_class(existing_driver, data=request.data, partial=True)
             if serializer.is_valid():
+                # serializer.push_token.
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

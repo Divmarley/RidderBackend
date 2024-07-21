@@ -124,6 +124,9 @@ class ChatConsumer(WebsocketConsumer):
 		elif data_source == 'trip.start':
 			self.receive_start_trip(data)
 
+		elif data_source == 'trip.end':
+			self.receive_trip_ended(data)
+
 		elif data_source == 'foodOrder.create':
 			self.receive_food_order_create(data)
 
@@ -341,6 +344,7 @@ class ChatConsumer(WebsocketConsumer):
 			return
 		# Update the connection
 		connection.accepted = True
+		connection.status = "DRIVER ACCEPTED"
 		connection.save()
 		
 		serialized = RequestSerializer(connection)
@@ -380,6 +384,9 @@ class ChatConsumer(WebsocketConsumer):
 	def receive_request_connect(self, data):
 		phone = data.get('phone')
 		location = data.get('location')
+		pushToken = data.get('pushToken')
+
+		print("receive_request_connect data",data)
 		# Attempt to fetch the receiving user
 		try:
 			receiver = CustomUser.objects.get(phone=phone)
@@ -390,8 +397,10 @@ class ChatConsumer(WebsocketConsumer):
 		connection, _ = Connection.objects.get_or_create(
 			sender=self.scope['user'],
 			receiver=receiver,
-			location=location
+			location=location,
+			pushToken= pushToken
 		)
+		
 		# Serialized connection
 		serialized = RequestSerializer(connection)
 		# Send back to sender
@@ -465,19 +474,20 @@ class ChatConsumer(WebsocketConsumer):
 		self.send_group(self.phone, 'thumbnail', serialized.data)
 
 	def receive_driver_arrived(self, data):
-		print('receive_driver_arrived ',data)
-		phone = data.get('phone')
+		print('receive_driver_arrived ',data)   
+		phone = data.get('phone') 
 		# Fetch connection object
 		try:
 			connection = Connection.objects.get(
 				sender__phone=phone,
 				receiver=self.scope['user']
 			)
+			
 		except Connection.DoesNotExist:
 			print('Error: connection  doesnt exists')
 			return
 		# Update the connection
-		connection.status = 'Driver Arrived'
+		connection.status = 'DRIVER ARRIVED'
 		connection.save()
 		
 		serialized = TripSerializer(connection)
@@ -491,7 +501,6 @@ class ChatConsumer(WebsocketConsumer):
 			connection.receiver.phone, 'driver.arrived', serialized.data
 		)
 
-
 	def receive_start_trip(self, data): 
 		print("data: ",	data)
 		phone = data.get('phone')
@@ -502,11 +511,12 @@ class ChatConsumer(WebsocketConsumer):
 				sender__phone=phone,
 				receiver=self.scope['user']
 			)
+			
 		except Connection.DoesNotExist:
 			print('Error: connection  doesnt exists')
 			return
 		# Update the connection
-		connection.status = 'Trip Started'
+		connection.status = 'TRIP STARTED'
 		connection.save()
 		
 		serialized = TripSerializer(connection)
@@ -519,6 +529,37 @@ class ChatConsumer(WebsocketConsumer):
 		self.send_group(
 			connection.receiver.phone, 'trip.start', serialized.data
 		)
+
+	def receive_trip_ended(self, data): 
+		print("data: ",	data)
+		phone = data.get('phone')
+
+		# Fetch connection object
+		try:
+			connection = Connection.objects.get(
+				sender__phone=phone,
+				receiver=self.scope['user']
+			)
+			
+		except Connection.DoesNotExist:
+			print('Error: connection  doesnt exists')
+			return
+		# Update the connection
+		connection.status = 'TRIP ENDED'
+		connection.save()
+		
+		serialized = TripSerializer(connection)
+
+		# Send accepted request to sender
+		self.send_group(
+			connection.sender.phone, 'trip.end', serialized.data
+		)
+		# Send accepted request to receiver
+		self.send_group(
+			connection.receiver.phone, 'trip.end', serialized.data
+		)
+
+
 
 
 	#--------------------------------------------
