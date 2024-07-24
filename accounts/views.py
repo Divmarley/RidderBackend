@@ -19,7 +19,9 @@ class RegisterView(APIView):
 
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
+        
         if serializer.is_valid():
+            
             user = serializer.save() 
             # Generate and save verification code
             verification_code = user.generate_verification_code()
@@ -45,7 +47,7 @@ class RegisterView(APIView):
                 latitude=request.data.get('latitude'),     # Default latitude, adjust as needed
                 longitude=request.data.get('longitude'),   # Default longitude, adjust as needed
                 push_token=request.data.get('push_token'),
-                rideType='Car'
+                # rideType='Car'
             )
 
             return Response({
