@@ -20,6 +20,8 @@ router.register(r'personal-info', PersonalInfoViewSet)
 router.register(r'vehicle-info', VehicleInfoViewSet)
 router.register(r'documents', DocumentViewSet)
 router.register(r'uploads', UploadViewSet)
+router.register(r'driver-info-by-id', GetDriverInfoByIdViewSet, basename='driver-info-by-id')
+router.register(r'vehicles-info-by-id', GetDriverVehicleInfoByIdViewSet, basename='vehicleinfo-by-id')
 
 
 urlpatterns = [
@@ -32,5 +34,7 @@ urlpatterns = [
     path('delete-user/', DeleteUserView.as_view(), name='delete-user'),
     path('create-all/', CreateAllDataView.as_view(), name='create-all'),
     path('', include(router.urls)),
+    path('driver-profile/<int:id>/', DriverProfileByIdView.as_view(), name='driver-profile-by-id'),
+    path('rider-profile/<int:id>/', RiderProfileByIdView.as_view(), name='rider-profile-by-id'),
 
 ]

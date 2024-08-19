@@ -36,7 +36,8 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Restaurant
-        fields = ['id', 'available', 'image', 'rating', 'details', 'location', 'cuisine', 'is_open', 'food_menu', 'about_us', 'delivery_fee']
+        # fields = ['id', 'available', 'image', 'rating', 'details', 'location', 'cuisine', 'is_open', 'food_menu', 'about_us', 'delivery_fee']
+        fields = ['id','user', 'available', 'image', 'rating', 'details', 'location', 'cuisine', 'is_open', 'about_us', 'delivery_fee']
 
     def create(self, validated_data):
         image_data = validated_data.pop('image')

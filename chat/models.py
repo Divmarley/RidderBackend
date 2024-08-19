@@ -10,17 +10,20 @@ class Connection(models.Model):
         related_name='sent_connections',
         on_delete=models.CASCADE
     )
-    location = models.CharField(max_length=300)
+    location = models.JSONField()
     status = models.CharField(max_length=300)
+    paymentStatus=models.CharField(max_length=200)
     receiver = models.ForeignKey(
         CustomUser,
         related_name='received_connections',
         on_delete=models.CASCADE
     )
     pushToken= models.CharField(max_length=2000)
+    # pushToken= models.CharField(max_length=2000)
     accepted = models.BooleanField(default=False)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+    data_driver =models.JSONField(null=True,blank=True)
 
     def __str__(self):
         return f'{self.sender.phone} -> {self.receiver.phone}'
@@ -71,9 +74,9 @@ class RideRequest(models.Model):
 class DriverOnline(models.Model):
     driver = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_driver')
     phone = models.CharField(max_length=15, unique=True)
-    location = models.CharField(max_length=100,null=True, blank=True)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6,null=True, blank=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6,null=True, blank=True)
+    location = models.CharField(max_length=255,null=True, blank=True)
+    latitude = models.CharField(max_length=255,null=True, blank=True)
+    longitude = models.CharField(max_length=255,null=True, blank=True)
     is_online = models.BooleanField(default=False)  # New field
     push_token=  models.CharField(max_length=255, null=True, blank=True)
 

@@ -2,7 +2,7 @@ import base64
 from rest_framework import serializers
 from .models import *
 from django.core.files.base import ContentFile
-
+from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
 from django.core.files.base import ContentFile
@@ -54,10 +54,6 @@ class UserSerializer(serializers.ModelSerializer):
         user = CustomUser.objects.create_user(**validated_data)
         return user
     
-class DriverProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = DriverProfile
-        fields = ['id', 'user', 'license_number', 'vehicle_registration_number', 'vehicle_model', 'vehicle_color', 'available', 'completed_trips','access_token']
 
 class RiderProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -92,9 +88,26 @@ class RegisterSerializer(serializers.ModelSerializer):
         #     DriverProfile.objects.create(user=user.id)
         
         return user
-    
+
+import re
 class LoginSerializer(serializers.Serializer):
     phone = serializers.CharField()
+
+    def validate_phone(self, value):
+        # Sanitize the phone number to remove any invalid characters
+        sanitized_phone = re.sub(r'[^a-zA-Z0-9\-_\.]', '', value)
+        
+        # Ensure the sanitized phone number meets the length requirements
+        if len(sanitized_phone) > 100:
+            raise serializers.ValidationError("Phone number is too long after sanitization.")
+        
+        return sanitized_phone
+
+    def create_group_name(self):
+        phone = self.validated_data.get('phone')
+        # Ensure phone number is sanitized
+        sanitized_phone = self.validate_phone(phone)
+        return sanitized_phone
 
 class VerifyLoginSerializer(serializers.Serializer):
     # phone = serializers.CharField()
@@ -106,7 +119,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['profile_picture']
+        fields = ['profile_picture','email', 'name',]
 
 class DriverSerializer(serializers.ModelSerializer):
     class Meta:
@@ -116,17 +129,56 @@ class DriverSerializer(serializers.ModelSerializer):
 class PersonalInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = PersonalInfo
-        fields = ['id', 'driver', 'name', 'email', 'phone', 'address']
+        fields = ['id',  'name', 'email', 'phone', 'address']
 
 class VehicleInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = VehicleInfo
-        fields = ['id', 'driver', 'model', 'color', 'year', 'vehicle_registration_number', 'vehicle_license_number']
+        fields = ['id',  'model', 'color', 'year', 'vehicle_registration_number', 'vehicle_license_number']
 
 class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document
-        fields = ['id', 'driver', 'driver_photo', 'document_type', 'proof_of_insurance', 'roadworthiness', 'identification_card', 'document_file']
+        fields = ['id',  'driver_photo', 'document_type', 'proof_of_insurance', 'roadworthiness', 'identification_card', 'document_file']
+
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+from .models import CustomUser, PersonalInfo, VehicleInfo, Document
+# from .serializers import PersonalInfoSerializer, VehicleInfoSerializer, DocumentSerializer
+
+class CreateAllDataSerializer(serializers.Serializer):
+    personal_info = PersonalInfoSerializer()
+    vehicle_info = VehicleInfoSerializer()
+    documents = DocumentSerializer(many=True)
+    user_id= serializers.IntegerField()
+
+    def create(self, validated_data):
+        # Ensure the driver is provided or fetched
+        
+        user_id = self.context.get('user_id')
+        print("user_id",user_id)
+ 
+        user = CustomUser.objects.get(id=user_id)
+
+        # Create or update PersonalInfo 
+        personal_info_data = validated_data.pop('personal_info')
+        personal_info = PersonalInfo.objects.create(driver=user, **personal_info_data)
+
+        # Create or update VehicleInfo
+        vehicle_info_data = validated_data.pop('vehicle_info')
+        vehicle_info = VehicleInfo.objects.create(driver=user, **vehicle_info_data)
+
+        # Create Document instances
+        documents_data = validated_data.pop('documents')
+        documents = [Document.objects.create(driver=user, **doc_data) for doc_data in documents_data]
+
+        # Return serialized data
+        return {
+            'personal_info': PersonalInfoSerializer(personal_info).data,
+            'vehicle_info': VehicleInfoSerializer(vehicle_info).data,
+            'documents': DocumentSerializer(documents, many=True).data
+        }
+
 
 class UploadSerializer(serializers.ModelSerializer):
     class Meta:
@@ -134,25 +186,21 @@ class UploadSerializer(serializers.ModelSerializer):
         fields = ['id', 'driver', 'upload_file']
 
 
-class CreateAllDataSerializer(serializers.Serializer):
-    personal_info = PersonalInfoSerializer()
-    vehicle_info = VehicleInfoSerializer()
-    documents = DocumentSerializer(many=True)
+class DriverProfileSerializer(serializers.ModelSerializer):
+    driver =UserSerializer()
+    # personal_info = PersonalInfoSerializer()
+    # vehicle_info = VehicleInfoSerializer()
+    # documents = DocumentSerializer(many=True)
+    class Meta:
+        model = DriverProfile
+        fields = ['id', 'driver'] #'license_number', 'vehicle_registration_number', 'vehicle_model', 'vehicle_color', 'available', 'completed_trips','access_token'
 
-    def create(self, validated_data):
-        user = self.context['request'].user
+class RiderProfileSerializer(serializers.ModelSerializer):
+    user =UserSerializer()
+    # personal_info = PersonalInfoSerializer()
+    # vehicle_info = VehicleInfoSerializer()
+    # documents = DocumentSerializer(many=True)
+    class Meta:
+        model = RiderProfile
+        fields = ['id', 'user'] #'license_number', 'vehicle_registration_number', 'vehicle_model', 'vehicle_color', 'available', 'completed_trips','access_token'
 
-        personal_info_data = validated_data.pop('personal_info')
-        personal_info = PersonalInfo.objects.create(driver=user, **personal_info_data)
-
-        vehicle_info_data = validated_data.pop('vehicle_info')
-        vehicle_info = VehicleInfo.objects.create(driver=user, **vehicle_info_data)
-
-        documents_data = validated_data.pop('documents')
-        documents = [Document.objects.create(driver=user, **doc_data) for doc_data in documents_data]
-
-        return {
-            'personal_info': personal_info,
-            'vehicle_info': vehicle_info,
-            'documents': documents
-        }

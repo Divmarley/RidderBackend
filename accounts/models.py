@@ -105,7 +105,7 @@ class Profile(models.Model):
             self.save()
 
 class DriverProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='driver_profile')
+    driver = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='driver_profile')
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     # license_number = models.CharField(max_length=50, unique=True)
     # vehicle_registration_number = models.CharField(max_length=50, unique=True)
@@ -156,7 +156,7 @@ class RiderProfile(models.Model):
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         if instance.account_type == 'driver':
-            profile = DriverProfile.objects.create(user=instance)
+            profile = DriverProfile.objects.create(driver=instance)
         elif instance.account_type == 'user':
             profile = RiderProfile.objects.create(user=instance)
         # else:
@@ -168,29 +168,33 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 class PersonalInfo(models.Model):
     driver = models.ForeignKey(CustomUser, related_name="driver_info", on_delete=models.CASCADE)
+    email = models.EmailField(null=True, blank=True)
     name = models.CharField(max_length=100)
-    email = models.EmailField()
-    phone = models.CharField(max_length=15)
-    address = models.TextField()
+    email = models.EmailField(null=True, blank=True)
+    phone = models.CharField(max_length=15,null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
 
 class VehicleInfo(models.Model):
     driver = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    model = models.CharField(max_length=100)
-    color = models.CharField(max_length=100)
-    year = models.IntegerField()
-    vehicle_registration_number = models.CharField(max_length=50, unique=True)
-    vehicle_license_number = models.CharField(max_length=50, unique=True)
+    model = models.CharField(max_length=100,null=True, blank=True)
+    color = models.CharField(max_length=100,null=True, blank=True)
+    year = models.IntegerField(null=True, blank=True)
+    vehicle_registration_number = models.CharField(max_length=50,null=True, blank=True)
+    vehicle_license_number = models.CharField(max_length=50, null=True, blank=True)
 
 class Document(models.Model):
     driver = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    driver_photo = models.ImageField(upload_to='documents/')
-    document_type = models.CharField(max_length=50)
-    proof_of_insurance = models.ImageField(upload_to='documents/')
-    roadworthiness = models.ImageField(upload_to='documents/')
-    identification_card = models.ImageField(upload_to='documents/')
-    document_file = models.FileField(upload_to='documents/')
+    driver_photo = models.ImageField(upload_to='documents/',null=True, blank=True)
+    document_type = models.CharField(max_length=50,null=True, blank=True)
+    proof_of_insurance = models.ImageField(upload_to='documents/',null=True, blank=True)
+    roadworthiness = models.ImageField(upload_to='documents/',null=True, blank=True)
+    identification_card = models.ImageField(upload_to='documents/',null=True, blank=True)
+    document_file = models.FileField(upload_to='documents/',null=True, blank=True)
 
 class Upload(models.Model):
     driver = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    upload_file = models.FileField(upload_to='uploads/')
+    upload_file = models.FileField(upload_to='uploads/',null=True, blank=True)
     
+
+
+

@@ -3,10 +3,22 @@ from rest_framework import generics
 from accounts.models import CustomUser
 from .models import OrderItem, Restaurant, FoodMenu
 from .serializers import RestaurantSerializer, FoodMenuSerializer
+from rest_framework.permissions import IsAuthenticated
 
 class RestaurantList(generics.ListCreateAPIView):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantSerializer
+
+
+
+class RestaurantListCreateView(generics.ListCreateAPIView):
+    queryset = Restaurant.objects.all()
+    serializer_class = RestaurantSerializer
+    # permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # Assuming you want to associate the restaurant with the logged-in user
+        serializer.save(user=self.request.user)
 
 class RestaurantDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Restaurant.objects.all()
@@ -42,7 +54,7 @@ class OrderListCreateView(generics.ListCreateAPIView):
             receiver_id = request.data.get('receiver') 
             location = request.data.get('location')
             receiver = Restaurant.objects.get(id=receiver_id)
-            print("receiver",receiver)
+         
             sender =  request.user.id
             total_price = request.data.get('total_price')
             

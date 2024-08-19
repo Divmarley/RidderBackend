@@ -1,6 +1,8 @@
  
 from rest_framework import generics
-from .models import Payment, RideHistory
+
+from chat.serializers import TripHistorySerializer
+from .models import Payment, RideHistory, TripHistory
 from .serializers import PaymentSerializer, RideHistorySerializer
 
 class PaymentListCreateView(generics.ListCreateAPIView):
@@ -20,6 +22,21 @@ class RideHistoryListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         user_id = self.kwargs.get('user_id')
         return RideHistory.objects.filter(user=self.request.user.id)
+
+
+class TripHistoryListView(generics.ListCreateAPIView):
+    # queryset = RideHistory.objects.all()
+    serializer_class =  TripHistorySerializer
+
+    def get_queryset(self):
+        
+        print("self.request.user.id",self.request.user)
+        if (self.request.user.account_type == 'driver'):
+            return  TripHistory.objects.filter(driver_id=self.request.user.id)
+        else:
+            id = self.kwargs.get('rider_id') 
+            return  TripHistory.objects.filter(rider_id=self.request.user.id)
+
 
 
 """ 

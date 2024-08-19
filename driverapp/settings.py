@@ -36,7 +36,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8081",  # Alternative localhost URL
     "http://192.168.100.5:8081",  # Alternative localhost URL
     # Add your production URLs here
-    'http://localhost'
+    'http://localhost',
+    'https://4cb6-154-161-162-196.ngrok-free.app'
 ]
 
 # If you want to allow all origins, use the following setting
@@ -182,6 +183,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+ 
  
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(weeks=30),

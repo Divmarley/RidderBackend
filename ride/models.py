@@ -5,7 +5,7 @@ from accounts.models import CustomUser
 # Create your models here.
 
 
-
+from django.utils import timezone
 
 
 class Payment(models.Model):
@@ -25,13 +25,49 @@ class Payment(models.Model):
  
 class RideHistory(models.Model):
     user = models.IntegerField() 
+    status = models.CharField(max_length=255)
     destination = models.CharField(max_length=255)
     date = models.DateField()
+    paymentStatus =  models.CharField(max_length=255)
+    amount = models.IntegerField()
+    paymentAmount = models.IntegerField(default=0)
 
     def __str__(self):
         return self.destination
     def __str__(self):
         return self.destination
+    
+ 
+class TripHistory(models.Model):
+    rider_id = models.IntegerField() 
+    driver_id = models.IntegerField() 
+    status = models.BooleanField()
+    destination = models.JSONField()
+   
+    paymentStatus =  models.CharField(max_length=255)
+    paymentType =  models.CharField(max_length=255,default="CASH")
+    paymentAmount =models.FloatField()
+    paidAmount = models.FloatField()  
+    
+    created_at= models.DateField( default=timezone.now) 
+
+    def __str__(self):
+        return self.destination
+    def __str__(self):
+        return self.destination
+
+class DriverHistory(models.Model):
+    driver = models.IntegerField() 
+    status = models.CharField(max_length=255)
+    destination = models.CharField(max_length=255)
+    date = models.DateField()
+    paymentStatus = models.CharField(max_length=255)
+    amount = models.IntegerField()
+    paymentAmount= models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.destination
+   
     
 
     

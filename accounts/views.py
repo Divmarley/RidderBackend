@@ -39,23 +39,28 @@ class RegisterView(APIView):
             refresh = RefreshToken.for_user(user)
             access_token = str(refresh.access_token)
             
-            # Create DriverOnline instance    
-            DriverOnline.objects.create(
-                driver=user,
-                phone=request.data.get('phone'),  # Ensure phone number is part of registration data
-                location=request.data.get('location'),  # Default location, adjust as needed
-                latitude=request.data.get('latitude'),     # Default latitude, adjust as needed
-                longitude=request.data.get('longitude'),   # Default longitude, adjust as needed
-                push_token=request.data.get('push_token'),
-                # rideType='Car'
-            )
+            # Create DriverOnline instance   
 
+            print("user",user.account_type) 
+
+            if user.account_type=='driver':
+
+                DriverOnline.objects.create(
+                    driver=user,
+                    phone=request.data.get('phone'),  # Ensure phone number is part of registration data
+                    location=request.data.get('location'),  # Default location, adjust as needed
+                    latitude=request.data.get('latitude'),     # Default latitude, adjust as needed
+                    longitude=request.data.get('longitude'),   # Default longitude, adjust as needed
+                    push_token=request.data.get('push_token'),
+                    # rideType='Car'
+                )
+            print('verification_code', verification_code)
             return Response({
                 'detail': 'User created successfully',
                 'access_token': access_token,
                 'verification_code': verification_code
-            }, status=status.HTTP_201_CREATED)
-        # print(serializer.errors)
+            }, status=status.HTTP_201_CREATED) 
+            
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TokenObtainView(APIView):
@@ -94,12 +99,14 @@ class LoginView(APIView):
                 else:
                     return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
             except ObjectDoesNotExist:
+
                 return Response({'detail': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
         
         elif phone:
             # Login with phone and verification code
             try:
                 user = CustomUser.objects.get(phone=phone)
+                print("User", user)
                 if verification_code:
                     # Verify phone number using verification code
                     if user.verification_code == verification_code:
@@ -121,6 +128,7 @@ class LoginView(APIView):
                 return Response({'detail': 'User with this phone number does not exist'}, status=status.HTTP_404_NOT_FOUND)
         
         else:
+            
             return Response({'detail': 'Please provide either email or phone'}, status=status.HTTP_400_BAD_REQUEST)
 
 # class VerifyLoginView(APIView):
@@ -190,7 +198,7 @@ class VerifyLoginView(APIView):
                 }, status=status.HTTP_200_OK)
             except CustomUser.DoesNotExist:
                 return Response({'detail': 'Invalid verification code or email/phone number'}, status=status.HTTP_400_BAD_REQUEST)
-        
+        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ProfileView(generics.RetrieveUpdateAPIView):
@@ -199,19 +207,16 @@ class ProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = ProfileSerializer
 
     def get_object(self):
-        print('self',self.request.user.thumbnail)   
-        lol =RiderProfile.objects.filter(user = self.request.user) 
+        print('self',self.request.user.thumbnail)    
         return RiderProfile.objects.filter(user = self.request.user)
-        # return Response(self.request.user, status=status.HTTP_400_BAD_REQUEST)
-    
-    
+        # return Response(self.request.user, status=status.HTTP_400_BAD_REQUEST) 
 
     def update(self, request, *args, **kwargs):
          
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        # print(serializer)
+        print(serializer)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -267,12 +272,32 @@ class DriverProfileViewSet(viewsets.ModelViewSet):
     serializer_class = DriverProfileSerializer
     # permission_classes = [IsAuthenticated]
 
+from django.shortcuts import get_object_or_404
+from rest_framework import views, status
+from rest_framework.response import Response
+from .models import DriverProfile, CustomUser
+from .serializers import DriverProfileSerializer
+
+
+class DriverProfileByIdView(views.APIView):
+    def get(self, request, id, *args, **kwargs):
+        user = get_object_or_404(CustomUser, id=id)
+        driver_profile = get_object_or_404(DriverProfile, driver=user)
+        serializer = DriverProfileSerializer(driver_profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class RiderProfileByIdView(views.APIView):
+    def get(self, request, id, *args, **kwargs):
+        rider = get_object_or_404(CustomUser, id=id)
+        rider_profile = get_object_or_404(RiderProfile, user=rider)
+        serializer = RiderProfileSerializer(rider_profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 class RiderProfileViewSet(viewsets.ModelViewSet):
     queryset = RiderProfile.objects.all()
     serializer_class = RiderProfileSerializer
     permission_classes = [IsAuthenticated]
-
-
 
 class DeleteUserView(APIView):
     permission_classes = [IsAuthenticated]
@@ -282,20 +307,47 @@ class DeleteUserView(APIView):
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
+# class CreateAllDataView(APIView):
+#     permission_classes = [AllowAny]
+
+#     def post(self, request, *args, **kwargs):
+#         serializer = CreateAllDataSerializer(data=request.data, context={'request': request})
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+#         print(serializer.errors)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+ 
+from rest_framework.response import Response
+from rest_framework import status
 
 class CreateAllDataView(APIView):
-    permission_classes = [IsAuthenticated]
-
     def post(self, request, *args, **kwargs):
-        serializer = CreateAllDataSerializer(data=request.data, context={'request': request})
+        print("request", request.user.id)
+        serializer = CreateAllDataSerializer(data=request.data, context={'user_id': request.user.id})
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        print(serializer.errors)
+            data = serializer.save()
+            return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
 
-
-
-    
+class GetDriverVehicleInfoByIdViewSet(viewsets.ViewSet):
+    def retrieve(self, request, pk=None):
+        try:
+            vehicle_info = VehicleInfo.objects.get(driver=pk)
+            serializer = VehicleInfoSerializer(vehicle_info)
+            return Response(serializer.data)
+        except VehicleInfo.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+# GetDriverInfoByIdViewSet 
+class GetDriverInfoByIdViewSet(viewsets.ViewSet):
+    def retrieve(self, request, pk=None):
+        try:
+            vehicle_info = PersonalInfo.objects.get(driver=pk)
+            serializer = PersonalInfoSerializer(vehicle_info)
+            return Response(serializer.data)
+        except PersonalInfo.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)

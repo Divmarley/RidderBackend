@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from accounts.models import CustomUser
 from accounts.serializers import UserSerializer
+from ride.models import TripHistory
 from .models import DriverOnline, Message, Connection, RideRequest
 
 class SearchSerializer(UserSerializer):
@@ -38,7 +39,8 @@ class RequestSerializer(serializers.ModelSerializer):
             'receiver',
             'location',
             'created',
-            'status'
+            'status',
+            # 'data_driver'
 
         ]
 
@@ -53,7 +55,11 @@ class FriendSerializer(serializers.ModelSerializer):
             'id',
             'friend',
             'preview',
-            'updated'
+            'updated',
+            'data_driver',
+            'location'
+
+            
         ]
 
     def get_friend(self, obj):
@@ -105,10 +111,23 @@ class TripSerializer(serializers.ModelSerializer):
             'sender',
             'receiver', 
             'status'
-
+            
         ]
 
 
+# TripHistorySerializer
+
+class TripHistorySerializer(serializers.ModelSerializer):
+    # sender = UserSerializer()
+    # receiver = UserSerializer()
+
+    class Meta:
+        model = TripHistory
+        fields = [
+            'rider_id','driver_id','status','destination','paymentStatus','paymentType','paymentAmount','paidAmount','created_at'
+        ]
+
+ 
 
 class DriverOnlineSerializer(serializers.ModelSerializer):
 

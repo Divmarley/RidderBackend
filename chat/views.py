@@ -26,8 +26,10 @@ from rest_framework.response import Response
 from rest_framework import status
 
 class DriverOnlineListCreateAPIView(generics.ListCreateAPIView):
-    queryset = DriverOnline.objects.all()
+    # queryset = DriverOnline.objects.all()
     serializer_class = DriverOnlineSerializer
+    def get_queryset(self):
+        return DriverOnline.objects.filter(is_online=True)
 
     def create(self, request, *args, **kwargs):
         phone = request.data.get('phone')
@@ -35,10 +37,11 @@ class DriverOnlineListCreateAPIView(generics.ListCreateAPIView):
         latitude = request.data.get('latitude')
         longitude = request.data.get('longitude')
         is_online = request.data.get('is_online')
-        push_token= 'ExponentPushToken[wTSDtiIf2tHiOFsx5GxybU]'
+        push_token= request.data.get('push_token')
 
         # Check if a driver with the given phone number already exists
         existing_driver = DriverOnline.objects.filter(phone=phone).first()
+ 
         if existing_driver:
             # If exists, update the existing driver entry
             serializer = self.serializer_class(existing_driver, data=request.data, partial=True)
@@ -46,6 +49,7 @@ class DriverOnlineListCreateAPIView(generics.ListCreateAPIView):
                 # serializer.push_token.
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
+            print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             # If does not exist, create a new driver entry
@@ -53,6 +57,7 @@ class DriverOnlineListCreateAPIView(generics.ListCreateAPIView):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+            print(serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
  
  
