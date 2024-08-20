@@ -356,7 +356,7 @@ class ChatConsumer(WebsocketConsumer):
 			print('Error: connection  doesnt exists')
 			return
 		# Update the connection
-		connection.accepted = False
+		connection.accepted = True
 		connection.status = "DRIVER ACCEPTED"
 		connection.data_driver = dataDriver
 		# connection.arrivalTime =arrivalTime
