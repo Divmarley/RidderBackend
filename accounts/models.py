@@ -25,8 +25,20 @@ class CustomUserManager(BaseUserManager):
 
         if not email:
             raise ValueError('Superuser must have an email address')
+        
+        user = self.create_user(
+            email=self.normalize_email(email), 
+            phone=None, 
+            password=password, 
+            **extra_fields
+        )
+        user.is_admin = True
+        user.is_staff = True
+        user.is_superuser = True
+        user.is_active = True
+        user.save(using=self._db)
+        return user
 
-        return self.create_user(email, phone=None, password=password, **extra_fields)
 
 def upload_thumbnail(instance, filename):
     
