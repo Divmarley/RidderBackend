@@ -39,3 +39,5 @@ typing_extensions==4.12.2
 urllib3==2.2.2
 yarl==1.9.4
 zope.interface==6.4.post2
+mysqlclient
+django-channels-jwt-auth-middleware
