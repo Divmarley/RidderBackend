@@ -101,23 +101,23 @@ ASGI_APPLICATION = 'driverapp.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "ridderapp",
-        "USER": "admin",
-        "PASSWORD": "ehhfaIhYCSJ7LvE",
-        "HOST": "db",
-        "PORT": "3306",
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.mysql",
+#         "NAME": "ridderapp",
+#         "USER": "admin",
+#         "PASSWORD": "ehhfaIhYCSJ7LvE",
+#         "HOST": "db",
+#         "PORT": "3306",
+#     }
+# }
 
 
 # Password validation
@@ -170,8 +170,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Replace with your email host
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'kumi.kofi@openlabs.edu.gh'  # Replace with your email
-EMAIL_HOST_PASSWORD = 'qkyavsftitaunpje'  # Replace with your email password
+EMAIL_HOST_USER = 'kofikumi64@gmail.com'  # Replace with your email
+EMAIL_HOST_PASSWORD = 'vzpo udjs pwwd dbzb'  # Replace with your email password
 
 
 
