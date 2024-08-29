@@ -24,7 +24,7 @@ class DetailsSerializer(serializers.ModelSerializer):
 class FoodMenuSerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodMenu
-        fields = ['id','restaurant', 'name', 'description', 'price', 'image']
+        fields = ['id', 'name', 'description', 'price', 'image']
         read_only_fields = ['id']
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -37,7 +37,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
         # fields = ['id', 'available', 'image', 'rating', 'details', 'location', 'cuisine', 'is_open', 'food_menu', 'about_us', 'delivery_fee']
-        fields = ['id','user', 'available', 'image', 'rating', 'details', 'location', 'cuisine', 'is_open', 'about_us', 'delivery_fee']
+        fields = ['id','user', 'available', 'image', 'rating', 'details', 'location', 'cuisine', 'is_open', 'about_us', 'delivery_fee','food_menu']
 
     def create(self, validated_data):
         image_data = validated_data.pop('image')

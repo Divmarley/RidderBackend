@@ -54,6 +54,7 @@ class RegisterView(APIView):
                     push_token=request.data.get('push_token'),
                     # rideType='Car'
                 )
+                
             print('verification_code', user.verification_code)
             return Response({
                 'detail': 'User created successfully',

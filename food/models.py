@@ -48,6 +48,7 @@ class Details(models.Model):
         verbose_name_plural = "Details"
 
 class FoodMenu(models.Model):
+    restaurant = models.ForeignKey('Restaurant', related_name='food_menu', on_delete=models.CASCADE)
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField()
     price = models.DecimalField(max_digits=8, decimal_places=2)

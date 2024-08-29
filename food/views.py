@@ -1,25 +1,57 @@
 from rest_framework import generics
 
 from accounts.models import CustomUser
-from .models import OrderItem, Restaurant, FoodMenu
+ 
 from .serializers import RestaurantSerializer, FoodMenuSerializer
 from rest_framework.permissions import IsAuthenticated
-
+from .models import Restaurant, Image, Rating, Details, Location, FoodMenu
 class RestaurantList(generics.ListCreateAPIView):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantSerializer
 
 
 
+# class RestaurantListCreateView(generics.ListCreateAPIView):
+#     queryset = Restaurant.objects.all()
+#     serializer_class = RestaurantSerializer
+#     # permission_classes = [IsAuthenticated]
+
+#     def perform_create(self, serializer):
+#         # Assuming you want to associate the restaurant with the logged-in user
+#         serializer.save(user=self.request.user)
 class RestaurantListCreateView(generics.ListCreateAPIView):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        # Assuming you want to associate the restaurant with the logged-in user
-        serializer.save(user=self.request.user)
+        # Extract nested data
+        image_data = self.request.data.get('image')
+        rating_data = self.request.data.get('rating')
+        details_data = self.request.data.get('details')
+        location_data = self.request.data.get('location')
+        food_menu_data = self.request.data.get('food_menu', [])
 
+        # Create nested objects
+        image = Image.objects.create(**image_data) if image_data else None
+        rating = Rating.objects.create(**rating_data) if rating_data else None
+        details = Details.objects.create(**details_data) if details_data else None
+        location = Location.objects.create(**location_data) if location_data else None
+
+        # Create the Restaurant instance
+        restaurant = serializer.save(
+            user=self.request.user,
+            image=image,
+            rating=rating,
+            details=details,
+            location=location
+        )
+
+        # Create related FoodMenu items
+        for food_item_data in food_menu_data:
+            FoodMenu.objects.create(restaurant=restaurant, **food_item_data)
+
+        return restaurant
 class RestaurantDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantSerializer
@@ -49,9 +81,10 @@ class OrderListCreateView(generics.ListCreateAPIView):
         return Order.objects.filter(sender=self.request.user )
 
     def create(self, request, *arrgs, **kwargs): 
+        print(request.data)
         try:
             items_data = request.data.get('items', [])
-            receiver_id = request.data.get('receiver') 
+            receiver_id = request.data.get('restaurant') 
             location = request.data.get('location')
             receiver = Restaurant.objects.get(id=receiver_id)
          
@@ -85,7 +118,7 @@ class OrderListCreateView(generics.ListCreateAPIView):
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Restaurant.DoesNotExist:
-            # print(serializer)
+ 
             return Response({'error': 'Receiver restaurant does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
         
         except Exception as e:

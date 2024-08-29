@@ -356,7 +356,7 @@ class ChatConsumer(WebsocketConsumer):
 			print('Error: connection  doesnt exists')
 			return
 		# Update the connection
-		connection.accepted = True
+		connection.accepted = False
 		connection.status = "DRIVER ACCEPTED"
 		connection.data_driver = dataDriver
 		# connection.arrivalTime =arrivalTime
@@ -519,6 +519,7 @@ class ChatConsumer(WebsocketConsumer):
 	def receive_start_trip(self, data): 
 		print("data: ",	data)
 		phone = data.get('phone')
+		print("phone: ",phone)
 
 		# Fetch connection object
 		try:
