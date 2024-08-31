@@ -24,7 +24,7 @@ class DetailsSerializer(serializers.ModelSerializer):
 class FoodMenuSerializer(serializers.ModelSerializer):
     class Meta:
         model = FoodMenu
-        fields = ['id','restaurant', 'name', 'description', 'price', 'image']
+        fields = ['id', 'name', 'description', 'price', 'image']
         read_only_fields = ['id']
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -37,7 +37,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
         # fields = ['id', 'available', 'image', 'rating', 'details', 'location', 'cuisine', 'is_open', 'food_menu', 'about_us', 'delivery_fee']
-        fields = ['id','user', 'available', 'image', 'rating', 'details', 'location', 'cuisine', 'is_open', 'about_us', 'delivery_fee']
+        fields = ['id','user', 'available', 'image', 'rating', 'details', 'location', 'cuisine', 'is_open', 'about_us', 'delivery_fee','food_menu']
 
     def create(self, validated_data):
         image_data = validated_data.pop('image')
@@ -110,6 +110,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ['item_id', 'quantity']
 
 class OrderSerializer(serializers.ModelSerializer):
+
     items = OrderItemSerializer(many=True)
 
     class Meta:
@@ -124,3 +125,7 @@ class OrderSerializer(serializers.ModelSerializer):
             OrderItem.objects.create(order=order, **item_data)
 
         return order
+    
+
+
+

@@ -8,8 +8,8 @@ from django.db.models import Q, Exists, OuterRef
 from django.db.models.functions import Coalesce
 
 from accounts.models import CustomUser
-from food.models import Order
-from food.serializers import OrderSerializer
+from food.models import FoodMenu, Order, OrderItem, Restaurant
+from food.serializers import FoodMenuSerializer, OrderSerializer
 from ride.models import DriverHistory, RideHistory, TripHistory
 
 from .models import Connection, Message
@@ -107,7 +107,7 @@ class ChatConsumer(WebsocketConsumer):
 		elif data_source == 'thumbnail':
 			self.receive_thumbnail(data)
 
-		elif data_source == 'order.create':
+		elif data_source == 'create.food.order':
 			self.receive_order_create(data)
 
 		elif data_source == 'order.list':
@@ -156,27 +156,67 @@ class ChatConsumer(WebsocketConsumer):
 		self.send_group('552297798', 'foodOrder.create', serialized_order)
 
 	def receive_order_create(self, data):
+	
 		user = self.scope['user']
-		order_number = data.get('order_number')
-		description = data.get('description')
+		print(user)
+		order_data = data.get('order')
+
+		print("order",order_data)
+		# order_number = data.get('order_number')
+		# order_number = data.get('order_number')
+		# description = data.get('description')
+
+		receiverInstance = Restaurant.objects.get(user=order_data['restaurant'])
+ 
 
 		order = Order.objects.create(
-			user=user,
-			order_number=order_number,
-			description=description
+			sender=user,
+			status=order_data['status'],
+			# items=order['items'],
+			total_price=order_data['total_price'],
+			location=order_data['location'],
+			receiver= receiverInstance
 		)
 
+		# Assuming `order_data` is the original dictionary containing the order information, including items
+		for item in order_data['items']:
+			print(item)
+			food_menu_item = FoodMenu.objects.get(id=item['item_id'])  # Fetch FoodMenu object using 'item_id'
+			OrderItem.objects.create(
+				order=order,  # This is the created Order object
+				item=food_menu_item,
+				quantity=item['quantity']
+			)
+
+
 		serialized_order = OrderSerializer(order)
-		self.send_group(user.phone, 'order.create', serialized_order.data)
+		# serialized_food = FoodMenuSerializer(food_menu_item)
+
+		# print("serialized_food",serialized_food.data) 
+		self.send_group(user.phone, 'create.food.order', serialized_order.data) 
+		# self.send_group(order['restaurant'], 'create.food.order', serialized_order.data)
 
 	def receive_order_list(self, data):
 		user = self.scope['user']
-		orders = Order.objects.filter(receiver=user)
-		serialized_orders = OrderSerializer(orders, many=True)
-		
+		if not user:
+			self.send(text_data=json.dumps({
+				'error': 'User is not authenticated'
+			}))
+			return
 
-		self.send_group(user.phone, 'order.list', serialized_orders.data)
- 
+		try:
+			orders = Order.objects.filter(receiver=user)
+			serialized_orders = OrderSerializer(orders, many=True)
+			
+			self.send(text_data=json.dumps({
+				'type': 'order.list',
+				'orders': serialized_orders.data
+			}))
+		except Exception as e:
+			self.send(text_data=json.dumps({
+				'error': str(e)
+			}))
+
 	def receive_order_accept(self, data):
 		order_id = data.get('order_id')
 		try:
@@ -356,7 +396,7 @@ class ChatConsumer(WebsocketConsumer):
 			print('Error: connection  doesnt exists')
 			return
 		# Update the connection
-		connection.accepted = True
+		connection.accepted = False
 		connection.status = "DRIVER ACCEPTED"
 		connection.data_driver = dataDriver
 		# connection.arrivalTime =arrivalTime
@@ -519,6 +559,7 @@ class ChatConsumer(WebsocketConsumer):
 	def receive_start_trip(self, data): 
 		print("data: ",	data)
 		phone = data.get('phone')
+		print("phone: ",phone)
 
 		# Fetch connection object
 		try:

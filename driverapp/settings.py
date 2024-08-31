@@ -173,9 +173,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'kofikumi64@gmail.com'  # Replace with your email
 EMAIL_HOST_PASSWORD = 'vzpo udjs pwwd dbzb'  # Replace with your email password
 
-
-
-
+ 
 # settings.py
 ASGI_APPLICATION = 'driverapp.asgi.application'
 
