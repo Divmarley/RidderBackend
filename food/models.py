@@ -103,7 +103,7 @@ class Order(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"Order from {self.sender.username} to {self.receiver.details.name} - {self.status}"
+        return f"Order from {self.sender.name} to {self.receiver.details.name} - {self.status}"
 
     class Meta:
         verbose_name = "Order"

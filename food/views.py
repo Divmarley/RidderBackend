@@ -2,9 +2,11 @@ from rest_framework import generics
 
 from accounts.models import CustomUser
  
+from rest_framework.response import Response
+
 from .serializers import RestaurantSerializer, FoodMenuSerializer
 from rest_framework.permissions import IsAuthenticated
-from .models import Restaurant, Image, Rating, Details, Location, FoodMenu
+from .models import OrderItem, Restaurant, Image, Rating, Details, Location, FoodMenu
 class RestaurantList(generics.ListCreateAPIView):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantSerializer
@@ -75,56 +77,111 @@ from rest_framework.exceptions import NotFound
 
 class OrderListCreateView(generics.ListCreateAPIView):
     serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Order.objects.filter(sender=self.request.user )
 
-    def create(self, request, *arrgs, **kwargs): 
-        print(request.data)
+    # def create(self, request, *arrgs, **kwargs): 
+    #     print(request.data)
+    #     try:
+    #         items_data = request.data.get('items', [])
+    #         receiver_id = request.data.get('restaurant') 
+    #         location = request.data.get('location')
+    #         receiver = Restaurant.objects.get(id=receiver_id)
+         
+    #         sender =  request.user.id
+    #         total_price = request.data.get('total_price')
+            
+    #         order_data = {
+    #             'sender': sender,
+    #             'receiver': receiver.id,
+    #             'status': 'pending',
+    #             'total_price': total_price,
+    #             'items': items_data,
+    #             'location':location
+    #         }
+
+    #         print("order_data", order_data)
+
+    #         serializer = self.get_serializer(data=order_data)
+    #         serializer.is_valid(raise_exception=True)
+    #         order = serializer.save()
+
+    #         # Send message via channels
+    #         channel_layer = get_channel_layer()
+    #         async_to_sync(channel_layer.group_send)(
+    #             'orders', 
+    #             {
+    #                 'type': 'order_message',
+    #                 'message': f'New order created: {order.id}'
+    #             }
+    #         )
+
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     except Restaurant.DoesNotExist:
+ 
+    #         return Response({'error': 'Receiver restaurant does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+    #     except Exception as e:
+    #         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def create(self, request, *args, **kwargs):
         try:
             items_data = request.data.get('items', [])
-            receiver_id = request.data.get('restaurant') 
+            if not items_data:
+                return Response({'error': 'No items provided for the order.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Ensure all items have a valid item_id
+            for item in items_data:
+                if 'item_id' not in item or not item['item_id']:
+                    return Response({'error': 'Item ID is required for all items.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            receiver_id = request.data.get('restaurant')
             location = request.data.get('location')
             receiver = Restaurant.objects.get(id=receiver_id)
-         
-            sender =  request.user.id
+            sender = request.user
             total_price = request.data.get('total_price')
-            
-            order_data = {
-                'sender': sender,
-                'receiver': receiver.id,
-                'status': 'pending',
-                'total_price': total_price,
-                'items': items_data,
-                'location':location
-            }
 
-            print("order_data", order_data)
+            # Create the Order instance
+            order = Order.objects.create(
+                sender=sender,
+                receiver=receiver,
+                status='pending',
+                total_price=total_price,
+                location=location
+            )
 
-            serializer = self.get_serializer(data=order_data)
-            serializer.is_valid(raise_exception=True)
-            order = serializer.save()
+            # Create OrderItem instances
+            for item_data in items_data:
+                food_item = FoodMenu.objects.get(id=item_data['item_id'])
+                OrderItem.objects.create(
+                    order=order,
+                    item=food_item,
+                    quantity=item_data.get('quantity')
+                )
 
             # Send message via channels
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
-                'orders', 
+                'orders',
                 {
                     'type': 'order_message',
                     'message': f'New order created: {order.id}'
                 }
             )
 
+            serializer = self.get_serializer(order)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         except Restaurant.DoesNotExist:
- 
             return Response({'error': 'Receiver restaurant does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
-        
+        except FoodMenu.DoesNotExist:
+            return Response({'error': 'Food item does not exist.'}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
-        
+
+
 class OrderAcceptView(generics.UpdateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
