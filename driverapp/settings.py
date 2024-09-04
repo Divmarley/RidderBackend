@@ -37,7 +37,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://192.168.100.5:8081",  # Alternative localhost URL
     # Add your production URLs here
     'http://localhost',
-    'https://4cb6-154-161-162-196.ngrok-free.app'
+    'https://4cb6-154-161-162-196.ngrok-free.app',
+
 ]
 
 # If you want to allow all origins, use the following setting

@@ -138,63 +138,117 @@ class ChatConsumer(WebsocketConsumer):
 			self.receive_trip_confirm_payment(data)
 
 
-	def receive_food_order_create(self, data):
-		user = self.scope['user']
-		restaurant_id = data.get('restaurant_id')
-		food_items = data.get('food_items')
+	# def receive_food_order_create(self, data):
+	# 	user = self.scope['user']
+	# 	restaurant_id = data.get('restaurant_id')
+	# 	food_items = data.get('food_items')
 
-		# Assuming you have a model for FoodOrder and serializer defined
-		# Replace with your actual models and serializers
-		food_order = Order.objects.create(
-			user=user,
-			restaurant_id=restaurant_id,
-			food_items=food_items
-		)
+	# 	# Assuming you have a model for FoodOrder and serializer defined
+	# 	# Replace with your actual models and serializers
+	# 	food_order = Order.objects.create(
+	# 		user=user,
+	# 		restaurant_id=restaurant_id,
+	# 		food_items=food_items
+	# 	)
 
-		serialized_order = OrderSerializer(food_order).data
-		self.send_group(user.phone, 'foodOrder.create', serialized_order)
-		self.send_group('552297798', 'foodOrder.create', serialized_order)
+	# 	serialized_order = OrderSerializer(food_order).data
+	# 	self.send_group(user.phone, 'foodOrder.create', serialized_order)
 
-	def receive_order_create(self, data):
+	# 	self.send_group('552297798', 'foodOrder.create', serialized_order)
+
+	# def receive_order_create(self, data):
 	
-		user = self.scope['user']
-		print(user)
-		order_data = data.get('order')
+	# 	user = self.scope['user']
+	# 	print(user)
+	# 	order_data = data.get('order')
 
-		print("order",order_data)
-		# order_number = data.get('order_number')
-		# order_number = data.get('order_number')
-		# description = data.get('description')
+	# 	print("order",order_data)
+	# 	# order_number = data.get('order_number')
+	# 	# order_number = data.get('order_number')
+	# 	# description = data.get('description')
 
-		receiverInstance = Restaurant.objects.get(user=order_data['restaurant'])
+	# 	receiverInstance = Restaurant.objects.get(user=order_data['restaurant'])
  
 
+	# 	order = Order.objects.create(
+	# 		sender=user,
+	# 		status=order_data['status'],
+	# 		# items=order['items'],
+	# 		total_price=order_data['total_price'],
+	# 		location=order_data['location'],
+	# 		receiver= receiverInstance
+	# 	)
+
+	# 	# Assuming `order_data` is the original dictionary containing the order information, including items
+	# 	for item in order_data['items']:
+	# 		print(item)
+	# 		food_menu_item = FoodMenu.objects.get(id=item['item_id'])  # Fetch FoodMenu object using 'item_id'
+	# 		OrderItem.objects.create(
+	# 			order=order,  # This is the created Order object
+	# 			item=food_menu_item,
+	# 			quantity=item['quantity']
+	# 		)
+
+
+	# 	print("order",order)
+	# 	print("food_menu_item",food_menu_item)
+
+	# 	serialized_order = OrderSerializer(order)
+	# 	serialized_food = FoodMenuSerializer(food_menu_item)
+
+	# 	print("serialized_food",serialized_food.data) 
+	# 	self.send_group(user.phone, 'create.food.order', serialized_order.data) 
+	# 	# self.send_group(order['restaurant'], 'create.food.order', serialized_order.data)
+	def receive_order_create(self, data):
+		user = self.scope['user']
+		 
+		order_data = data.get('order')
+
+		# print("order", order_data)
+		print("dataapp", data)
+
+		# Get the receiver instance
+		receiver_instance = Restaurant.objects.get(user=order_data['restaurant'])
+
+		# Create the Order instance
 		order = Order.objects.create(
 			sender=user,
 			status=order_data['status'],
-			# items=order['items'],
 			total_price=order_data['total_price'],
 			location=order_data['location'],
-			receiver= receiverInstance
+			receiver=receiver_instance
 		)
 
-		# Assuming `order_data` is the original dictionary containing the order information, including items
+		serialized_food_items = []
+
+		# Loop through the items in the order and create OrderItem instances
 		for item in order_data['items']:
 			print(item)
 			food_menu_item = FoodMenu.objects.get(id=item['item_id'])  # Fetch FoodMenu object using 'item_id'
-			OrderItem.objects.create(
-				order=order,  # This is the created Order object
+			order_item = OrderItem.objects.create(
+				order=order,
 				item=food_menu_item,
 				quantity=item['quantity']
 			)
+			
+			# Serialize the food item and add to the list
+			serialized_food = FoodMenuSerializer(food_menu_item).data
+			serialized_food_items.append(serialized_food)
 
-
+		# Serialize the order
 		serialized_order = OrderSerializer(order)
-		# serialized_food = FoodMenuSerializer(food_menu_item)
 
-		# print("serialized_food",serialized_food.data) 
-		self.send_group(user.phone, 'create.food.order', serialized_order.data) 
-		# self.send_group(order['restaurant'], 'create.food.order', serialized_order.data)
+		# Print the serialized food items
+		print("serialized_food_items", serialized_food_items)
+
+		# Send serialized order data along with serialized food items
+		response_data = {
+			'order': serialized_order.data,
+			'food_items': serialized_food_items,
+			"data": data
+		}
+
+		self.send_group(user.phone, 'create.food.order', response_data)
 
 	def receive_order_list(self, data):
 		user = self.scope['user']
@@ -207,7 +261,7 @@ class ChatConsumer(WebsocketConsumer):
 		try:
 			orders = Order.objects.filter(receiver=user)
 			serialized_orders = OrderSerializer(orders, many=True)
-			
+			print('serialized_orders',serialized_orders)
 			self.send(text_data=json.dumps({
 				'type': 'order.list',
 				'orders': serialized_orders.data

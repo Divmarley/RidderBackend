@@ -82,3 +82,31 @@ class DriverOnline(models.Model):
 
     def __str__(self):
         return f"Driver {self.id} - {self.phone}"
+    
+
+
+
+class FoodConnection(models.Model):
+    sender = models.ForeignKey(
+        CustomUser,
+        related_name='sent_food_connections',
+        on_delete=models.CASCADE
+    )
+    location = models.JSONField()
+    status = models.CharField(max_length=300)
+    paymentStatus=models.CharField(max_length=200)
+    receiver = models.ForeignKey(
+        CustomUser,
+        related_name='received_food_connections',
+        on_delete=models.CASCADE
+    )
+    pushToken= models.CharField(max_length=2000)
+    # pushToken= models.CharField(max_length=2000)
+    accepted = models.BooleanField(default=False)
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    data_driver =models.JSONField(null=True,blank=True)
+
+    def __str__(self):
+        return f'{self.sender.phone} -> {self.receiver.phone}'
+    

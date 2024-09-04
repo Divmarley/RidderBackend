@@ -81,6 +81,7 @@ class OrderListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         return Order.objects.filter(sender=self.request.user )
+    
 
     # def create(self, request, *arrgs, **kwargs): 
     #     print(request.data)
@@ -181,6 +182,15 @@ class OrderListCreateView(generics.ListCreateAPIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
+
+class OrderListByIdView(generics.ListAPIView):
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        order_id = self.kwargs.get('id')
+        return Order.objects.filter(id=order_id,sender=self.request.user )
+    
 
 class OrderAcceptView(generics.UpdateAPIView):
     queryset = Order.objects.all()
