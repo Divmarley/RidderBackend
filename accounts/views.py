@@ -24,12 +24,12 @@ class RegisterView(APIView):
             
             user = serializer.save() 
             # Generate and save verification code
-            verification_code = user.generate_verification_code()
+            # verification_code = user.generate_verification_code()
 
             # Send verification code via email
             send_mail(
                 'Verification Code',
-                f'Your verification code is {verification_code}',
+                f'Your verification code is {user.verification_code}',
                 'from@example.com',
                 [user.email],
                 fail_silently=False,
@@ -54,11 +54,12 @@ class RegisterView(APIView):
                     push_token=request.data.get('push_token'),
                     # rideType='Car'
                 )
-            print('verification_code', verification_code)
+                
+            print('verification_code', user.verification_code)
             return Response({
                 'detail': 'User created successfully',
                 'access_token': access_token,
-                'verification_code': verification_code
+                'verification_code': user.verification_code
             }, status=status.HTTP_201_CREATED) 
             
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -118,8 +119,8 @@ class LoginView(APIView):
                         return Response({'detail': 'Invalid verification code'}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     # Generate and send verification code
-                    user.generate_verification_code()
-                    print(user.verification_code)
+                    # user.generate_verification_code()
+                    # print(user.verification_code)
                     return Response({
                         'detail': 'Verification code sent',
                         'verification_code': user.verification_code
