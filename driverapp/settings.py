@@ -108,16 +108,16 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.mysql",
-#         "NAME": "ridderapp",
-#         "USER": "admin",
-#         "PASSWORD": "ehhfaIhYCSJ7LvE",
-#         "HOST": "db",
-#         "PORT": "3306",
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': os.environ.get("DB_ENGINE", "django.db.backends.mysql"),
+        'NAME': os.environ.get("MYSQL_DATABASE", 'ridderapp'),
+        'USER': os.environ.get("MYSQL_USER", "admin"),
+        'PASSWORD': os.environ.get("MYSQL_ROOT_PASSWORD", "ehhfaIhYCSJ7LvE"),
+        'HOST': os.environ.get("MYSQL_HOST", "localhost"),
+        'PORT': 3306,
+    }
+}
 
 
 # Password validation
@@ -154,7 +154,21 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+if DEBUG:
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, 'static')
+    ]
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
  
@@ -182,7 +196,7 @@ CHANNEL_LAYERS = {
 	'default': {
 		'BACKEND': 'channels_redis.core.RedisChannelLayer',
 		'CONFIG': {
-			'hosts': [('127.0.0.1', 6379)]
+			'hosts': [('redis', 6379)]
 		}
 	}
 }
