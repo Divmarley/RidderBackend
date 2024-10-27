@@ -1,9 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-
 from accounts.models import CustomUser
-
-
+ 
 class Connection(models.Model):
     sender = models.ForeignKey(
         CustomUser,
@@ -83,9 +81,6 @@ class DriverOnline(models.Model):
     def __str__(self):
         return f"Driver {self.id} - {self.phone}"
     
-
-
-
 class FoodConnection(models.Model):
     sender = models.ForeignKey(
         CustomUser,

@@ -137,6 +137,12 @@ class ChatConsumer(WebsocketConsumer):
 		elif data_source == 'confirm.payment':
 			self.receive_trip_confirm_payment(data)
 
+		elif data_source == 'driver.locationUpdate':
+			self.receive_locationUpdate(data)
+
+		elif data_source == 'user.update':
+			self.receive_userUpdate(data)
+
 
 	# def receive_food_order_create(self, data):
 	# 	user = self.scope['user']
@@ -450,7 +456,7 @@ class ChatConsumer(WebsocketConsumer):
 			print('Error: connection  doesnt exists')
 			return
 		# Update the connection
-		connection.accepted = False
+		connection.accepted = True
 		connection.status = "DRIVER ACCEPTED"
 		connection.data_driver = dataDriver
 		# connection.arrivalTime =arrivalTime
@@ -489,6 +495,9 @@ class ChatConsumer(WebsocketConsumer):
 		)
 		self.send_group(
 			connection.sender.phone, 'friend.new', serialized_friend.data)
+
+		self.send_group(
+			connection.receiver.phone, 'friend.new', serialized_friend.data)
 		 
 	def receive_request_connect(self, data):
 		phone = data.get('phone')
@@ -611,10 +620,8 @@ class ChatConsumer(WebsocketConsumer):
 		)
 
 	def receive_start_trip(self, data): 
-		print("data: ",	data)
 		phone = data.get('phone')
-		print("phone: ",phone)
-
+	 
 		# Fetch connection object
 		try:
 			connection = Connection.objects.get(
@@ -659,8 +666,8 @@ class ChatConsumer(WebsocketConsumer):
 		connection.paymentStatus = 0 
 		connection.save()
 		TripHistory.objects.create(
-			rider_id=connection.sender.id,
-			driver_id=connection.receiver.id,
+			rider=connection.sender.id,
+			driver=connection.receiver.id,
 			status=1,
 			destination=connection.location,
 			paymentStatus=connection.paymentStatus,
@@ -668,8 +675,8 @@ class ChatConsumer(WebsocketConsumer):
 			paymentAmount=connection.location['estimatedPrice'],
 			paidAmount=connection.location['estimatedPrice']
 			)
-		RideHistory.objects.create(user=connection.sender.id,destination=connection.location,date=connection.updated,paymentStatus=connection.status,amount=100)
-		DriverHistory.objects.create(driver=connection.receiver.id,destination=connection.location,date=connection.updated,paymentStatus=connection.status,amount=100)
+		# RideHistory.objects.create(user=connection.sender.id,destination=connection.location,date=connection.updated,paymentStatus=connection.status,amount=100)
+		# DriverHistory.objects.create(driver=connection.receiver.id,destination=connection.location,date=connection.updated,paymentStatus=connection.status,amount=100)
 		# connection.delete()
 		serialized = TripSerializer(connection)
 
@@ -701,19 +708,19 @@ class ChatConsumer(WebsocketConsumer):
 		connection.paymentStatus = 1
 		 
 		connection.save()
-		TripHistory.objects.create(
-			rider_id=connection.sender.id,
-			driver_id=connection.receiver.id,
-			status=1,
-			destination=connection.location,
-			paymentStatus=connection.paymentStatus,
-			paymentType='CASH',
-			paymentAmount=20,
-			paidAmount=20
-			)
+		# TripHistory.objects.create(
+		# 	rider=connection.sender.id,
+		# 	driver=connection.receiver.id,
+		# 	status=1,
+		# 	destination=connection.location,
+		# 	paymentStatus=connection.paymentStatus,
+		# 	paymentType='CASH',
+		# 	paymentAmount=20,
+		# 	paidAmount=20
+		# 	)
 		 
-		RideHistory.objects.create(user=connection.sender.id,destination=connection.location,date=connection.updated,paymentStatus=connection.status, paymentAmount=20,amount=100)
-		DriverHistory.objects.create(driver=connection.receiver.id,destination=connection.location,date=connection.updated,paymentStatus=connection.status,paymentAmount=20,amount=100)
+		# RideHistory.objects.create(user=connection.sender.id,destination=connection.location,date=connection.updated,paymentStatus=connection.status, paymentAmount=20,amount=100)
+		# DriverHistory.objects.create(driver=connection.receiver.id,destination=connection.location,date=connection.updated,paymentStatus=connection.status,paymentAmount=20,amount=100)
 		# connection.delete()
 		serialized = TripHistorySerializer(connection)
 		
@@ -726,7 +733,80 @@ class ChatConsumer(WebsocketConsumer):
 			connection.receiver.phone, 'confirm.payment', serialized.data
 		)
 
-	
+	def receive_locationUpdate(self, data):
+		try:
+			# Log the incoming location data
+			print('Receiving location update:', data)
+
+			# Extract the necessary fields from the incoming data
+		 
+			# latitude = data.get('latitude')
+			# longitude = data.get('longitude')
+			# print(latitude)
+			# Ensure all required data is present
+			# if  latitude is None or longitude is None:
+			# 	print('Invalid data received: missing fields')
+			# 	return
+			
+			# Update the driver's location in the database
+			# try:
+			# 	print('latitude')
+				
+			# 	# Assuming you have a Driver model and 'driver_id' is valid
+			# 	# driver = DriverHistory.objects.get(id=driver_id)
+			# 	# driver.latitude = latitude
+			# 	# driver.longitude = longitude
+			# 	# driver.save()
+
+			# 	# Log the update
+			# 	# print(f"Updated location for driver {driver_id}: ({latitude}, {longitude})")
+
+			# 	# Optionally, broadcast the location update to a group (e.g., for tracking in real-time)
+			# 	# self.send_group(driver.phone, 'driver.locationUpdate', {
+			# 	# 	'driver_id': driver_id,
+			# 	# 	'latitude': latitude,
+			# 	# 	'longitude': longitude
+			# 	# })
+
+			# except DriverHistory.DoesNotExist:
+			# 	print(f"Driver with ID {driver_id} does not exist")
+
+		except Exception as e:
+			print(f"Error in location update: {str(e)}")
+ 
+	def receive_userUpdate(self, data):
+		# Get the currently authenticated user
+		user = self.scope['user']
+		
+		# Log the received data for debugging
+		print("Received user update", data, user)
+		
+		# Extract the user object from the incoming data
+		updated_user_data = data.get('user')
+		
+		if updated_user_data:
+			# Get the new name and phone from the nested user object, or fallback to current values
+			new_name = updated_user_data.get('name') or user.phone  # Use phone as fallback for name
+			new_phone = updated_user_data.get('phone') or user.phone  # Use current phone if not provided
+			new_email = updated_user_data.get('email') or user.phone  # Use current phone if not provided
+
+			# Update the user's name and phone
+			if new_name:
+				user.name = new_name
+			if new_phone:
+				user.phone = new_phone
+			if new_email:
+				user.email = new_email
+			
+			# Save the updated user
+			user.save()
+			
+			# Serialize the updated user
+			serialized = UserSerializer(user)
+			
+			# Send the updated user data back to the group, including the new name and phone
+			self.send_group(self.phone, 'user.update', serialized.data)
+
 	#--------------------------------------------
 	#   Catch/all broadcast to client helpers
 	#--------------------------------------------

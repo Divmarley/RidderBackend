@@ -29,13 +29,17 @@ class TripHistoryListView(generics.ListCreateAPIView):
     serializer_class =  TripHistorySerializer
 
     def get_queryset(self):
+        # return  TripHistory.objects.filter(driver=self.request.user.id)
+        # else:
         
-        print("self.request.user.id",self.request.user)
+        print("self.request.user.id",self.request.user.id)
         if (self.request.user.account_type == 'driver'):
-            return  TripHistory.objects.filter(driver_id=self.request.user.id)
+            print('driver')
+            return  TripHistory.objects.filter(driver=self.request.user.id).order_by('-created_at')
         else:
-            id = self.kwargs.get('rider_id') 
-            return  TripHistory.objects.filter(rider_id=self.request.user.id)
+            id = self.kwargs.get('rider') 
+            print('rider')
+            return  TripHistory.objects.filter(rider=self.request.user.id).order_by('-created_at')
 
 
 

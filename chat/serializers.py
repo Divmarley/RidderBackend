@@ -124,7 +124,15 @@ class TripHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = TripHistory
         fields = [
-            'rider_id','driver_id','status','destination','paymentStatus','paymentType','paymentAmount','paidAmount','created_at'
+           'rider',
+            "driver"  ,
+            "status" ,
+            "destination" ,
+            "paymentStatus",
+            "paymentType" ,
+            "paymentAmount",
+            "paidAmount" ,
+            "created_at", 
         ]
 
  
