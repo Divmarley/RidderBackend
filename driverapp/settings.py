@@ -37,7 +37,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://192.168.100.5:8081",  # Alternative localhost URL
     # Add your production URLs here
     'http://localhost',
-    'https://4cb6-154-161-162-196.ngrok-free.app'
+    'https://4cb6-154-161-162-196.ngrok-free.app',
+
 ]
 
 # If you want to allow all origins, use the following setting
@@ -196,8 +197,16 @@ CHANNEL_LAYERS = {
 	'default': {
 		'BACKEND': 'channels_redis.core.RedisChannelLayer',
 		'CONFIG': {
+ 
+			'hosts': [('127.0.0.1', 6379)]
+		},
+        "OPTIONS": {
+            "close_timeout": 10.0,  # Increase timeout (in seconds)
+        },
+
 			'hosts': [('redis', 6379)]
 		}
+ 
 	}
 }
  
