@@ -3,8 +3,6 @@ from django.db import models
 from accounts.models import CustomUser
 
 # Create your models here.
-
-
 from django.utils import timezone
 
 
@@ -22,7 +20,6 @@ class Payment(models.Model):
     def __str__(self):
         return f'{self.destination} - {self.price}'
 
- 
 class RideHistory(models.Model):
     user = models.IntegerField() 
     status = models.CharField(max_length=255)
@@ -36,8 +33,7 @@ class RideHistory(models.Model):
         return self.destination
     def __str__(self):
         return self.destination
-    
- 
+     
 class TripHistory(models.Model):
     rider = models.IntegerField() 
     driver = models.IntegerField() 
