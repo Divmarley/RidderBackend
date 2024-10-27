@@ -43,14 +43,4 @@ class TripHistoryListView(generics.ListCreateAPIView):
 
 
 
-""" 
-    {
-        "destination": "New York",
-        "trip_time": "2024-07-01T10:00:00Z",
-        "price": "50.00",
-        "payment_method": "Credit Card",
-        "date": "2024-07-01",
-        "payment_by": 1,
-        "payment_to": 2
-    } 
-"""
+ 
