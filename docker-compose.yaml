@@ -1,14 +1,14 @@
 services:
   nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx:/etc/nginx/conf.d
-      - static_volume:/app/staticfiles
-      - media_volume:/app/media
-    depends_on:
-      - web
+   image: nginx:latest
+   ports:
+     - "80:80"
+     - "443:443"
+   volumes:
+     - ./nginx:/etc/nginx/conf.d
+     - /etc/letsencrypt:/etc/letsencrypt
+   depends_on:
+     - web
 
   web:
     build: .
