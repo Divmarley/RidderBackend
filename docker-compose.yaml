@@ -75,7 +75,7 @@ volumes:
   media_volume:
 
 networks:
-  - rider_network:
+  rider_network:
 
 
 
