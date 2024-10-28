@@ -37,4 +37,6 @@ python manage.py migrate
 python manage.py collectstatic --no-input
 
 # Start Gunicorn server
-exec daphne driverapp.wsgi:application --bind 0.0.0.0:8000
+#exec daphne driverapp.asgi:application --bind 0.0.0.0:8000
+
+exec python manage.py runserver 0.0.0.0:8000
