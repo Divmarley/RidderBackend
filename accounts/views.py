@@ -27,13 +27,13 @@ class RegisterView(APIView):
             # verification_code = user.generate_verification_code()
 
             # Send verification code via email
-            send_mail(
-                'Verification Code',
-                f'Your verification code is {user.verification_code}',
-                'from@example.com',
-                [user.email],
-                fail_silently=False,
-            )
+            # send_mail(
+            #     'Verification Code',
+            #     f'Your verification code is {user.verification_code}',
+            #     'from@example.com',
+            #     [user.email],
+            #     fail_silently=False,
+            # )
 
             # Generate access token
             refresh = RefreshToken.for_user(user)
@@ -61,7 +61,7 @@ class RegisterView(APIView):
                 'access_token': access_token,
                 'verification_code': user.verification_code
             }, status=status.HTTP_201_CREATED) 
-            
+        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TokenObtainView(APIView):
@@ -165,6 +165,43 @@ class LoginView(APIView):
 
 
 
+# class VerifyLoginView(APIView):
+#     permission_classes = [AllowAny]
+
+#     def post(self, request):
+#         serializer = VerifyLoginSerializer(data=request.data)
+#         if serializer.is_valid():
+#             email_or_phone = serializer.validated_data.get('email_or_phone')
+#             verification_code = serializer.validated_data['verification_code']
+            
+#             try:
+#                 if '@' in email_or_phone:
+#                     # Assume email verification
+#                     user = CustomUser.objects.get(email=email_or_phone, verification_code=verification_code)
+#                 else:
+#                     # Assume phone verification
+#                     user = CustomUser.objects.get(phone=email_or_phone, verification_code=verification_code)
+                
+#                 user.verification_code = None  # Clear the verification code after successful login
+#                 user.save()
+                
+#                 # Generate access token
+#                 refresh = RefreshToken.for_user(user)
+#                 access_token = str(refresh.access_token)
+#                 refresh_token = str(refresh)
+
+#                 user_data = UserSerializer(user).data  # Serialize the user data
+#                 return Response({
+#                     'detail': 'Login successful',
+#                     'user': user_data,
+#                     'access_token': access_token,
+#                     'refresh_token': refresh_token
+#                 }, status=status.HTTP_200_OK)
+#             except CustomUser.DoesNotExist:
+#                 return Response({'detail': 'Invalid verification code or email/phone number'}, status=status.HTTP_400_BAD_REQUEST)
+#         print(serializer.errors)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class VerifyLoginView(APIView):
     permission_classes = [AllowAny]
 
@@ -175,32 +212,31 @@ class VerifyLoginView(APIView):
             verification_code = serializer.validated_data['verification_code']
             
             try:
-                if '@' in email_or_phone:
-                    # Assume email verification
-                    user = CustomUser.objects.get(email=email_or_phone, verification_code=verification_code)
-                else:
-                    # Assume phone verification
-                    user = CustomUser.objects.get(phone=email_or_phone, verification_code=verification_code)
+                user = (CustomUser.objects.get(email=email_or_phone) if '@' in email_or_phone 
+                        else CustomUser.objects.get(phone=email_or_phone))
                 
-                user.verification_code = None  # Clear the verification code after successful login
-                user.save()
-                
-                # Generate access token
-                refresh = RefreshToken.for_user(user)
-                access_token = str(refresh.access_token)
-                refresh_token = str(refresh)
-
-                user_data = UserSerializer(user).data  # Serialize the user data
-                return Response({
-                    'detail': 'Login successful',
-                    'user': user_data,
-                    'access_token': access_token,
-                    'refresh_token': refresh_token
-                }, status=status.HTTP_200_OK)
+                if user.verification_code == verification_code:
+                    user.verification_code = None  # Clear the code
+                    user.save()
+                    
+                    refresh = RefreshToken.for_user(user)
+                    access_token = str(refresh.access_token)
+                    refresh_token = str(refresh)
+                    
+                    user_data = UserSerializer(user).data  # Serialize user data
+                    return Response({
+                        'detail': 'Login successful',
+                        'user': user_data,
+                        'access_token': access_token,
+                        'refresh_token': refresh_token
+                    }, status=status.HTTP_200_OK)
+                return Response({'detail': 'Invalid verification code'}, status=status.HTTP_400_BAD_REQUEST)
+            
             except CustomUser.DoesNotExist:
-                return Response({'detail': 'Invalid verification code or email/phone number'}, status=status.HTTP_400_BAD_REQUEST)
-        print(serializer.errors)
+                return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ProfileView(generics.RetrieveUpdateAPIView):
     queryset = RiderProfile.objects.all()
@@ -331,6 +367,7 @@ class CreateAllDataView(APIView):
         if serializer.is_valid():
             data = serializer.save()
             return Response(data, status=status.HTTP_201_CREATED)
+        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

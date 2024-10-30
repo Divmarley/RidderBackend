@@ -57,9 +57,7 @@ class FriendSerializer(serializers.ModelSerializer):
             'preview',
             'updated',
             'data_driver',
-            'location'
-
-            
+            'location' 
         ]
 
     def get_friend(self, obj):
@@ -118,21 +116,13 @@ class TripSerializer(serializers.ModelSerializer):
 # TripHistorySerializer
 
 class TripHistorySerializer(serializers.ModelSerializer):
-    # sender = UserSerializer()
-    # receiver = UserSerializer()
+    sender = UserSerializer()
+    receiver = UserSerializer()
 
     class Meta:
         model = TripHistory
         fields = [
-           'rider',
-            "driver"  ,
-            "status" ,
-            "destination" ,
-            "paymentStatus",
-            "paymentType" ,
-            "paymentAmount",
-            "paidAmount" ,
-            "created_at", 
+            'sender','receiver','status','paymentStatus','created_at'
         ]
 
  

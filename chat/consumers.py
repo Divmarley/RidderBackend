@@ -331,7 +331,7 @@ class ChatConsumer(WebsocketConsumer):
 		serialized = FriendSerializer(
 			connections, 
 			context={ 
-				'user': user 
+				'user': user
 			}, 
 			many=True)
 		# Send data back to requesting user
@@ -442,8 +442,7 @@ class ChatConsumer(WebsocketConsumer):
 
 	def receive_request_accept(self, data):
 		phone = data.get('phone')
-		dataDriver = data.get('dataDriver')
-		print("dataDriver",dataDriver)
+		dataDriver = data.get('dataDriver') 
 		# arrivalTime = data.get('arrivalTime')
 		# Fetch connection object
  

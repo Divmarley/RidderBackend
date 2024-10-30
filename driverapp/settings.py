@@ -27,17 +27,22 @@ SECRET_KEY = 'django-insecure-n0kn2qx+n78vlb(*dgm$q29rxix7n761wk1$erc2+8bgh*-lkc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
 ALLOWED_HOSTS = ["*",'127.0.0.1','localhost','192.168.100.5','ubintax.com']
+n
 
 CORS_ORIGIN_ALLOW_ALL = True  
 # Allow all origins to access your API
 CORS_ALLOWED_ORIGINS = [
-    "https://www.ubintax.com"
+ 
+    "https://www.ubintax.com",
+ 
     "http://localhost:3000",  # React Native development server URL
     "http://127.0.0.1:8081",  # Alternative localhost URL
     "http://192.168.100.5:8081",  # Alternative localhost URL
     # Add your production URLs here
     'http://localhost',
+    'http://172.20.10.3:8000',
     'https://4cb6-154-161-162-196.ngrok-free.app',
 
 ]
@@ -110,16 +115,16 @@ ASGI_APPLICATION = 'driverapp.asgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': os.environ.get("DB_ENGINE", "django.db.backends.mysql"),
-        'NAME': os.environ.get("MYSQL_DATABASE", 'ridderapp'),
-        'USER': os.environ.get("MYSQL_USER", "admin"),
-        'PASSWORD': os.environ.get("MYSQL_ROOT_PASSWORD", "ehhfaIhYCSJ7LvE"),
-        'HOST': os.environ.get("MYSQL_HOST", "localhost"),
-        'PORT': 3306,
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': os.environ.get("DB_ENGINE", "django.db.backends.mysql"),
+#         'NAME': os.environ.get("MYSQL_DATABASE", 'ridderapp'),
+#         'USER': os.environ.get("MYSQL_USER", "admin"),
+#         'PASSWORD': os.environ.get("MYSQL_ROOT_PASSWORD", "ehhfaIhYCSJ7LvE"),
+#         'HOST': os.environ.get("MYSQL_HOST", "localhost"),
+#         'PORT': 3306,
+#     }
+# }
 
 
 # Password validation
@@ -200,6 +205,7 @@ CHANNEL_LAYERS = {
 		'CONFIG': {
  
 			'hosts': [('redis', 6379)]
+ 
 		},
        
  
