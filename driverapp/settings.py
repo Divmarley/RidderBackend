@@ -30,6 +30,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*",'127.0.0.1','localhost','192.168.100.5','ubintax.com']
 
+CSRF_TRUSTED_ORIGINS = ['https://ubintax.com']
 
 CORS_ORIGIN_ALLOW_ALL = True  
 # Allow all origins to access your API
