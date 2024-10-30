@@ -102,8 +102,26 @@ from .models import Order
 
 
 from rest_framework import serializers
-from .models import Order, OrderItem
+from .models import Order, OrderItem,FoodConnection
+from accounts.serializers import UserSerializer
 
+class RequestFoodSerializer(serializers.ModelSerializer):
+    buyer = UserSerializer()
+    restaurant = UserSerializer()
+
+    class Meta:
+        model = FoodConnection
+        fields = [
+            'id',
+            'buyer',
+            'restaurant',
+            'location',
+            'created',
+            'status',
+            'items'
+            # 'data_driver'
+
+        ]
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
@@ -126,6 +144,3 @@ class OrderSerializer(serializers.ModelSerializer):
 
         return order
     
-
-
-

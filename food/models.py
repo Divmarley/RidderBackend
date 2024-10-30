@@ -1,6 +1,33 @@
 from django.db import models
 from accounts.models import CustomUser
 
+
+
+class FoodConnection(models.Model):
+    buyer = models.ForeignKey(
+        CustomUser,
+        related_name='buyer_sent_connections',
+        on_delete=models.CASCADE
+    )
+    location = models.JSONField()
+    status = models.CharField(max_length=300)
+    restaurant = models.ForeignKey(
+        CustomUser,
+        related_name='restaurant_received_connections',
+        on_delete=models.CASCADE
+    )
+    pushToken= models.CharField(max_length=2000)
+    items= models.JSONField()
+    
+    # pushToken= models.CharField(max_length=2000)
+   
+    updated = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True) 
+
+    def __str__(self):
+        return f'{self.buyer.phone} -> {self.restaurant.phone}'
+    
+
 class Image(models.Model):
     uri = models.URLField()
     border_radius = models.IntegerField(null=True, blank=True)  # Optional field
