@@ -1,14 +1,16 @@
 services:
   nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx:/etc/nginx/conf.d
-      - static_volume:/app/staticfiles
-      - media_volume:/app/media
-    depends_on:
-      - web
+   image: nginx:latest
+   ports:
+     - "80:80"
+     - "443:443"
+   volumes:
+     - ./nginx:/etc/nginx/conf.d
+     - /etc/letsencrypt:/etc/letsencrypt
+   depends_on:
+     - web
+   networks:
+     - rider_network
 
   web:
     build: .
@@ -23,10 +25,12 @@ services:
       - .env
     depends_on:
       - db
+    networks:
+      - rider_network
 
   db:
     image: mysql:8.0
-    container_name: ridder_mysql_db
+    container_name: rider_mysql_db
     env_file:
       - .env
     volumes:
@@ -35,10 +39,12 @@ services:
       - "3306:3306"
     command: --default-authentication-plugin=mysql_native_password
     restart: always
+    networks:
+      - rider_network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: ridder_phpmyadmin
+    container_name: rider_phpmyadmin
     environment:
       PMA_HOST: db
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -52,17 +58,24 @@ services:
     depends_on:
       - db
     restart: always
+    networks:
+      - rider_network
 
   redis:
     image: redis
     ports:
       - "6379:6379"
     restart: always
+    networks:
+      - rider_network
 
 volumes:
   mysql_data:
   static_volume:
   media_volume:
+
+networks:
+  rider_network:
 
 
 

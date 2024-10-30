@@ -1,6 +1,7 @@
 # asgi.py (inside driverapp directory)
 
 import chat.routing
+import food.routing
 import os
 
 from channels.routing import ProtocolTypeRouter, URLRouter
@@ -17,7 +18,7 @@ application = ProtocolTypeRouter({
 	'http': django_asgi_app,
 	'websocket': AllowedHostsOriginValidator(
 		JWTAuthMiddlewareStack(
-			URLRouter(chat.routing.websocket_urlpatterns)
+			URLRouter(chat.routing.websocket_urlpatterns),
 		)
 	)
 })

@@ -27,12 +27,16 @@ SECRET_KEY = 'django-insecure-n0kn2qx+n78vlb(*dgm$q29rxix7n761wk1$erc2+8bgh*-lkc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*",'127.0.0.1','localhost','192.168.100.5','ubintax.com','172.20.10.3:8000']
+
+ALLOWED_HOSTS = ["*",'127.0.0.1','localhost','192.168.100.5','ubintax.com']
+n
 
 CORS_ORIGIN_ALLOW_ALL = True  
 # Allow all origins to access your API
 CORS_ALLOWED_ORIGINS = [
+ 
     "https://www.ubintax.com",
+ 
     "http://localhost:3000",  # React Native development server URL
     "http://127.0.0.1:8081",  # Alternative localhost URL
     "http://192.168.100.5:8081",  # Alternative localhost URL
@@ -104,12 +108,12 @@ ASGI_APPLICATION = 'driverapp.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # DATABASES = {
 #     'default': {
@@ -200,7 +204,8 @@ CHANNEL_LAYERS = {
 		'BACKEND': 'channels_redis.core.RedisChannelLayer',
 		'CONFIG': {
  
-			'hosts': [('127.0.0.1', 6379)]
+			'hosts': [('redis', 6379)]
+ 
 		},
        
  
