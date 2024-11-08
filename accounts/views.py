@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from accounts import send_verification_code
 from chat.models import DriverOnline
 from .models import CustomUser, DriverProfile, PersonalInfo, Profile, RiderProfile, Upload, VehicleInfo,Document
-from .serializers import CreateAllDataSerializer, DocumentSerializer, DriverProfileSerializer, DriverSerializer, PersonalInfoSerializer, RegisterSerializer, RiderProfileSerializer, UploadSerializer, UserSerializer, VehicleInfoSerializer, VerifyLoginSerializer, ProfileSerializer
+from .serializers import CreateAllDataSerializer, DocumentSerializer, DriverProfileSerializer, DriverSerializer, LoginSerializer, PersonalInfoSerializer, RegisterSerializer, RiderProfileSerializer, UploadSerializer, UserSerializer, VehicleInfoSerializer, VerifyLoginSerializer, ProfileSerializer
 
 class RegisterView(APIView):
     permission_classes = (AllowAny,)
@@ -76,9 +76,13 @@ class TokenObtainView(APIView):
         })
 
 class LoginView(APIView):
-    permission_classes = [AllowAny]
-
+    permission_classes = [AllowAny] 
     def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if not serializer.is_valid():
+            print(serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         phone = request.data.get('phone')
         email = request.data.get('email')
         verification_code = request.data.get('verification_code')
@@ -126,6 +130,7 @@ class LoginView(APIView):
                         'verification_code': user.verification_code
                     }, status=status.HTTP_200_OK)
             except ObjectDoesNotExist:
+                print()
                 return Response({'detail': 'User with this phone number does not exist'}, status=status.HTTP_404_NOT_FOUND)
         
         else:

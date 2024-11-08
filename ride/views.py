@@ -38,7 +38,7 @@ class TripHistoryListView(generics.ListCreateAPIView):
             return  TripHistory.objects.filter(driver=self.request.user.id).order_by('-created_at')
         else:
             id = self.kwargs.get('rider') 
-            print('rider')
+            print('rider',)
             return  TripHistory.objects.filter(rider=self.request.user.id).order_by('-created_at')
 
 

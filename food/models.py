@@ -54,6 +54,7 @@ class Location(models.Model):
     address = models.CharField(max_length=255)
     city = models.CharField(max_length=100)
     country = models.CharField(max_length=100)
+    coordinates = models.JSONField()
 
     def __str__(self):
         return f"{self.address}, {self.city}, {self.country}"
@@ -99,6 +100,7 @@ class Restaurant(models.Model):
     rating = models.OneToOneField(Rating, on_delete=models.CASCADE)
     details = models.OneToOneField(Details, on_delete=models.CASCADE)
     location = models.OneToOneField(Location, on_delete=models.CASCADE)
+ 
     cuisine = models.CharField(max_length=255)
     is_open = models.BooleanField(default=False)
     about_us = models.TextField(null=True, blank=True)
@@ -122,7 +124,7 @@ class Order(models.Model):
     ]
     
     sender = models.ForeignKey(CustomUser, related_name='sent_orders', on_delete=models.CASCADE)
-    receiver = models.ForeignKey(Restaurant, related_name='received_orders', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(CustomUser, related_name='received_orders', on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -137,9 +139,9 @@ class Order(models.Model):
         verbose_name_plural = "Orders"
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
-    item = models.ForeignKey(FoodMenu, related_name='order_items', on_delete=models.CASCADE)
-    quantity = models.IntegerField()
+    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)  # Use related_name='items'
+    food_menu = models.ForeignKey(FoodMenu, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
 
     def __str__(self):
         return f"OrderItem {self.id} for Order {self.order.id}: {self.item.name}"

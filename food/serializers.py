@@ -14,7 +14,7 @@ class RatingSerializer(serializers.ModelSerializer):
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ['address', 'city', 'country']
+        fields = ['address', 'city', 'country','coordinates']
 
 class DetailsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -122,10 +122,13 @@ class RequestFoodSerializer(serializers.ModelSerializer):
             # 'data_driver'
 
         ]
+
+        
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
-        fields = ['item_id', 'quantity']
+        fields = ['id', 'food_menu', 'quantity']  # Change 'item' to 'food_menu'
+
 
 class OrderSerializer(serializers.ModelSerializer):
 

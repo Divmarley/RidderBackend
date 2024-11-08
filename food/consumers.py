@@ -4,8 +4,8 @@ from django.contrib.auth.models import User
 from accounts.models import CustomUser
 import json
 from asgiref.sync import async_to_sync
-from food.models import FoodConnection,Restaurant
-from food.serializers import RequestFoodSerializer
+from food.models import FoodConnection, FoodMenu, Order, OrderItem,Restaurant
+from food.serializers import OrderSerializer, RequestFoodSerializer
 
 
 
@@ -43,56 +43,130 @@ class FoodConsumer(WebsocketConsumer):
             self.receive_food_request_connect(data)
         elif data_source == 'foodOrder.list':
             self.receive_food_list(data)
+        elif data_source == 'list.orders':
+            self.list_orders()
         
     
     def receive_food_request_connect(self, data):
-        print("receive_food_request_connect", data.get('data'))
         daseData = data.get('data')
 
         location = daseData['location']
         phone = daseData['phone']
-        restaurant = daseData['restaurant']
+        restaurant_id = daseData['restaurant']
         pushToken = daseData['pushToken']
         items = daseData['items']
+        total_price = daseData['total_price']
+        status = daseData['status']
         user = self.scope['user']
-        print("user",user)
+
         if not user:
             self.send(text_data=json.dumps({
                 'error': 'User is not authenticated'
             }))
             return
- 
-		# Attempt to fetch the receiving user
+
         try:
-            restaurant = CustomUser.objects.get(id=restaurant)
-            print('restaurant',restaurant)
+            restaurant = CustomUser.objects.get(id=restaurant_id)
         except CustomUser.DoesNotExist:
-            print('Error: User not found')
+            self.send(text_data=json.dumps({
+                'error': 'Restaurant not found'
+            }))
             return
-		# Create connection
+
+        # Create or retrieve FoodConnection instance
         connection, _ = FoodConnection.objects.get_or_create(
-			buyer=self.scope['user'],
-            restaurant= restaurant,
-			location=location,
-			pushToken=pushToken,
-            items=items
-		)
+            buyer=user,  # Use the authenticated user
+            restaurant=restaurant,
+            location=location,
+            pushToken=pushToken,
+            defaults={'items': items}  # Store items as needed
+        )
 
-        print("connection",connection)
+        # Create Order instance
+        order = Order.objects.create(
+            sender=connection.buyer,
+            receiver=connection.restaurant,
+            status=status,
+            location=connection.location,
+            total_price=total_price
+        )
 
-        print('Received food request',) 
-        
-        # # Serialized connection
+        # Create OrderItem instances for each item in the order
+        for item_data in items:
+            item_id = item_data.get('item_id')
+            quantity = item_data.get('quantity')
+
+            try:
+                food_item = FoodMenu.objects.get(id=item_id)
+                OrderItem.objects.create(
+                    order=order,
+                    food_menu=food_item,  # Ensure this is the correct field name
+                    quantity=quantity
+                )
+            except FoodMenu.DoesNotExist:
+                print(f"Food item with id {item_id} not found")
+
+        # Serialize connection and send back to sender and receiver
         serialized = RequestFoodSerializer(connection)
-   
-        # # Send back to sender
+
         self.send_group(
             connection.buyer.phone, 'request.connect.food', serialized.data
         )
-        # # Send to receiver
         self.send_group(
             connection.restaurant.phone, 'request.connect.food', serialized.data
-		)
+        )
+
+    def list_orders(self):
+        user = self.scope['user']
+        if not user:
+            self.send(text_data=json.dumps({
+                'source': 'list.orders',
+                'error': 'User is not authenticated'
+            }))
+            return
+
+        # Fetch orders where the user is the sender or receiver
+        orders = Order.objects.filter(
+            sender=user
+        ) | Order.objects.filter(receiver=user)
+
+        # Prepare serialized orders data with item details
+        orders_data = []
+        for order in orders:
+            # Fetch items related to the order
+            order_items = []
+            for item in order.items.all():
+                item_data = {
+                    "item_id": item.food_menu.id,  # Corrected here
+                    "quantity": item.quantity,
+                    "name": item.food_menu.name,
+                    "description": item.food_menu.description,
+                    "price": float(item.food_menu.price)  # Convert Decimal to float
+                }
+                order_items.append(item_data)
+
+            # Add order details including item data
+            orders_data.append({
+                "order_id": order.id,
+                "status": order.status,
+                "location": order.location,
+                "total_price": float(order.total_price),  # Convert Decimal to float
+                "items": order_items
+            })
+
+        # Send back the detailed orders list to the client
+        response_data = {
+            'source': 'list.orders',
+            'status': 'success',
+            'orders': orders_data
+        }
+
+        # Send serialized data back to the client
+        self.send(text_data=json.dumps(response_data))
+
+        # self.send_group(
+		# 	connection.sender.phone, 'trip.start', serialized.data
+		# )
 
 
     def receive_food_list(self, data):

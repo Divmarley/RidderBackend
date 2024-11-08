@@ -157,13 +157,25 @@ class RiderProfile(models.Model):
             self.profile_picture = data
             self.save()
 
-# @receiver(post_save, sender=CustomUser)
-# def create_auth_token(sender, instance=None, created=False, **kwargs):
-#     if created:
-#         DriverProfile.objects.create(user=instance)
-#         refresh = RefreshToken.for_user(instance)
-#         instance.profile.access_token = str(refresh.access_token)
-#         instance.profile.save()
+
+
+class RestaurantProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='restaurant_profile')
+    payment_method = models.CharField(max_length=50, blank=True, null=True)
+    preferred_driver_rating = models.FloatField(default=0)
+    access_token = models.CharField(max_length=255, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    
+    def __str__(self):
+        return f"{self.user.name} - Restaurant Profile"
+    
+    def update_profile_picture_from_base64(self, base64_data):
+        if base64_data:
+            format, imgstr = base64_data.split(';base64,')
+            ext = format.split('/')[-1]
+            data = ContentFile(base64.b64decode(imgstr), name=f'{self.user.id}.{ext}')
+            self.profile_picture = data
+            self.save()
 
 @receiver(post_save, sender=CustomUser)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
@@ -172,12 +184,23 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
             profile = DriverProfile.objects.create(driver=instance)
         elif instance.account_type == 'user':
             profile = RiderProfile.objects.create(user=instance)
+        elif instance.account_type == 'restaurant':
+            profile = RestaurantProfile.objects.create(user=instance)
         # else:
         #     profile = Profile.objects.create(user=instance)
         
         refresh = RefreshToken.for_user(instance)
         profile.access_token = str(refresh.access_token)
         profile.save()
+
+
+    # @receiver(post_save, sender=CustomUser)
+    # def create_auth_token(sender, instance=None, created=False, **kwargs):
+    #     if created:
+    #         DriverProfile.objects.create(user=instance)
+    #         refresh = RefreshToken.for_user(instance)
+    #         instance.profile.access_token = str(refresh.access_token)
+    #         instance.profile.save()
 
 class PersonalInfo(models.Model):
     driver = models.ForeignKey(CustomUser, related_name="driver_info", on_delete=models.CASCADE)

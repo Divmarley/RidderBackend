@@ -108,6 +108,7 @@ class ChatConsumer(WebsocketConsumer):
 			self.receive_thumbnail(data)
 
 		elif data_source == 'create.food.order':
+			print('hello')
 			self.receive_order_create(data)
 
 		elif data_source == 'order.list':

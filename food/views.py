@@ -21,6 +21,7 @@ class RestaurantList(generics.ListCreateAPIView):
 #     def perform_create(self, serializer):
 #         # Assuming you want to associate the restaurant with the logged-in user
 #         serializer.save(user=self.request.user)
+
 class RestaurantListCreateView(generics.ListCreateAPIView):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantSerializer
@@ -74,10 +75,11 @@ from django.shortcuts import get_object_or_404
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 from rest_framework.exceptions import NotFound 
+from rest_framework.views import APIView
 
 class OrderListCreateView(generics.ListCreateAPIView):
     serializer_class = OrderSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Order.objects.filter(sender=self.request.user )
@@ -182,8 +184,38 @@ class OrderListCreateView(generics.ListCreateAPIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+class OrderListView(APIView):
+    permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        user = request.user
+        # Fetch orders where the user is the sender or receiver
+        orders = Order.objects.filter(sender=user) | Order.objects.filter(receiver=user)
+        
+        # Prepare serialized orders data
+        orders_data = []
+        for order in orders:
+            order_items = []
+            for item in order.items.all():
+                item_data = {
+                    "item_id": item.food_menu.id,
+                    "quantity": item.quantity,
+                    "name": item.food_menu.name,
+                    "description": item.food_menu.description,
+                    "price": float(item.food_menu.price)
+                }
+                order_items.append(item_data)
 
+            orders_data.append({
+                "order_id": order.id,
+                "status": order.status,
+                "location": order.location,
+                "total_price": float(order.total_price),
+                "items": order_items
+            })
+
+        return Response({'orders': orders_data})
+    
 class OrderListByIdView(generics.ListAPIView):
     serializer_class = OrderSerializer
 
