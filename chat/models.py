@@ -17,7 +17,7 @@ class Connection(models.Model):
         on_delete=models.CASCADE
     )
     pushToken= models.CharField(max_length=2000)
-    # pushToken= models.CharField(max_length=2000)
+    riderPushToken= models.CharField(max_length=2000)
     accepted = models.BooleanField(default=False)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

@@ -107,23 +107,23 @@ ASGI_APPLICATION = 'driverapp.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get("DB_ENGINE", "django.db.backends.mysql"),
-        'NAME': os.environ.get("MYSQL_DATABASE", 'ridderapp'),
-        'USER': os.environ.get("MYSQL_USER", "admin"),
-        'PASSWORD': os.environ.get("MYSQL_ROOT_PASSWORD", "ehhfaIhYCSJ7LvE"),
-        'HOST': os.environ.get("MYSQL_HOST", "localhost"),
-        'PORT': 3306,
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': os.environ.get("DB_ENGINE", "django.db.backends.mysql"),
+#         'NAME': os.environ.get("MYSQL_DATABASE", 'ridderapp'),
+#         'USER': os.environ.get("MYSQL_USER", "admin"),
+#         'PASSWORD': os.environ.get("MYSQL_ROOT_PASSWORD", "ehhfaIhYCSJ7LvE"),
+#         'HOST': os.environ.get("MYSQL_HOST", "localhost"),
+#         'PORT': 3306,
+#     }
+# }
 
 
 # Password validation
@@ -202,8 +202,8 @@ CHANNEL_LAYERS = {
 	'default': {
 		'BACKEND': 'channels_redis.core.RedisChannelLayer',
 		'CONFIG': {
-			'hosts': [('redis', 6379)]
-			# 'hosts': [('127.0.0.1', 6379)]
+			# 'hosts': [('redis', 6379)]
+			'hosts': [('127.0.0.1', 6379)]
 		},
        
  
@@ -214,8 +214,19 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,  # Adjust this to your needs
 }
  
+ 
+FILE_UPLOAD_HANDLERS = [
+    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
+    'django.core.files.uploadhandler.MemoryFileUploadHandler',
+]
+ 
+
+# Optionally, you can increase the max upload size if the image is large
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # Example: 10MB
  
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(weeks=30),

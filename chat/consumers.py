@@ -503,6 +503,7 @@ class ChatConsumer(WebsocketConsumer):
 		phone = data.get('phone')
 		location = data.get('location')
 		push_token = data.get('push_token')
+		riderPushToken = data.get('riderPushToken')
 
 		print("receive_request_connect data",data)
 		# Attempt to fetch the receiving user
@@ -516,7 +517,9 @@ class ChatConsumer(WebsocketConsumer):
 			sender=self.scope['user'],
 			receiver=receiver,
 			location=location,
-			pushToken= push_token
+			pushToken= push_token,
+			riderPushToken= riderPushToken
+ 
 		)
 		
 		# Serialized connection
@@ -663,7 +666,7 @@ class ChatConsumer(WebsocketConsumer):
 			return
 		# Update the connection
 		connection.status = 'TRIP ENDED'
-		connection.paymentStatus = 0 
+		connection.paymentStatus = 1
 		connection.save()
 		TripHistory.objects.create(
 			rider=connection.sender.id,

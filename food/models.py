@@ -1,6 +1,8 @@
 from django.db import models
 from accounts.models import CustomUser
 
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 
 class FoodConnection(models.Model):
@@ -75,19 +77,35 @@ class Details(models.Model):
         verbose_name = "Details"
         verbose_name_plural = "Details"
 
-class FoodMenu(models.Model):
-    restaurant = models.ForeignKey('Restaurant', related_name='food_menu', on_delete=models.CASCADE)
+from django.db import models
+import json
+
+# Category model for food items
+class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    description = models.TextField()
-    price = models.DecimalField(max_digits=8, decimal_places=2)
-    image = models.URLField()
+    restaurant = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="categories")
 
     def __str__(self):
         return self.name
 
     class Meta:
-        verbose_name = "Food Menu"
-        verbose_name_plural = "Food Menus"
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
+
+
+class FoodMenu(models.Model):
+    restaurant = models.ForeignKey('Restaurant', related_name="food_menu", on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, related_name="food_items", on_delete=models.CASCADE)  # Link to Category
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=6, decimal_places=2)
+    image = models.ImageField(upload_to='food_menu_images/', blank=True, null=True)
+    # image = models.ImageField(upload_to='food_menu/')
+    order_type = models.CharField(max_length=50)
+    free_addons = models.JSONField(default=list)
+    paid_addons = models.JSONField(default=list)
+    def __str__(self):
+        return f"{self.name} - {self.category.name}"
 
 class Restaurant(models.Model):
     user = models.ForeignKey(CustomUser, related_name='restaurants', on_delete=models.CASCADE)
@@ -113,6 +131,14 @@ class Restaurant(models.Model):
         verbose_name = "Restaurant"
         verbose_name_plural = "Restaurants"
 
+
+import random
+import string
+
+def generate_order_id():
+    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+
+
 class Order(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),
@@ -122,7 +148,7 @@ class Order(models.Model):
         ('on_the_way', 'On the Way to Destination'),
         ('delivered', 'Delivered'),
     ]
-    
+    order_id = models.CharField(max_length=10, unique=True, editable=False)
     sender = models.ForeignKey(CustomUser, related_name='sent_orders', on_delete=models.CASCADE)
     receiver = models.ForeignKey(CustomUser, related_name='received_orders', on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
@@ -130,13 +156,21 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     location = models.CharField(max_length=300)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    food_connection_id=models.PositiveIntegerField()
 
     def __str__(self):
-        return f"Order from {self.sender.name} to {self.receiver.details.name} - {self.status}"
+        return f"Order from {self.sender.name} to {self.receiver.name} - {self.status}"
 
     class Meta:
         verbose_name = "Order"
         verbose_name_plural = "Orders"
+
+# Signal to automatically generate order ID before saving
+@receiver(pre_save, sender=Order)
+def set_order_id(sender, instance, **kwargs):
+    if not instance.order_id:
+        instance.order_id = generate_order_id()
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)  # Use related_name='items'

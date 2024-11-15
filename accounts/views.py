@@ -11,6 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from accounts import send_verification_code
 from chat.models import DriverOnline
+from food.models import Details, Image, Location, Rating, Restaurant
 from .models import CustomUser, DriverProfile, PersonalInfo, Profile, RiderProfile, Upload, VehicleInfo,Document
 from .serializers import CreateAllDataSerializer, DocumentSerializer, DriverProfileSerializer, DriverSerializer, LoginSerializer, PersonalInfoSerializer, RegisterSerializer, RiderProfileSerializer, UploadSerializer, UserSerializer, VehicleInfoSerializer, VerifyLoginSerializer, ProfileSerializer
 
@@ -55,11 +56,55 @@ class RegisterView(APIView):
                     # rideType='Car'
                 )
                 
+            # Create Restaurant instance if the account type is 'restaurants'
+            elif user.account_type == 'restaurants':
+                # Create associated Image, Rating, Details, and Location instances
+                image = Image.objects.create(
+                    uri=request.data.get('image_uri'),
+                    border_radius=request.data.get('border_radius', 10)
+                )
+                
+                rating = Rating.objects.create(
+                    value=request.data.get('rating_value', 0.0),
+                    number_of_ratings=request.data.get('number_of_ratings', 0)
+                )
+                
+                details = Details.objects.create(
+                    name=request.data.get('restaurant_name'),
+                    price_range=request.data.get('price_range', '$0 - $100'),
+                    delivery_time=request.data.get('delivery_time', '20-30 mins')
+                )
+                
+                location = Location.objects.create(
+                    address=request.data.get('address'),
+                    city=request.data.get('city'),
+                    country=request.data.get('country'),
+                    coordinates={
+                        'latitude': request.data.get('latitude', '0.0'),
+                        'longitude': request.data.get('longitude', '0.0')
+                    }
+                )
+
+                # Create Restaurant with all related information
+                Restaurant.objects.create(
+                    user=user,
+                    available=request.data.get('available', 'open'),
+                    image=image,
+                    rating=rating,
+                    details=details,
+                    location=location,
+                    cuisine=request.data.get('cuisine', 'International'),
+                    is_open=request.data.get('is_open', True),
+                    about_us=request.data.get('about_us', 'About us text'),
+                    delivery_fee=request.data.get('delivery_fee', '5.00'),
+                )
+                
             print('verification_code', user.verification_code)
             return Response({
                 'detail': 'User created successfully',
                 'access_token': access_token,
-                'verification_code': user.verification_code
+                'verification_code': user.verification_code,
+                'id': user.id
             }, status=status.HTTP_201_CREATED) 
         print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

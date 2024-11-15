@@ -1,31 +1,38 @@
 from rest_framework import generics
 
 from accounts.models import CustomUser
- 
-from rest_framework.response import Response
+from django.core.files.base import ContentFile
+import base64
+import uuid
 
-from .serializers import RestaurantSerializer, FoodMenuSerializer
-from rest_framework.permissions import IsAuthenticated
-from .models import OrderItem, Restaurant, Image, Rating, Details, Location, FoodMenu
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from .serializers import CategorySerializer, RestaurantSerializer, FoodMenuSerializer
+from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
+from .models import Category, OrderItem, Restaurant, Image, Rating, Details, Location, FoodMenu
 class RestaurantList(generics.ListCreateAPIView):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantSerializer
 
 
+class CategoryListView(ListAPIView):
+    serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticated]
 
-# class RestaurantListCreateView(generics.ListCreateAPIView):
-#     queryset = Restaurant.objects.all()
-#     serializer_class = RestaurantSerializer
-#     # permission_classes = [IsAuthenticated]
-
-#     def perform_create(self, serializer):
-#         # Assuming you want to associate the restaurant with the logged-in user
-#         serializer.save(user=self.request.user)
+    def get_queryset(self):
+        restaurant_id = self.request.user.id
+        print("restaurant_id", restaurant_id)
+        if restaurant_id:
+            return Category.objects.filter(restaurant_id=restaurant_id)
+        return Category.objects.all()
 
 class RestaurantListCreateView(generics.ListCreateAPIView):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantSerializer
     permission_classes = [IsAuthenticated]
+
 
     def perform_create(self, serializer):
         # Extract nested data
@@ -55,6 +62,7 @@ class RestaurantListCreateView(generics.ListCreateAPIView):
             FoodMenu.objects.create(restaurant=restaurant, **food_item_data)
 
         return restaurant
+    
 class RestaurantDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantSerializer
@@ -62,6 +70,66 @@ class RestaurantDetail(generics.RetrieveUpdateDestroyAPIView):
 class FoodMenuCreate(generics.CreateAPIView):
     queryset = FoodMenu.objects.all()
     serializer_class = FoodMenuSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # Set the restaurant field to the current user
+        a=  Restaurant.objects.get(user=self.request.user.id)
+
+        print("a",a)
+        serializer.save(restaurant=a)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Override the default create method to handle Base64-encoded image data.
+        """
+        if not request.data:
+            return Response(
+                {"detail": "No data provided in the request."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Log request data for debugging
+        print("Request Data:", request.data)
+
+        # Check if 'image' is in the request and handle it
+        if 'image' in request.data:
+            image_data = request.data.get('image')
+            # Log the image data to check its format
+            print("Image Data:", image_data)
+            request.data['image'] = image_data  # Pass Base64 data to serializer
+
+        # Proceed with normal serializer validation and creation
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class FoodMenuList(generics.ListAPIView):
+    serializer_class = FoodMenuSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        user = self.request.user
+ 
+
+        # Filter by restaurant_id and, optionally, user
+         
+        if user.is_authenticated:
+            return FoodMenu.objects.filter(restaurant=user.id, )
+        # return FoodMenu.objects.filter(restaurant_id=restaurant_id)
+    
+        return FoodMenu.objects.none()
+
+class FoodMenuDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = FoodMenu.objects.all()
+    serializer_class = FoodMenuSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return FoodMenu.objects.filter(restaurant__user=user)
 
 
 from rest_framework import generics, status

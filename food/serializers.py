@@ -1,5 +1,28 @@
 from rest_framework import serializers
-from .models import OrderItem, Restaurant, Image, Rating, Location, Details, FoodMenu
+
+from accounts.models import CustomUser
+from .models import Category, OrderItem, Restaurant, Image, Rating, Location, Details, FoodMenu,FoodConnection
+
+from rest_framework.exceptions import ValidationError
+
+# Category Serializer
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'restaurant']
+
+
+class FoodConnectionSerializer(serializers.ModelSerializer):
+    
+    buyer = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    restaurant = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+    items = serializers.JSONField()
+    location = serializers.JSONField()
+    
+    class Meta:
+        model = FoodConnection
+        fields = ['id', 'buyer', 'restaurant', 'location', 'status', 'pushToken', 'items', 'updated', 'created']
+
 
 class ImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -22,17 +45,29 @@ class DetailsSerializer(serializers.ModelSerializer):
         fields = ['name', 'price_range', 'delivery_time']
 
 class FoodMenuSerializer(serializers.ModelSerializer):
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())  # Category as a PrimaryKey
+    order_type = serializers.CharField(max_length=50)  # New field: order_type
+    free_addons = serializers.JSONField()  # New field: free_addons (expects a JSON list)
+    paid_addons = serializers.JSONField()  # New field: paid_addons (expects a JSON list)
+    image = serializers.CharField(write_only=True)  # Accepts a Base64 string
     class Meta:
         model = FoodMenu
-        fields = ['id', 'name', 'description', 'price', 'image']
+        fields = ['id', 'name', 'description', 'price', 'image', 'order_type', 'free_addons', 'paid_addons','category']
         read_only_fields = ['id']
+
+    # Handle unique constraint validation on the name field
+    def validate_name(self, value):
+        # Check if a food menu item with the same name already exists (excluding the current instance if updating)
+        if FoodMenu.objects.filter(name=value).exclude(id=self.instance.id if self.instance else None).exists():
+            raise ValidationError("A food menu item with this name already exists.")
+        return value
 
 class RestaurantSerializer(serializers.ModelSerializer):
     image = ImageSerializer()
     rating = RatingSerializer()
     details = DetailsSerializer()
     location = LocationSerializer()
-    food_menu = FoodMenuSerializer(many=True)
+    food_menu = FoodMenuSerializer(many=True, read_only=True)
 
     class Meta:
         model = Restaurant
@@ -44,7 +79,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
         rating_data = validated_data.pop('rating')
         details_data = validated_data.pop('details')
         location_data = validated_data.pop('location')
-        food_menu_data = validated_data.pop('food_menu')
+        # food_menu_data = validated_data.pop('food_menu')
 
         image = Image.objects.create(**image_data)
         rating = Rating.objects.create(**rating_data)
@@ -53,8 +88,8 @@ class RestaurantSerializer(serializers.ModelSerializer):
         
         restaurant = Restaurant.objects.create(image=image, rating=rating, details=details, location=location, **validated_data)
 
-        for food_item in food_menu_data:
-            FoodMenu.objects.create(restaurant=restaurant, **food_item)
+        # for food_item in food_menu_data:
+        #     FoodMenu.objects.create(restaurant=restaurant, **food_item)
         
         return restaurant
 
