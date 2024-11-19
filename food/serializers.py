@@ -45,8 +45,8 @@ class DetailsSerializer(serializers.ModelSerializer):
         fields = ['name', 'price_range', 'delivery_time']
 
 class FoodMenuSerializer(serializers.ModelSerializer):
-    # category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())  # Category as a PrimaryKey
-    category =  serializers.CharField(source='category.name', read_only=True)  # Category as a PrimaryKey
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())  # Category as a PrimaryKey
+    # category =  serializers.CharField(source='category.name', read_only=True)  # Category as a PrimaryKey
     order_type = serializers.CharField(max_length=50)  # New field: order_type
     free_addons = serializers.JSONField()  # New field: free_addons (expects a JSON list)
     paid_addons = serializers.JSONField()  # New field: paid_addons (expects a JSON list)
