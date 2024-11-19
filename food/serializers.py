@@ -9,7 +9,7 @@ from rest_framework.exceptions import ValidationError
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ['id', 'name', 'restaurant']
+        fields = ['id', 'name']
 
 
 class FoodConnectionSerializer(serializers.ModelSerializer):

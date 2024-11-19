@@ -48,7 +48,8 @@ class CategoryListView(ListAPIView):
         restaurant_id = self.request.user.id
         # print("restaurant_id", restaurant_id)
         if restaurant_id:
-            cat= Category.objects.filter(restaurant_id=restaurant_id)
+            cat= Category.objects.all()
+            # cat= Category.objects.filter(restaurant_id=restaurant_id)
             print( "cat", cat)
             return cat
         return Category.objects.all()
