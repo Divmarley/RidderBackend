@@ -7,11 +7,34 @@ import uuid
 
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from .serializers import CategorySerializer, RestaurantSerializer, FoodMenuSerializer
+from .serializers import CategorySerializer, RestaurantSerializer, FoodMenuSerializer, ReviewSerializer
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
-from .models import Category, OrderItem, Restaurant, Image, Rating, Details, Location, FoodMenu
+from .models import Category, OrderItem, Restaurant, Image, Rating, Details, Location, FoodMenu, Review
+from django.db.models import Sum, Count
+
+class OrderAndFoodMenuCountView(APIView):
+    def get(self, request):
+        try:
+            order_count = Order.objects.count()
+            food_menu_count = FoodMenu.objects.count()
+            reviews_summary = Review.objects.filter(food_menu=food_menu_count).aggregate(
+                total_reviews=Count('id'),
+                accumulated_ratings=Sum('rating')
+            )
+            return Response(
+                {
+                    'order_count': order_count,
+                    'food_menu_count': food_menu_count,
+                    'accumulated_ratings': reviews_summary.get('accumulated_ratings', 0) or 0
+                },
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class RestaurantList(generics.ListCreateAPIView):
     queryset = Restaurant.objects.all()
     serializer_class = RestaurantSerializer
@@ -23,9 +46,11 @@ class CategoryListView(ListAPIView):
 
     def get_queryset(self):
         restaurant_id = self.request.user.id
-        print("restaurant_id", restaurant_id)
+        # print("restaurant_id", restaurant_id)
         if restaurant_id:
-            return Category.objects.filter(restaurant_id=restaurant_id)
+            cat= Category.objects.filter(restaurant_id=restaurant_id)
+            print( "cat", cat)
+            return cat
         return Category.objects.all()
 
 class RestaurantListCreateView(generics.ListCreateAPIView):
@@ -130,6 +155,17 @@ class FoodMenuDetail(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         user = self.request.user
         return FoodMenu.objects.filter(restaurant__user=user)
+    
+    def delete(self, request, *args, **kwargs):
+        """
+        Override the delete method to add custom logic if necessary and ensure proper response.
+        """
+        instance = self.get_object()  # Get the specific object
+        self.perform_destroy(instance)
+        return Response(
+            {"message": "Food menu item deleted successfully."},
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
 
 from rest_framework import generics, status
@@ -331,3 +367,19 @@ class OrderStatusView(generics.RetrieveAPIView):
             return Response(OrderSerializer(order).data)
         except Order.DoesNotExist:
             raise NotFound('Order not found')
+        
+
+class ReviewCreateView(APIView):
+    def post(self, request, food_menu_id):
+        food_menu = get_object_or_404(FoodMenu, id=food_menu_id)
+        serializer = ReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(food_menu=food_menu, user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ReviewCountView(APIView):
+    def get(self, request, food_menu_id):
+        food_menu = get_object_or_404(FoodMenu, id=food_menu_id)
+        review_count = food_menu.reviews.count()
+        return Response({'food_menu': food_menu.name, 'review_count': review_count})

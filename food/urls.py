@@ -15,4 +15,7 @@ urlpatterns = [
     path('orders/<int:pk>/decline/', OrderDeclineView.as_view(), name='order-decline'),
     path('orders/<int:id>/status/', OrderStatusView.as_view(), name='order-status'),
     path('orders/', OrderListView.as_view(), name='order-list'),
+    path('order-foodmenu-count/', OrderAndFoodMenuCountView.as_view(), name='order-foodmenu-count'),
+    path('reviews/create/<int:food_menu_id>/', ReviewCreateView.as_view(), name='create-review'),
+    path('reviews/count/<int:food_menu_id>/', ReviewCountView.as_view(), name='review-count'),
 ]

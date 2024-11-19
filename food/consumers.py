@@ -159,7 +159,8 @@ class FoodConsumer(WebsocketConsumer):
             restaurant=restaurant,
             location=location,
             pushToken=pushToken,
-            defaults={'items': items}  # Store items as needed
+            defaults={'items': items},  # Store items as needed
+            status=status
         ) 
         
         # Create Order instance
@@ -189,6 +190,7 @@ class FoodConsumer(WebsocketConsumer):
 
         # Serialize connection and send back to sender and receiver
         serialized = RequestFoodSerializer(connection)
+        print('Serializedfood item with id ',serialized)
 
         self.send_group(
             connection.buyer.phone, 'request.connect.food', serialized.data

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from accounts.models import CustomUser
-from .models import Category, OrderItem, Restaurant, Image, Rating, Location, Details, FoodMenu,FoodConnection
+from .models import Category, OrderItem, Restaurant, Image, Rating, Location, Details, FoodMenu,FoodConnection, Review
 
 from rest_framework.exceptions import ValidationError
 
@@ -45,11 +45,12 @@ class DetailsSerializer(serializers.ModelSerializer):
         fields = ['name', 'price_range', 'delivery_time']
 
 class FoodMenuSerializer(serializers.ModelSerializer):
-    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())  # Category as a PrimaryKey
+    # category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())  # Category as a PrimaryKey
+    category =  serializers.CharField(source='category.name', read_only=True)  # Category as a PrimaryKey
     order_type = serializers.CharField(max_length=50)  # New field: order_type
     free_addons = serializers.JSONField()  # New field: free_addons (expects a JSON list)
     paid_addons = serializers.JSONField()  # New field: paid_addons (expects a JSON list)
-    image = serializers.CharField(write_only=True)  # Accepts a Base64 string
+    image = serializers.CharField()  # Accepts a Base64 string
     class Meta:
         model = FoodMenu
         fields = ['id', 'name', 'description', 'price', 'image', 'order_type', 'free_addons', 'paid_addons','category']
@@ -182,3 +183,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
         return order
     
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['id', 'rating', 'comment', 'created_at']
