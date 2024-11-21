@@ -134,7 +134,7 @@ class FoodMenuCreate(generics.CreateAPIView):
 
 class FoodMenuList(generics.ListAPIView):
     serializer_class = FoodMenuSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user

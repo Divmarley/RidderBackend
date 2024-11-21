@@ -58,7 +58,7 @@ class FoodConsumer(WebsocketConsumer):
         food_connection_id = data.get('foodConnectionId')
         new_status = data.get('status')
         order_id = data.get('order_id')
-        print('order_id=====?:', order_id,food_connection_id)
+        # print('order_id=====?:', order_id,food_connection_id)
         user = self.scope['user']
 
 
@@ -92,9 +92,7 @@ class FoodConsumer(WebsocketConsumer):
                 'error': 'Order not found for the provided connection'
             }))
             return
-        print(
-                "orders",orders
-            )
+       
         
         updated_orders = []
         for order in orders:
@@ -114,9 +112,12 @@ class FoodConsumer(WebsocketConsumer):
 
         # Serialize the updated order and food connection
         order_data = OrderSerializer(order).data
+        print("order_data==>",order_data)
         food_connection_data = FoodConnectionSerializer(food_connection).data
+        
 
         # Notify both the buyer (sender) and restaurant (receiver) about the status update
+        print("food_connection_data",food_connection_data)
         self.send_group(
             food_connection.buyer.phone, 'update.order.status',  food_connection_data
         )
