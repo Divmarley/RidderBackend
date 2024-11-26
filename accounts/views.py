@@ -11,7 +11,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from accounts import send_verification_code
 from chat.models import DriverOnline
-from food.models import Details, Image, Location, Rating, Restaurant
+from food.models import Details, Image, Location, Rating, Restuarant
 from .models import CustomUser, DriverProfile, PersonalInfo, Profile, RiderProfile, Upload, VehicleInfo,Document
 from .serializers import CreateAllDataSerializer, DocumentSerializer, DriverProfileSerializer, DriverSerializer, LoginSerializer, PersonalInfoSerializer, RegisterSerializer, RiderProfileSerializer, UploadSerializer, UserSerializer, VehicleInfoSerializer, VerifyLoginSerializer, ProfileSerializer
 

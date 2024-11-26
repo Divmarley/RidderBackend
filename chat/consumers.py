@@ -8,7 +8,7 @@ from django.db.models import Q, Exists, OuterRef
 from django.db.models.functions import Coalesce
 
 from accounts.models import CustomUser
-from food.models import FoodMenu, Order, OrderItem, Restaurant
+from food.models import FoodMenu, Order, OrderItem, Restuarant
 from food.serializers import FoodMenuSerializer, OrderSerializer
 from ride.models import DriverHistory, RideHistory, TripHistory
 
@@ -215,7 +215,7 @@ class ChatConsumer(WebsocketConsumer):
 		print("dataapp", data)
 
 		# Get the receiver instance
-		receiver_instance = Restaurant.objects.get(user=order_data['restaurant'])
+		receiver_instance = Restuarant.objects.get(user=order_data['restaurant'])
 
 		# Create the Order instance
 		order = Order.objects.create(
@@ -595,7 +595,7 @@ class ChatConsumer(WebsocketConsumer):
 		self.send_group(self.phone, 'thumbnail', serialized.data)
 
 	def receive_driver_arrived(self, data):
-		print('receive_driver_arrived ',data)   
+		print('receive_driver_arrived-.....> ',data)   
 		phone = data.get('phone') 
 		# Fetch connection object
 		try:
@@ -612,6 +612,7 @@ class ChatConsumer(WebsocketConsumer):
 		connection.save()
 		
 		serialized = TripSerializer(connection)
+		print("serialized.data",serialized.data)
 
 		# Send accepted request to sender
 		self.send_group(

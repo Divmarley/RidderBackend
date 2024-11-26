@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from accounts.models import CustomUser
 import json
 from asgiref.sync import async_to_sync
-from food.models import FoodConnection, FoodMenu, Order, OrderItem,Restaurant
+from food.models import FoodConnection, FoodMenu, Order, OrderItem,Restuarant
 from food.serializers import FoodConnectionSerializer, OrderSerializer, RequestFoodSerializer
 
 
@@ -84,9 +84,9 @@ class FoodConsumer(WebsocketConsumer):
             return
 
         # Fetch the related order
-        try:
+        try: 
             orders = Order.objects.filter(sender=food_connection.buyer, receiver=food_connection.restaurant,order_id =order_id)
-         
+ 
         except Order.DoesNotExist:
             self.send(text_data=json.dumps({
                 'error': 'Order not found for the provided connection'
@@ -119,10 +119,10 @@ class FoodConsumer(WebsocketConsumer):
         # Notify both the buyer (sender) and restaurant (receiver) about the status update
         print("food_connection_data",food_connection_data)
         self.send_group(
-            food_connection.buyer.phone, 'update.order.status',  food_connection_data
+            food_connection.buyer.phone, 'update.order.status',  order_data
         )
         self.send_group(
-            food_connection.restaurant.phone, 'update.order.status',  food_connection_data
+            food_connection.restaurant.phone, 'update.order.status',  order_data
         )
     
 
@@ -173,6 +173,42 @@ class FoodConsumer(WebsocketConsumer):
             total_price=total_price,
             food_connection_id= connection.id
         )
+        orders_data = []
+        for order in items:
+            order_items = []
+            for item in order.items.all():
+                item_data = {
+                    "item_id": item.food_menu.id,  # Corrected here
+                    "quantity": item.quantity,
+                    "name": item.food_menu.name,
+                    "description": item.food_menu.description,
+                    # "image": item.food_menu.image,
+                    "price": float(item.food_menu.price)  # Convert Decimal to float
+
+                }
+                order_items.append(item_data)
+
+            # Add order details including item data
+   
+            orders_data.append({
+                "id": order.id,
+                "status": order.status,
+                "location": order.location,
+                "total_price": float(order.total_price),  # Convert Decimal to float
+                "items": order_items,
+                "order_id": order.order_id,
+                "connection_id": order.food_connection_id
+            })
+
+             # Send back the detailed orders list to the client
+        response_data = {
+            'source': 'list.orders',
+            'status': 'success', 
+            "data":orders_data
+        }
+
+        self.send(text_data=json.dumps(response_data))
+
 
         # Create OrderItem instances for each item in the order
         for item_data in items:
@@ -190,14 +226,14 @@ class FoodConsumer(WebsocketConsumer):
                 print(f"Food item with id {item_id} not found")
 
         # Serialize connection and send back to sender and receiver
-        serialized = RequestFoodSerializer(connection)
-        print('Serializedfood item with id ',serialized)
+        serialized = RequestFoodSerializer(connection).data
+        # print('Serializedfood item with id ',serialized)
 
         self.send_group(
-            connection.buyer.phone, 'request.connect.food', serialized.data
+            connection.buyer.phone, 'request.connect.food', serialized 
         )
         self.send_group(
-            connection.restaurant.phone, 'request.connect.food', serialized.data
+            connection.restaurant.phone, 'request.connect.food', serialized 
         )
 
     def list_orders(self):

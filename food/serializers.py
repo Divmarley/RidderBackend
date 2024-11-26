@@ -1,8 +1,9 @@
 from rest_framework import serializers
 
 from accounts.models import CustomUser
-from .models import Category, OrderItem, Restaurant, Image, Rating, Location, Details, FoodMenu,FoodConnection, Review
-
+from .models import Category, OrderItem, Restuarant, Image, Rating, Location, Details, FoodMenu,FoodConnection, Review
+import base64
+from django.core.files.base import ContentFile
 from rest_framework.exceptions import ValidationError
 
 # Category Serializer
@@ -10,7 +11,6 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name']
-
 
 class FoodConnectionSerializer(serializers.ModelSerializer):
     
@@ -23,8 +23,21 @@ class FoodConnectionSerializer(serializers.ModelSerializer):
         model = FoodConnection
         fields = ['id', 'buyer', 'restaurant', 'location', 'status', 'pushToken', 'items', 'updated', 'created']
 
-
 class ImageSerializer(serializers.ModelSerializer):
+    uri = serializers.CharField()  # Accept Base64 string
+
+    def validate_uri(self, value):
+        # Handle Base64 decoding if necessary
+        try:
+            if value.startswith("data:image"):
+                format, imgstr = value.split(';base64,')  # Split header from content
+                ext = format.split('/')[-1]  # Extract file extension
+                image_data = ContentFile(base64.b64decode(imgstr), name=f"temp.{ext}")
+                return image_data
+            raise serializers.ValidationError("Invalid Base64 image format.")
+        except Exception as e:
+            raise serializers.ValidationError(f"Invalid image: {str(e)}")
+    
     class Meta:
         model = Image
         fields = ['uri', 'border_radius']
@@ -53,7 +66,7 @@ class FoodMenuSerializer(serializers.ModelSerializer):
     image = serializers.CharField()  # Accepts a Base64 string
     class Meta:
         model = FoodMenu
-        fields = ['id', 'name', 'description', 'price', 'image', 'order_type', 'free_addons', 'paid_addons','category']
+        fields = ['id', 'name', 'description', 'price', 'image', 'order_type', 'free_addons', 'paid_addons','category',]
         read_only_fields = ['id']
 
     # Handle unique constraint validation on the name field
@@ -64,35 +77,59 @@ class FoodMenuSerializer(serializers.ModelSerializer):
         return value
 
 class RestaurantSerializer(serializers.ModelSerializer):
-    image = ImageSerializer()
-    rating = RatingSerializer()
-    details = DetailsSerializer()
-    location = LocationSerializer()
-    food_menu = FoodMenuSerializer(many=True, read_only=True)
+    # image = ImageSerializer()
+    # rating = RatingSerializer()
+    # details = DetailsSerializer()
+    # location = LocationSerializer()
+ 
 
     class Meta:
-        model = Restaurant
+        model = Restuarant
         # fields = ['id', 'available', 'image', 'rating', 'details', 'location', 'cuisine', 'is_open', 'food_menu', 'about_us', 'delivery_fee']
-        fields = ['id','user', 'available', 'image', 'rating', 'details', 'location', 'cuisine', 'is_open', 'about_us', 'delivery_fee','food_menu']
+        fields = '__all__'
+
 
     def create(self, validated_data):
-        image_data = validated_data.pop('image')
-        rating_data = validated_data.pop('rating')
-        details_data = validated_data.pop('details')
-        location_data = validated_data.pop('location')
-        # food_menu_data = validated_data.pop('food_menu')
+    # Pop related data from validated_data
+        # image_data = validated_data.pop('image', None)
+        rating_data = validated_data.pop('rating', None)
+        details_data = validated_data.pop('details', None)
+        location_data = validated_data.pop('location', None)
+        food_menu_data = validated_data.pop('food_menu', [])
 
-        image = Image.objects.create(**image_data)
-        rating = Rating.objects.create(**rating_data)
-        details = Details.objects.create(**details_data)
-        location = Location.objects.create(**location_data)
+        # Create related objects
+        # image = None
+        # if image_data and isinstance(image_data, dict):
+        #     image = Image.objects.create(**image_data)
         
-        restaurant = Restaurant.objects.create(image=image, rating=rating, details=details, location=location, **validated_data)
+        rating = None
+        if rating_data and isinstance(rating_data, dict):
+            rating = Rating.objects.create(**rating_data)
 
-        # for food_item in food_menu_data:
-        #     FoodMenu.objects.create(restaurant=restaurant, **food_item)
-        
+        details = None
+        if details_data and isinstance(details_data, dict):
+            details = Details.objects.create(**details_data)
+
+        location = None
+        if location_data and isinstance(location_data, dict):
+            location = Location.objects.create(**location_data)
+
+        # Create the restaurant
+        restaurant = Restaurant.objects.create(
+            image=image,
+            rating=rating,
+            details=details,
+            location=location,
+            **validated_data
+        )
+
+        # Create related food menu items
+        for food_item_data in food_menu_data:
+            if isinstance(food_item_data, dict):
+                FoodMenu.objects.create(restaurant=restaurant, **food_item_data)
+
         return restaurant
+
 
     def update(self, instance, validated_data):
         image_data = validated_data.pop('image', None)
@@ -158,13 +195,11 @@ class RequestFoodSerializer(serializers.ModelSerializer):
             # 'data_driver'
 
         ]
-
-        
+      
 class OrderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = ['id', 'food_menu', 'quantity']  # Change 'item' to 'food_menu'
-
 
 class OrderSerializer(serializers.ModelSerializer):
 
