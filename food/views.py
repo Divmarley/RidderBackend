@@ -94,67 +94,21 @@ class RestaurantDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Restuarant.objects.all()
     serializer_class = RestaurantSerializer
 
-class FoodMenuCreate(generics.CreateAPIView):
-    queryset = FoodMenu.objects.all()
-    serializer_class = FoodMenuSerializer
-    permission_classes = [IsAuthenticated]
-
-    def perform_create(self, serializer):
-        try:
-            # Assuming the logged-in user's restaurant is tied to their account
-            print("self.request.user",self.request.user.id)
-            restaurant = Restuarant.objects.get(user= self.request.user.id)
-             
-          
-            serializer.save(restaurant=self.request.user)
-        except Restuarant.DoesNotExist:
-            raise serializers.ValidationError("No restaurant is associated with the current user.")
-
-    def create(self, request, *args, **kwargs):
-        """
-        Override the default create method to handle Base64-encoded image data.
-        """
-        if not request.data:
-            return Response(
-                {"detail": "No data provided in the request."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        # Log request data for debugging
-        print("Request Data:", request.data)
-
-        # Check if 'image' is in the request and handle it
-        if 'image' in request.data:
-            image_data = request.data.get('image')
-            # Log the image data to check its format
-            print("Image Data:", image_data)
-            request.data['image'] = image_data  # Pass Base64 data to serializer
-
-        # Proceed with normal serializer validation and creation
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
 # class FoodMenuCreate(generics.CreateAPIView):
 #     queryset = FoodMenu.objects.all()
 #     serializer_class = FoodMenuSerializer
 #     permission_classes = [IsAuthenticated]
 
 #     def perform_create(self, serializer):
-#         """
-#         Set the restaurant field to the current user's associated restaurant.
-#         """
 #         try:
-#             # Fetch the restaurant linked to the authenticated user
-#             restaurant = Restuarant.objects.get(user=self.request.user)
-#             print("Restaurant:", restaurant)
-#             serializer.save(restaurant)
-#         except ObjectDoesNotExist:
-#             # Handle case where no restaurant is associated with the user
-#             raise ValueError("No restaurant is associated with the current user.")
+#             # Assuming the logged-in user's restaurant is tied to their account
+#             print("self.request.user",self.request.user.id)
+#             restaurant = Restuarant.objects.get(user= self.request.user.id)
+             
+          
+#             serializer.save(restaurant=self.request.user)
+#         except Restuarant.DoesNotExist:
+#             raise serializers.ValidationError("No restaurant is associated with the current user.")
 
 #     def create(self, request, *args, **kwargs):
 #         """
@@ -169,18 +123,66 @@ class FoodMenuCreate(generics.CreateAPIView):
 #         # Log request data for debugging
 #         print("Request Data:", request.data)
 
-#         # Handle Base64-encoded image data if present
+#         # Check if 'image' is in the request and handle it
 #         if 'image' in request.data:
-#             image_data = request.data['image']
+#             image_data = request.data.get('image')
+#             # Log the image data to check its format
 #             print("Image Data:", image_data)
-#             request.data['image'] = image_data  # Pass the data directly
+#             request.data['image'] = image_data  # Pass Base64 data to serializer
 
-#         # Validate and create the FoodMenu instance
+#         # Proceed with normal serializer validation and creation
 #         serializer = self.get_serializer(data=request.data)
 #         serializer.is_valid(raise_exception=True)
 #         self.perform_create(serializer)
 
 #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+import base64
+from django.core.files.base import ContentFile
+
+class FoodMenuCreate(generics.CreateAPIView):
+    queryset = FoodMenu.objects.all()
+    serializer_class = FoodMenuSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        try:
+            # Get the restaurant associated with the user
+            restaurant = Restuarant.objects.get(user=self.request.user.id)
+            serializer.save(restaurant=self.request.user)
+        except Restuarant.DoesNotExist:
+            raise serializers.ValidationError("No restaurant is associated with the current user.")
+
+    def create(self, request, *args, **kwargs):
+        """
+        Override the default create method to handle Base64-encoded image data.
+        """
+        if not request.data:
+            return Response(
+                {"detail": "No data provided in the request."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if 'image' is in the request and handle Base64
+        if 'image' in request.data:
+            image_data = request.data.get('image')
+            if image_data.startswith("data:image"):
+                # Decode Base64 image
+                format, imgstr = image_data.split(';base64,')  # Format is "data:image/jpeg;base64,"
+                ext = format.split('/')[-1]  # Extract file extension (e.g., jpg, png)
+                image_file = ContentFile(base64.b64decode(imgstr), name=f"uploaded_image.{ext}")
+                request.data['image'] = image_file  # Replace Base64 string with decoded file
+
+        # Proceed with serializer validation and creation
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+ 
 
 class FoodMenuList(generics.ListAPIView):
     serializer_class = FoodMenuSerializer

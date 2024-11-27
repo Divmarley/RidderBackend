@@ -107,23 +107,23 @@ ASGI_APPLICATION = 'driverapp.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get("DB_ENGINE", "django.db.backends.mysql"),
-        'NAME': os.environ.get("MYSQL_DATABASE", 'ridderapp'),
-        'USER': os.environ.get("MYSQL_USER", "admin"),
-        'PASSWORD': os.environ.get("MYSQL_ROOT_PASSWORD", "ehhfaIhYCSJ7LvE"),
-        'HOST': os.environ.get("MYSQL_HOST", "localhost"),
-        'PORT': 3306,
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': os.environ.get("DB_ENGINE", "django.db.backends.mysql"),
+#         'NAME': os.environ.get("MYSQL_DATABASE", 'ridderapp'),
+#         'USER': os.environ.get("MYSQL_USER", "admin"),
+#         'PASSWORD': os.environ.get("MYSQL_ROOT_PASSWORD", "ehhfaIhYCSJ7LvE"),
+#         'HOST': os.environ.get("MYSQL_HOST", "localhost"),
+#         'PORT': 3306,
+#     }
+# }
 
 
 # Password validation
