@@ -585,6 +585,7 @@ class ChatConsumer(WebsocketConsumer):
 		user = self.scope['user']
 		# Convert base64 data  to django content file
 		image_str = data.get('base64')
+		print(image_str)
 		image = ContentFile(base64.b64decode(image_str))
 		# Update thumbnail field
 		filename = data.get('filename')

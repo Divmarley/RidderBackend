@@ -38,7 +38,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://www.ubintax.com",
     "http://localhost:3000",  # React Native development server URL
     "http://127.0.0.1:8081",  # Alternative localhost URL
-    "http://192.168.100.5:8081",  # Alternative localhost URL
+    "http://192.168.100.5:8000",  # Alternative localhost URL
     # Add your production URLs here
     'http://localhost',
     'http://172.20.10.3:8000',
@@ -107,23 +107,23 @@ ASGI_APPLICATION = 'driverapp.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': os.environ.get("DB_ENGINE", "django.db.backends.mysql"),
-        'NAME': os.environ.get("MYSQL_DATABASE", 'ridderapp'),
-        'USER': os.environ.get("MYSQL_USER", "admin"),
-        'PASSWORD': os.environ.get("MYSQL_ROOT_PASSWORD", "ehhfaIhYCSJ7LvE"),
-        'HOST': os.environ.get("MYSQL_HOST", "localhost"),
-        'PORT': 3306,
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': os.environ.get("DB_ENGINE", "django.db.backends.mysql"),
+#         'NAME': os.environ.get("MYSQL_DATABASE", 'ridderapp'),
+#         'USER': os.environ.get("MYSQL_USER", "admin"),
+#         'PASSWORD': os.environ.get("MYSQL_ROOT_PASSWORD", "ehhfaIhYCSJ7LvE"),
+#         'HOST': os.environ.get("MYSQL_HOST", "localhost"),
+#         'PORT': 3306,
+#     }
+# }
 
 
 # Password validation
@@ -202,8 +202,8 @@ CHANNEL_LAYERS = {
 	'default': {
 		'BACKEND': 'channels_redis.core.RedisChannelLayer',
 		'CONFIG': {
-			'hosts': [('redis', 6379)]
-			# 'hosts': [('127.0.0.1', 6379)]
+			# 'hosts': [('redis', q6379)]
+			'hosts': [('127.0.0.1', 6379)]
 		},
        
  

@@ -86,18 +86,18 @@ class RegisterView(APIView):
                 )
 
                 # Create Restaurant with all related information
-                Restaurant.objects.create(
-                    user=user,
-                    available=request.data.get('available', 'open'),
-                    image=image,
-                    rating=rating,
-                    details=details,
-                    location=location,
-                    cuisine=request.data.get('cuisine', 'International'),
-                    is_open=request.data.get('is_open', True),
-                    about_us=request.data.get('about_us', 'About us text'),
-                    delivery_fee=request.data.get('delivery_fee', '5.00'),
-                )
+                # Restaurant.objects.create(
+                #     user=user,
+                #     available=request.data.get('available', 'open'),
+                #     image=image,
+                #     rating=rating,
+                #     details=details,
+                #     location=location,
+                #     cuisine=request.data.get('cuisine', 'International'),
+                #     is_open=request.data.get('is_open', True),
+                #     about_us=request.data.get('about_us', 'About us text'),
+                #     delivery_fee=request.data.get('delivery_fee', '5.00'),
+                # )
                 
             print('verification_code', user.verification_code)
             return Response({

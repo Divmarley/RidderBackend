@@ -40,6 +40,22 @@ class Base64ImageField(serializers.ImageField):
 
         return extension
     
+class PUserSerializer(serializers.ModelSerializer):
+	name = serializers.SerializerMethodField()
+
+	class Meta:
+		model = CustomUser
+		fields = [
+			'phone',
+			'name',
+			'thumbnail'
+		]
+
+	def get_name(self, obj):
+		fname = obj.first_name.capitalize()
+		lname = obj.last_name.capitalize()
+		return fname + ' ' + lname
+    
 class UserSerializer(serializers.ModelSerializer):
     """add later 
     'is_verified'
@@ -61,7 +77,7 @@ class RiderProfileSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'payment_method', 'preferred_driver_rating','access_token']
 
 class RegisterSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(required=False, default=" ")
+    name = serializers.CharField(required=False, default="")
 
     class Meta:
         model = CustomUser
@@ -78,7 +94,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=validated_data.get('email'),
             phone=validated_data.get('phone'),
             name=validated_data.get('name'),  # Making name optional
-            
             is_active=validated_data.get('is_active'),  # Making name optional
             password=validated_data['password'],
             account_type=validated_data['account_type']
