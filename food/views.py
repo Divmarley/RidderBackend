@@ -190,17 +190,23 @@ class FoodMenuList(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        # restaurant_id = self.request.restaurant_id
- 
-        print("restaurant_id",user)
-        # Filter by restaurant_id and, optionally, user]
-        restaurant=Restuarant.objects.get(user=user)
-        print('user',user.id,restaurant.user.id)
-        if user.is_authenticated:
-            return FoodMenu.objects.filter(restaurant=restaurant.user.id,)
-        # return FoodMenu.objects.filter(restaurant_id=restaurant_id)
-    
-        return FoodMenu.objects.none()
+        print(f"Current user ID: {user.id}")
+        
+        try:
+            if user.is_authenticated:
+                restaurant = Restuarant.objects.get(user=user)
+                print(f"Found restaurant: {restaurant.id}")
+                return FoodMenu.objects.filter(restaurant=restaurant)
+            else:
+                print("User not authenticated")
+                return FoodMenu.objects.none()
+                
+        except Restuarant.DoesNotExist:
+            print(f"No restaurant found for user: {user.id}")
+            return FoodMenu.objects.none()
+        except Exception as e:
+            print(f"Error in get_queryset: {str(e)}")
+            return FoodMenu.objects.none()
 
 
 class UserFoodMenuList(generics.ListAPIView):

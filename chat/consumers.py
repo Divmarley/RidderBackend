@@ -89,6 +89,7 @@ class ChatConsumer(WebsocketConsumer):
 
 		# Accept friend request
 		elif data_source == 'request.accept':
+			print("request.accept",)
 			self.receive_request_accept(data)
 
 		# Make friend request
@@ -138,7 +139,7 @@ class ChatConsumer(WebsocketConsumer):
 		elif data_source == 'confirm.payment':
 			self.receive_trip_confirm_payment(data)
 
-		elif data_source == 'driver.locationUpdate':
+		elif data_source == 'driver.location':
 			self.receive_locationUpdate(data)
 
 		elif data_source == 'user.update':
@@ -442,6 +443,7 @@ class ChatConsumer(WebsocketConsumer):
 		self.send_group(recipient_phone, 'message.type', data)
 
 	def receive_request_accept(self, data):
+		print('received', data)
 		phone = data.get('phone')
 		dataDriver = data.get('dataDriver') 
 		# arrivalTime = data.get('arrivalTime')
@@ -745,36 +747,36 @@ class ChatConsumer(WebsocketConsumer):
 
 			# Extract the necessary fields from the incoming data
 		 
-			# latitude = data.get('latitude')
-			# longitude = data.get('longitude')
-			# print(latitude)
+			latitude = data.get('latitude')
+			longitude = data.get('longitude')
+			print(latitude)
 			# Ensure all required data is present
-			# if  latitude is None or longitude is None:
-			# 	print('Invalid data received: missing fields')
-			# 	return
+			if  latitude is None or longitude is None:
+				print('Invalid data received: missing fields')
+				return
 			
 			# Update the driver's location in the database
-			# try:
-			# 	print('latitude')
+			try:
+				print('latitude')
 				
-			# 	# Assuming you have a Driver model and 'driver_id' is valid
-			# 	# driver = DriverHistory.objects.get(id=driver_id)
-			# 	# driver.latitude = latitude
-			# 	# driver.longitude = longitude
-			# 	# driver.save()
+				# Assuming you have a Driver model and 'driver_id' is valid
+				# driver = DriverHistory.objects.get(id=driver_id)
+				# driver.latitude = latitude
+				# driver.longitude = longitude
+				# driver.save()
 
-			# 	# Log the update
-			# 	# print(f"Updated location for driver {driver_id}: ({latitude}, {longitude})")
+				# Log the update
+				# print(f"Updated location for driver {driver_id}: ({latitude}, {longitude})")
 
-			# 	# Optionally, broadcast the location update to a group (e.g., for tracking in real-time)
-			# 	# self.send_group(driver.phone, 'driver.locationUpdate', {
-			# 	# 	'driver_id': driver_id,
-			# 	# 	'latitude': latitude,
-			# 	# 	'longitude': longitude
-			# 	# })
+				# Optionally, broadcast the location update to a group (e.g., for tracking in real-time)
+				# self.send_group(driver.phone, 'driver.locationUpdate', {
+				# 	'driver_id': driver_id,
+				# 	'latitude': latitude,
+				# 	'longitude': longitude
+				# })
 
-			# except DriverHistory.DoesNotExist:
-			# 	print(f"Driver with ID {driver_id} does not exist")
+			except DriverHistory.DoesNotExist:
+				print(f"Driver with ID {driver_id} does not exist")
 
 		except Exception as e:
 			print(f"Error in location update: {str(e)}")
@@ -826,20 +828,18 @@ class ChatConsumer(WebsocketConsumer):
 			group, response
 		)
 
-	def broadcast_group(self, data):
+	def broadcast_group(self, event):
 		'''
-		data:
+		event:
 			- type: 'broadcast_group'
 			- source: where it originated from
-			- data: what ever you want to send as a dict
+			- data: whatever you want to send as a dict
 		'''
-		data.pop('type')
-		'''
-		return data:
-			- source: where it originated from
-			- data: what ever you want to send as a dict
-		'''
-		self.send(text_data=json.dumps(data))
+		# Send only the source and data to the client
+		self.send(text_data=json.dumps({
+			'source': event['source'],
+			'data': event['data']
+		}))
 		
 
 

@@ -108,7 +108,11 @@ class TripSerializer(serializers.ModelSerializer):
             'id',
             'sender',
             'receiver', 
-            'status'
+            'status',
+            'paymentStatus',
+            'status',
+            'location',
+            'data_driver'
             
         ]
 

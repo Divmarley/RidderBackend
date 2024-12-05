@@ -282,6 +282,7 @@ class FoodConsumer(WebsocketConsumer):
         daseData = data.get('data')
 
         location = daseData['location']
+        print("location",location)
         phone = daseData['phone']
         restaurant_id = daseData['restaurant']
         pushToken = daseData['pushToken']
