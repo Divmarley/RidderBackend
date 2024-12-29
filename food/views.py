@@ -36,11 +36,12 @@ class OrderAndFoodMenuCountView(APIView):
                 status=status.HTTP_200_OK
             )
         except Exception as e:
+            print("error",e)
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class CategoryListView(ListAPIView):
     serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         restaurant_id = self.request.user.id
@@ -144,66 +145,91 @@ from django.core.files.base import ContentFile
 class FoodMenuCreate(generics.CreateAPIView):
     queryset = FoodMenu.objects.all()
     serializer_class = FoodMenuSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         try:
             # Get the restaurant associated with the user
-            restaurant = Restuarant.objects.get(user=self.request.user.id)
-            serializer.save(restaurant=self.request.user)
-        except Restuarant.DoesNotExist:
-            raise serializers.ValidationError("No restaurant is associated with the current user.")
+            restaurant = self.request.user
+            print(f"Creating food menu for user/restaurant: {restaurant.id}")
+            
+            # Save with the user as restaurant (since FoodMenu.restaurant points to CustomUser)
+            serializer.save(restaurant=restaurant)
+            
+        except Exception as e:
+            print(f"Error saving food menu: {str(e)}")
+            raise serializers.ValidationError({
+                "error": f"Error creating food menu: {str(e)}",
+                "details": str(e)
+            })
 
     def create(self, request, *args, **kwargs):
-        """
-        Override the default create method to handle Base64-encoded image data.
-        """
-        if not request.data:
-            return Response(
-                {"detail": "No data provided in the request."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        print("Incoming request data:", request.data)
+        
+        try:
+            # Prepare the data
+            menu_data = {
+                'name': request.data.get('name'),
+                'description': request.data.get('description'),
+                'price': request.data.get('price'),
+                'category': request.data.get('category'),
+                'order_type': request.data.get('order_type', ''),
+                'free_addons': request.data.get('free_addons', []),
+                'paid_addons': request.data.get('paid_addons', [])
+            }
 
-        # Check if 'image' is in the request and handle Base64
-        if 'image' in request.data:
-            image_data = request.data.get('image')
-            if image_data.startswith("data:image"):
-                # Decode Base64 image
-                format, imgstr = image_data.split(';base64,')  # Format is "data:image/jpeg;base64,"
-                ext = format.split('/')[-1]  # Extract file extension (e.g., jpg, png)
-                image_file = ContentFile(base64.b64decode(imgstr), name=f"uploaded_image.{ext}")
-                request.data['image'] = image_file  # Replace Base64 string with decoded file
+            # Handle image if present
+            if 'image' in request.data:
+                menu_data['image'] = request.data['image']
+            # if 'image' in request.FILES:
+            #     menu_data['image'] = request.FILES['image']
 
-        # Proceed with serializer validation and creation
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+            # Create and validate serializer
+            serializer = self.get_serializer(data=menu_data)
+            if not serializer.is_valid():
+                print("Validation errors:", serializer.errors)
+                return Response({
+                    "error": "Validation failed",
+                    "details": serializer.errors
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            # Save the food menu
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            print(f"Error in create: {str(e)}")
+            return Response({
+                "error": "Failed to create food menu",
+                "details": str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
 
 
  
 
 class FoodMenuList(generics.ListAPIView):
     serializer_class = FoodMenuSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
-        print(f"Current user ID: {user.id}")
+        print(f"Getting food menu for user: {user.id}")
         
         try:
             if user.is_authenticated:
-                restaurant = Restuarant.objects.get(user=user)
-                print(f"Found restaurant: {restaurant.id}")
-                return FoodMenu.objects.filter(restaurant=restaurant)
+                # Try to get the restaurant
+                restaurant = Restuarant.objects.filter(user=user).first()
+                print('restaurant',restaurant)
+                if restaurant:
+                    print(f"Found restaurant: {restaurant.id}")
+                    return FoodMenu.objects.filter(restaurant=user)
+                else:
+                    print("No restaurant found for user")
+                    return FoodMenu.objects.none()
             else:
                 print("User not authenticated")
                 return FoodMenu.objects.none()
                 
-        except Restuarant.DoesNotExist:
-            print(f"No restaurant found for user: {user.id}")
-            return FoodMenu.objects.none()
         except Exception as e:
             print(f"Error in get_queryset: {str(e)}")
             return FoodMenu.objects.none()
@@ -466,38 +492,85 @@ class ReviewCountView(APIView):
         review_count = food_menu.reviews.count()
         return Response({'food_menu': food_menu.name, 'review_count': review_count})
 
+
 @api_view(['POST'])
 def create_restaurant(request):
-    user = request.data.get('user')
-    image = request.FILES.get('image')
-    name = request.data.get('name')
-    price_range = request.data.get('price_range')
-    delivery_time = request.data.get('delivery_time')
-    address = request.data.get('address')
-    city = request.data.get('city')
-    country = request.data.get('country')
-    coordinates = request.data.get('coordinates')
-    rating = request.data.get('rating')
-    cuisine = request.data.get('cuisine')
-    about_us = request.data.get('about_us')
-    delivery_fee = request.data.get('delivery_fee')
-
     try:
-        Restuarant.objects.create(
-            user=CustomUser.objects.get(id=user),
-            name=name,
-            image=image,
-            price_range=price_range,
-            delivery_time=delivery_time,
-            address=address,
-            city=city,
-            country=country,
-            coordinates=coordinates,
-            rating=rating,
-            cuisine=cuisine,
-            about_us=about_us,
-            delivery_fee=delivery_fee
-        )
-        return Response({"msg": "Created"}, status=status.HTTP_201_CREATED)
+        # Get the authenticated user
+        user = request.user
+        if not user.is_authenticated:
+            return Response({
+                "status": "error",
+                "code": "authentication_required",
+                "message": "Authentication is required to create a restaurant"
+            }, status=status.HTTP_401_UNAUTHORIZED)
+
+        # Validate required fields
+        required_fields = ['name', 'price_range', 'delivery_time', 'address', 'city', 'country']
+        missing_fields = [field for field in required_fields if not request.data.get(field)]
+        if missing_fields:
+            return Response({
+                "status": "error",
+                "code": "missing_fields",
+                "message": "Required fields are missing",
+                "fields": missing_fields
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if restaurant already exists for user
+        if Restuarant.objects.filter(user=user).exists():
+            return Response({
+                "status": "error",
+                "code": "restaurant_exists",
+                "message": "User already has a restaurant registered"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        # Extract data from request
+        data = request.data
+        
+        try:
+            # Create restaurant
+            restaurant = Restuarant.objects.create(
+                user=user,
+                name=data.get('name'),
+                price_range=data.get('price_range'),
+                delivery_time=data.get('delivery_time'),
+                address=data.get('address'),
+                city=data.get('city'),
+                country=data.get('country'),
+                coordinates=data.get('coordinates', {}),
+                rating=data.get('rating', 0),
+                cuisine=data.get('cuisine', ''),
+                about_us=data.get('about_us', ''),
+                delivery_fee=data.get('delivery_fee', 0.0)
+            )
+
+            # Handle image if provided
+            if 'image' in request.FILES:
+                restaurant.image = request.FILES['image']
+                restaurant.save()
+
+            return Response({
+                "status": "success",
+                "message": "Restaurant created successfully",
+                "data": {
+                    "restaurant_id": restaurant.id,
+                    "name": restaurant.name,
+                    "address": restaurant.address
+                }
+            }, status=status.HTTP_201_CREATED)
+
+        except Exception as e:
+            return Response({
+                "status": "error",
+                "code": "creation_failed",
+                "message": "Failed to create restaurant",
+                "details": str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)
+            
     except Exception as e:
-        return Response({"msg": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            "status": "error",
+            "code": "server_error",
+            "message": "An unexpected error occurred",
+            "details": str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

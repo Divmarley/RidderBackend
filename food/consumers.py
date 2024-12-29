@@ -279,10 +279,11 @@ class FoodConsumer(WebsocketConsumer):
     #         connection.restaurant.phone, 'request.connect.food', serialized.data
     #     )
     def receive_food_request_connect(self, data):
+        print("data",data)
         daseData = data.get('data')
 
         location = daseData['location']
-        print("location",location)
+        # print("location",location)
         phone = daseData['phone']
         restaurant_id = daseData['restaurant']
         pushToken = daseData['pushToken']

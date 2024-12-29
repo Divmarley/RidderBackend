@@ -70,6 +70,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    
     'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -213,7 +214,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10,  # Adjust this to your needs
+    'PAGE_SIZE': 100,  # Adjust this to your needs
 }
  
  
@@ -249,3 +250,8 @@ SIMPLE_JWT = {
 TWILIO_ACCOUNT_SID = 'baabcff8-2553-477b-a5b9-9ff179788989'
 TWILIO_AUTH_TOKEN = '975655e042f7c2907273b7978e195c26-746c53cc-5443-4a7a-a269-b9520da9a9a3'
 TWILIO_PHONE_NUMBER = '447860099299'
+
+
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

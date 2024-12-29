@@ -1,4 +1,0 @@
-deployment/
-deployment/*
-Dockerfile
-docker-compose.yaml

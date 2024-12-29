@@ -77,7 +77,7 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name', 'account_type']
+    REQUIRED_FIELDS = ['name', 'account_type','is_aproved']
 
     def save(self, *args, **kwargs):
         if not self.email and not self.phone:
@@ -212,6 +212,7 @@ class PersonalInfo(models.Model):
 
 class VehicleInfo(models.Model):
     driver = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    vehicle_name = models.CharField(max_length=100,null=True, blank=True)
     model = models.CharField(max_length=100,null=True, blank=True)
     color = models.CharField(max_length=100,null=True, blank=True)
     year = models.IntegerField(null=True, blank=True)

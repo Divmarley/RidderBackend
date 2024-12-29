@@ -7,12 +7,12 @@ from django.core.files.base import  ContentFile
 from django.db.models import Q, Exists, OuterRef
 from django.db.models.functions import Coalesce
 
-from accounts.models import CustomUser
+from accounts.models import CustomUser, VehicleInfo
 from food.models import FoodMenu, Order, OrderItem, Restuarant
 from food.serializers import FoodMenuSerializer, OrderSerializer
 from ride.models import DriverHistory, RideHistory, TripHistory
 
-from .models import Connection, Message
+from .models import Connection, DriverOnline, Message
 
 from .serializers import (
 	TripHistorySerializer,
@@ -130,8 +130,15 @@ class ChatConsumer(WebsocketConsumer):
 		elif data_source == 'trip.start':
 			self.receive_start_trip(data)
 
-		elif data_source == 'trip.end':
+		elif data_source == 'trip.ended':
 			self.receive_trip_ended(data)
+
+		elif data_source == 'trip.done':
+			self.receive_trip_done(data)
+
+		elif data_source == 'trip.rating':
+			self.receive_rating(data)
+
 
 		elif data_source == 'foodOrder.create':
 			self.receive_food_order_create(data)
@@ -445,35 +452,53 @@ class ChatConsumer(WebsocketConsumer):
 	def receive_request_accept(self, data):
 		print('received', data)
 		phone = data.get('phone')
-		dataDriver = data.get('dataDriver') 
-		# arrivalTime = data.get('arrivalTime')
-		# Fetch connection object
- 
+		dataDriver = data.get('dataDriver')
+		
 		try:
+			# Fetch connection object
 			connection = Connection.objects.get(
 				sender__phone=phone,
 				receiver=self.scope['user']
 			)
 		except Connection.DoesNotExist:
-			print('Error: connection  doesnt exists')
+			print('Error: connection does not exist')
 			return
+		
+		# Fetch driver's vehicle information
+		try:
+			vehicle_info = VehicleInfo.objects.get(driver=self.scope['user'])
+			vehicle_data = {
+				"vehicle_name": vehicle_info.vehicle_name,
+				"model": vehicle_info.model,
+				"color": vehicle_info.color,
+				"year": vehicle_info.year,
+				"vehicle_registration_number": vehicle_info.vehicle_registration_number,
+				"vehicle_license_number": vehicle_info.vehicle_license_number,
+			}
+		except VehicleInfo.DoesNotExist:
+			vehicle_data = None  # No vehicle info available
+
 		# Update the connection
 		connection.accepted = True
 		connection.status = "DRIVER ACCEPTED"
 		connection.data_driver = dataDriver
-		# connection.arrivalTime =arrivalTime
-		 
 		connection.save()
 		
 		serialized = RequestSerializer(connection)
-		print("RequestSerializer",serialized.data)
+		print("RequestSerializer", serialized.data)
+		
+		# Include vehicle data in serialized data
+		serialized_data = serialized.data
+		serialized_data["vehicle_info"] = vehicle_data
+
 		# Send accepted request to sender
 		self.send_group(
-			connection.sender.phone, 'request.accept', serialized.data
+			connection.sender.phone, 'request.accept', serialized_data
 		)
+
 		# Send accepted request to receiver
 		self.send_group(
-			connection.receiver.phone, 'request.accept', serialized.data
+			connection.receiver.phone, 'request.accept', serialized_data
 		)
 
 		# Send new friend object to sender
@@ -481,7 +506,7 @@ class ChatConsumer(WebsocketConsumer):
 			connection,
 			context={
 				'user': connection.sender,
-				'dataDriver':connection.data_driver
+				'dataDriver': connection.data_driver
 			}
 		)
 		self.send_group(
@@ -492,15 +517,12 @@ class ChatConsumer(WebsocketConsumer):
 			connection,
 			context={
 				'user': connection.receiver,
-				'driverTripData':connection.data_driver
+				'driverTripData': connection.data_driver
 			}
 		)
 		self.send_group(
-			connection.sender.phone, 'friend.new', serialized_friend.data)
-
-		self.send_group(
 			connection.receiver.phone, 'friend.new', serialized_friend.data)
-		 
+
 	def receive_request_connect(self, data):
 		phone = data.get('phone')
 		location = data.get('location')
@@ -520,7 +542,8 @@ class ChatConsumer(WebsocketConsumer):
 			receiver=receiver,
 			location=location,
 			pushToken= push_token,
-			riderPushToken= riderPushToken
+			riderPushToken= riderPushToken,
+			status='LOOKING FOR DRIVER'
  
 		)
 		
@@ -671,7 +694,7 @@ class ChatConsumer(WebsocketConsumer):
 		# Update the connection
 		connection.status = 'TRIP ENDED'
 		connection.paymentStatus = 1
-		connection.save()
+		connection.save() 
 		TripHistory.objects.create(
 			rider=connection.sender.id,
 			driver=connection.receiver.id,
@@ -689,12 +712,101 @@ class ChatConsumer(WebsocketConsumer):
 
 		# Send accepted request to sender
 		self.send_group(
-			connection.sender.phone, 'trip.end', serialized.data
+			connection.sender.phone, 'trip.ended', serialized.data
 		)
 		# Send accepted request to receiver
 		self.send_group(
-			connection.receiver.phone, 'trip.end', serialized.data
+			connection.receiver.phone, 'trip.ended', serialized.data
 		)
+
+
+	def receive_trip_done(self, data): 
+		print("data: ",	data)
+ 
+		# Fetch connection object
+		print("user",self.scope['user'])
+		try:
+			connection = Connection.objects.get(
+				sender__phone=self.scope['user'],
+			
+			)
+			print("connection",connection)
+			
+		except Connection.DoesNotExist:
+			print('Error: connection  doesnt exists')
+			return
+		# Update the connection
+		connection.status = 'RATING'
+		connection.paymentStatus = 1
+		connection.save() 
+		# TripHistory.objects.create(
+		# 	rider=connection.sender.id,
+		# 	driver=connection.receiver.id,
+		# 	status=1,
+		# 	destination=connection.location,
+		# 	paymentStatus=connection.paymentStatus,
+		# 	paymentType='CASH',
+		# 	paymentAmount=connection.location['estimatedPrice'],
+		# 	paidAmount=connection.location['estimatedPrice']
+		# 	)
+		# RideHistory.objects.create(user=connection.sender.id,destination=connection.location,date=connection.updated,paymentStatus=connection.status,amount=100)
+		# DriverHistory.objects.create(driver=connection.receiver.id,destination=connection.location,date=connection.updated,paymentStatus=connection.status,amount=100)
+		# connection.delete()
+		serialized = TripSerializer(connection)
+
+		# Send accepted request to sender
+		self.send_group(
+			connection.sender.phone, 'trip.done', serialized.data
+		)
+		# Send accepted request to receiver
+		self.send_group(
+			connection.receiver.phone, 'trip.done', serialized.data
+		)
+
+
+	def receive_rating(self, data): 
+		print("data: ",	data)
+ 
+		# Fetch connection object
+		print("user",self.scope['user'])
+		try:
+			connection = Connection.objects.get(
+				sender__phone=self.scope['user'],
+			
+			)
+			print("connection",connection)
+			
+		except Connection.DoesNotExist:
+			print('Error: connection  doesnt exists')
+			return
+		# Update the connection
+		connection.status = 'IDEL'
+		connection.paymentStatus = 1
+		# connection.delete() 
+		TripHistory.objects.create(
+			rider=connection.sender.id,
+			driver=connection.receiver.id,
+			status=1,
+			destination=connection.location,
+			paymentStatus=connection.paymentStatus,
+			paymentType='CASH',
+			paymentAmount=connection.location['estimatedPrice'],
+			paidAmount=connection.location['estimatedPrice']
+			)
+		# RideHistory.objects.create(user=connection.sender.id,destination=connection.location,date=connection.updated,paymentStatus=connection.status,amount=100)
+		# DriverHistory.objects.create(driver=connection.receiver.id,destination=connection.location,date=connection.updated,paymentStatus=connection.status,amount=100)
+		connection.delete()
+		serialized = TripSerializer(connection)
+
+		# Send accepted request to sender
+		self.send_group(
+			connection.sender.phone, 'trip.rating', serialized.data
+		)
+		# Send accepted request to receiver
+		self.send_group(
+			connection.receiver.phone, 'trip.rating', serialized.data
+		)
+
 
 	def receive_trip_confirm_payment(self, data): 
 		print("data: ",	data)
@@ -729,7 +841,7 @@ class ChatConsumer(WebsocketConsumer):
 		# RideHistory.objects.create(user=connection.sender.id,destination=connection.location,date=connection.updated,paymentStatus=connection.status, paymentAmount=20,amount=100)
 		# DriverHistory.objects.create(driver=connection.receiver.id,destination=connection.location,date=connection.updated,paymentStatus=connection.status,paymentAmount=20,amount=100)
 		# connection.delete()
-		serialized = TripHistorySerializer(connection)
+		serialized = TripSerializer(connection)
 		
 		# Send accepted request to sender
 		self.send_group(
@@ -813,6 +925,33 @@ class ChatConsumer(WebsocketConsumer):
 			
 			# Send the updated user data back to the group, including the new name and phone
 			self.send_group(self.phone, 'user.update', serialized.data)
+
+	def receive_online_drivers(self, data):
+		# Get all online drivers
+		online_drivers = DriverOnline.objects.filter(is_online=True).select_related('driver')
+		
+		# Prepare response data
+		drivers_data = []
+		for driver in online_drivers:
+			drivers_data.append({
+				'driver_id': driver.driver.id,
+				'name': driver.driver.get_full_name(),
+				'phone': driver.phone,
+				'location': driver.location,
+				'latitude': driver.latitude,
+				'longitude': driver.longitude,
+				'vehicle': {
+					'name': driver.driver.vehicle_name,
+					'model': driver.driver.model,
+					'color': driver.driver.color,
+					'registration': driver.driver.vehicle_registration_number
+				}
+			})
+
+		# Send response through WebSocket
+		self.send_group(self.scope['user'].phone, 'drivers.online', {
+			'online_drivers': drivers_data
+		})
 
 	#--------------------------------------------
 	#   Catch/all broadcast to client helpers

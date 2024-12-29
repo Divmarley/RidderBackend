@@ -16,6 +16,7 @@ class Connection(models.Model):
         related_name='received_connections',
         on_delete=models.CASCADE
     )
+    extras = models.JSONField(null=True,blank=True)
     pushToken= models.CharField(max_length=2000)
     riderPushToken= models.CharField(max_length=2000)
     accepted = models.BooleanField(default=False)

@@ -149,7 +149,7 @@ class PersonalInfoSerializer(serializers.ModelSerializer):
 class VehicleInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = VehicleInfo
-        fields = ['id',  'model', 'color', 'year', 'vehicle_registration_number', 'vehicle_license_number']
+        fields = ['id', 'vehicle_name', 'model', 'color', 'year', 'vehicle_registration_number', 'vehicle_license_number']
 
 class DocumentSerializer(serializers.ModelSerializer):
     class Meta:

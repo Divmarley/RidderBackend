@@ -40,7 +40,8 @@ class RequestSerializer(serializers.ModelSerializer):
             'location',
             'created',
             'status',
-            # 'data_driver'
+            'extras'
+            
 
         ]
 
@@ -109,8 +110,7 @@ class TripSerializer(serializers.ModelSerializer):
             'sender',
             'receiver', 
             'status',
-            'paymentStatus',
-            'status',
+            'paymentStatus', 
             'location',
             'data_driver'
             
@@ -129,7 +129,8 @@ class TripHistorySerializer(serializers.ModelSerializer):
             'sender','receiver','status','paymentStatus','created_at'
         ]
 
- 
+  
+
 
 class DriverOnlineSerializer(serializers.ModelSerializer):
 

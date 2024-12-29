@@ -129,7 +129,9 @@ class LoginView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         phone = request.data.get('phone')
+
         email = request.data.get('email')
+        print('Email',email)
         verification_code = request.data.get('verification_code')
         password = request.data.get('password')
 
@@ -154,6 +156,7 @@ class LoginView(APIView):
         
         elif phone:
             # Login with phone and verification code
+            print('phone',phone)
             try:
                 user = CustomUser.objects.get(phone=phone)
                 print("User", user)
@@ -172,14 +175,15 @@ class LoginView(APIView):
                     # print(user.verification_code)
                     return Response({
                         'detail': 'Verification code sent',
-                        'verification_code': user.verification_code
+                        'verification_code': user.verification_code,
+                        'account_type': user.account_type
+
                     }, status=status.HTTP_200_OK)
             except ObjectDoesNotExist:
-                print()
+            
                 return Response({'detail': 'User with this phone number does not exist'}, status=status.HTTP_404_NOT_FOUND)
         
         else:
-            
             return Response({'detail': 'Please provide either email or phone'}, status=status.HTTP_400_BAD_REQUEST)
 
 # class VerifyLoginView(APIView):
@@ -258,15 +262,17 @@ class VerifyLoginView(APIView):
     def post(self, request):
         serializer = VerifyLoginSerializer(data=request.data)
         if serializer.is_valid():
+            print('Verifying login', serializer.validated_data)
             email_or_phone = serializer.validated_data.get('email_or_phone')
+            print('email_or_phone',email_or_phone)
             verification_code = serializer.validated_data['verification_code']
             
             try:
                 user = (CustomUser.objects.get(email=email_or_phone) if '@' in email_or_phone 
                         else CustomUser.objects.get(phone=email_or_phone))
-                
+                print('user'  )
                 if user.verification_code == verification_code:
-                    user.verification_code = None  # Clear the code
+                    user.verification_code = verification_code  # Clear the code
                     user.save()
                     
                     refresh = RefreshToken.for_user(user)
