@@ -859,9 +859,8 @@ class ChatConsumer(WebsocketConsumer):
 
 			# Extract the necessary fields from the incoming data
 		 
-			latitude = data.get('latitude')
-			longitude = data.get('longitude')
-			print(latitude)
+			latitude = data['data']['latitude']
+			longitude = data['data']['longitude']
 			# Ensure all required data is present
 			if  latitude is None or longitude is None:
 				print('Invalid data received: missing fields')
@@ -869,8 +868,6 @@ class ChatConsumer(WebsocketConsumer):
 			
 			# Update the driver's location in the database
 			try:
-				print('latitude')
-				
 				# Assuming you have a Driver model and 'driver_id' is valid
 				# driver = DriverHistory.objects.get(id=driver_id)
 				# driver.latitude = latitude
@@ -879,16 +876,25 @@ class ChatConsumer(WebsocketConsumer):
 
 				# Log the update
 				# print(f"Updated location for driver {driver_id}: ({latitude}, {longitude})")
-
+				user = self.scope['user']
+				connection = Connection.objects.filter(
+					sender__phone=user.phone, accepted=True
+				).first()
 				# Optionally, broadcast the location update to a group (e.g., for tracking in real-time)
-				# self.send_group(driver.phone, 'driver.locationUpdate', {
-				# 	'driver_id': driver_id,
-				# 	'latitude': latitude,
-				# 	'longitude': longitude
-				# })
-
+				self.send_group(user.phone, 'driver.locationUpdate', {
+					'user_id': user.id,
+					'latitude': latitude,
+					'longitude': longitude
+				})
+    
+				self.send_group(connection.receiver.phone, 'driver.locationUpdate', {
+					'driver_id': connection.receiver.id,
+					'latitude': latitude,
+					'longitude': longitude
+				})
+    
 			except DriverHistory.DoesNotExist:
-				print(f"Driver with ID {driver_id} does not exist")
+				print(f"Driver with ID {connection.receiver.id} does not exist")
 
 		except Exception as e:
 			print(f"Error in location update: {str(e)}")

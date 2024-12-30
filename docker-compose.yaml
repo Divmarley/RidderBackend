@@ -2,8 +2,8 @@ services:
   nginx:
    image: nginx:latest
    ports:
-     - "80:80"
-     - "443:443"
+     - "1200:80"
+    #  - "443:443"
    volumes:
      - ./nginx:/etc/nginx/conf.d
      - /etc/letsencrypt:/etc/letsencrypt
@@ -14,7 +14,8 @@ services:
 
   web:
     build: .
-    command: gunicorn driverapp.wsgi:application --bind 0.0.0.0:8000
+    # command: gunicorn driverapp.wsgi:application --bind 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/code
       - static_volume:/code/staticfiles

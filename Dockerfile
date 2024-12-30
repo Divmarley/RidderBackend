@@ -47,7 +47,7 @@ RUN apt-get update && apt-get install -y default-mysql-client --no-install-recom
 # Expose the port the app runs on
 EXPOSE 8000
 
-ENTRYPOINT ["/entrypoint.sh"]
+# ENTRYPOINT ["/entrypoint.sh"]
 
 # Run the application
 # CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
