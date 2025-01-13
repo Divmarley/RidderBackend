@@ -238,19 +238,23 @@ class FoodMenuList(generics.ListAPIView):
 class UserFoodMenuList(generics.ListAPIView):
     serializer_class = FoodMenuSerializer
     permission_classes = [AllowAny]
-
+ 
     def get_queryset(self):
         user = self.request.user
         restaurant_id = self.kwargs.get('pk')  # Retrieve the `pk` from the URL
-        print('restaurant_id',restaurant_id)
-        if not user.is_authenticated:
-            return FoodMenu.objects.none()  # Return empty queryset for unauthenticated users
+        
+        print('restaurant_id',restaurant_id,user.is_authenticated)
 
+        # if not user.is_authenticated:
+        #     return FoodMenu.objects.none()  # Return empty queryset for unauthenticated users
+        # restaurant = Restuarant.objects.all()
+        # print('restaurant,restaurant',restaurant)
         try:
             # Get the restaurant object
             # restaurant = Restuarant.objects.get(user=restaurant_id)
             # print('restaurant===>',restaurant.restaurant)
             # Filter food menu by the restaurant 
+            # print('Restaurant', FoodMenu.objects.filter(restaurant=restaurant_id))
             return FoodMenu.objects.filter(restaurant=restaurant_id)
         except Restuarant.DoesNotExist:
             return FoodMenu.objects.none()  # Return empty queryset if the restaurant does not exist
@@ -262,13 +266,16 @@ class FoodMenuDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return FoodMenu.objects.filter(restaurant__user=user)
+        print(user)
+        return FoodMenu.objects.filter(restaurant=user)
     
     def delete(self, request, *args, **kwargs):
         """
         Override the delete method to add custom logic if necessary and ensure proper response.
         """
         instance = self.get_object()  # Get the specific object
+        print("")
+        print("Deleting food menu item:", instance) 
         self.perform_destroy(instance)
         return Response(
             {"message": "Food menu item deleted successfully."},
@@ -560,6 +567,7 @@ def create_restaurant(request):
             }, status=status.HTTP_201_CREATED)
 
         except Exception as e:
+            print(e)
             return Response({
                 "status": "error",
                 "code": "creation_failed",

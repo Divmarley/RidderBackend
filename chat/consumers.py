@@ -63,7 +63,7 @@ class ChatConsumer(WebsocketConsumer):
 		
 		data_source = data.get('source') 
 
-		print('data_source:',data_source)
+		print('data_source chat:',data_source)
 		
 		# Pretty print  python dict
 		print('receive', json.dumps(data, indent=2))

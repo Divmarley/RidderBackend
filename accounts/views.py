@@ -156,23 +156,24 @@ class LoginView(APIView):
         
         elif phone:
             # Login with phone and verification code
-            print('phone',phone)
+            
             try:
                 user = CustomUser.objects.get(phone=phone)
-                print("User", user)
+    
                 if verification_code:
                     # Verify phone number using verification code
                     if user.verification_code == verification_code:
                         # Clear verification code after successful verification
-                        user.verification_code = None
+                        user.verification_code = user.generate_verification_code()
+                        
                         user.save()
-                        return Response({'detail': 'Verification successful'}, status=status.HTTP_200_OK)
+                        return Response({'detail': 'Verification successful','mes':'hi'}, status=status.HTTP_200_OK)
                     else:
                         return Response({'detail': 'Invalid verification code'}, status=status.HTTP_400_BAD_REQUEST)
                 else:
                     # Generate and send verification code
-                    # user.generate_verification_code()
-                    # print(user.verification_code)
+                    user.generate_verification_code()
+                    print(user.verification_code)
                     return Response({
                         'detail': 'Verification code sent',
                         'verification_code': user.verification_code,
@@ -219,79 +220,79 @@ class LoginView(APIView):
 
 
 
-# class VerifyLoginView(APIView):
-#     permission_classes = [AllowAny]
-
-#     def post(self, request):
-#         serializer = VerifyLoginSerializer(data=request.data)
-#         if serializer.is_valid():
-#             email_or_phone = serializer.validated_data.get('email_or_phone')
-#             verification_code = serializer.validated_data['verification_code']
-            
-#             try:
-#                 if '@' in email_or_phone:
-#                     # Assume email verification
-#                     user = CustomUser.objects.get(email=email_or_phone, verification_code=verification_code)
-#                 else:
-#                     # Assume phone verification
-#                     user = CustomUser.objects.get(phone=email_or_phone, verification_code=verification_code)
-                
-#                 user.verification_code = None  # Clear the verification code after successful login
-#                 user.save()
-                
-#                 # Generate access token
-#                 refresh = RefreshToken.for_user(user)
-#                 access_token = str(refresh.access_token)
-#                 refresh_token = str(refresh)
-
-#                 user_data = UserSerializer(user).data  # Serialize the user data
-#                 return Response({
-#                     'detail': 'Login successful',
-#                     'user': user_data,
-#                     'access_token': access_token,
-#                     'refresh_token': refresh_token
-#                 }, status=status.HTTP_200_OK)
-#             except CustomUser.DoesNotExist:
-#                 return Response({'detail': 'Invalid verification code or email/phone number'}, status=status.HTTP_400_BAD_REQUEST)
-#         print(serializer.errors)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 class VerifyLoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
         serializer = VerifyLoginSerializer(data=request.data)
         if serializer.is_valid():
-            print('Verifying login', serializer.validated_data)
             email_or_phone = serializer.validated_data.get('email_or_phone')
-            print('email_or_phone',email_or_phone)
             verification_code = serializer.validated_data['verification_code']
             
             try:
-                user = (CustomUser.objects.get(email=email_or_phone) if '@' in email_or_phone 
-                        else CustomUser.objects.get(phone=email_or_phone))
-                print('user'  )
-                if user.verification_code == verification_code:
-                    user.verification_code = verification_code  # Clear the code
-                    user.save()
-                    
-                    refresh = RefreshToken.for_user(user)
-                    access_token = str(refresh.access_token)
-                    refresh_token = str(refresh)
-                    
-                    user_data = UserSerializer(user).data  # Serialize user data
-                    return Response({
-                        'detail': 'Login successful',
-                        'user': user_data,
-                        'access_token': access_token,
-                        'refresh_token': refresh_token
-                    }, status=status.HTTP_200_OK)
-                return Response({'detail': 'Invalid verification code'}, status=status.HTTP_400_BAD_REQUEST)
-            
+                if '@' in email_or_phone:
+                    # Assume email verification
+                    user = CustomUser.objects.get(email=email_or_phone, verification_code=verification_code)
+                else:
+                    # Assume phone verification
+                    user = CustomUser.objects.get(phone=email_or_phone, verification_code=verification_code)
+                
+                user.verification_code = None  # Clear the verification code after successful login
+                user.save()
+                
+                # Generate access token
+                refresh = RefreshToken.for_user(user)
+                access_token = str(refresh.access_token)
+                refresh_token = str(refresh)
+
+                user_data = UserSerializer(user).data  # Serialize the user data
+                return Response({
+                    'detail': 'Login successful',
+                    'user': user_data,
+                    'access_token': access_token,
+                    'refresh_token': refresh_token
+                }, status=status.HTTP_200_OK)
             except CustomUser.DoesNotExist:
-                return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-        
+                return Response({'detail': 'Invalid verification code or email/phone number'}, status=status.HTTP_400_BAD_REQUEST)
+        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# class VerifyLoginView(APIView):
+#     permission_classes = [AllowAny]
+
+#     def post(self, request):
+#         serializer = VerifyLoginSerializer(data=request.data)
+#         if serializer.is_valid():
+#             print('Verifying login', serializer.validated_data)
+#             email_or_phone = serializer.validated_data.get('email_or_phone')
+#             print('email_or_phone',email_or_phone)
+#             verification_code = serializer.validated_data['verification_code']
+            
+#             try:
+#                 user = (CustomUser.objects.get(email=email_or_phone) if '@' in email_or_phone 
+#                         else CustomUser.objects.get(phone=email_or_phone))
+#                 print('user'  )
+#                 if user.verification_code == verification_code:
+#                     user.verification_code = verification_code  # Clear the code
+#                     user.save()
+                    
+#                     refresh = RefreshToken.for_user(user)
+#                     access_token = str(refresh.access_token)
+#                     refresh_token = str(refresh)
+                    
+#                     user_data = UserSerializer(user).data  # Serialize user data
+#                     return Response({
+#                         'detail': 'Login successful',
+#                         'user': user_data,
+#                         'access_token': access_token,
+#                         'refresh_token': refresh_token
+#                     }, status=status.HTTP_200_OK)
+#                 return Response({'detail': 'Invalid verification code'}, status=status.HTTP_400_BAD_REQUEST)
+            
+#             except CustomUser.DoesNotExist:
+#                 return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ProfileView(generics.RetrieveUpdateAPIView):

@@ -46,8 +46,7 @@ class FoodConsumer(WebsocketConsumer):
     
     def receive(self, text_data):
         data = json.loads(text_data)
-        data_source = data.get('source')
-        print('FoodConsumer Received message:', json.dumps(data, indent=2))
+        data_source = data.get('source') 
 
         if data_source == 'request.connect.food':
             self.receive_food_request_connect(data)
@@ -279,6 +278,7 @@ class FoodConsumer(WebsocketConsumer):
     #         connection.restaurant.phone, 'request.connect.food', serialized.data
     #     )
     def receive_food_request_connect(self, data):
+ 
         print("data",data)
         daseData = data.get('data')
 
@@ -316,6 +316,7 @@ class FoodConsumer(WebsocketConsumer):
             status=status
         ) 
 
+        print('connection',connection)
         # Create Order instance
         order_id = generate_order_id()
         order = Order.objects.create(
@@ -367,8 +368,7 @@ class FoodConsumer(WebsocketConsumer):
                 "id": connection.restaurant.id,
     
                 "phone": connection.restaurant.phone,
-            }
-            
+            } 
             
         }
 
