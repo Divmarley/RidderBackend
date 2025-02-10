@@ -1,5 +1,6 @@
 import base64
 import json
+import logging
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
@@ -24,196 +25,121 @@ from .serializers import (
 	MessageSerializer
 )
 
-
+logger = logging.getLogger(__name__)
 
 class ChatConsumer(WebsocketConsumer):
+	def __init__(self, *args, **kwargs):
+		super().__init__(*args, **kwargs)
+		self.phone = None
+		self.user = None
+		self.group_name = None
 
 	def connect(self):
-		user = self.scope['user']
-		print("user", user)
+		try:
+			# Get user from scope
+			self.user = self.scope['user']
+			logger.info(f"Connection attempt from user: {self.user}")
 
+			if not self.user.is_authenticated:
+				logger.warning("Unauthenticated connection attempt")
+				self.close()
+				return
 
-		if not user.is_authenticated:
-			return
-		# Save phone to use as a group name for this user
-		self.phone = user.phone
-		# Join this user to a group with their phone
-		async_to_sync(self.channel_layer.group_add)(
-			self.phone, self.channel_name
-		)
-		self.accept()
+			# Set phone attribute
+			self.phone = getattr(self.user, 'phone', None)
+			if not self.phone:
+				logger.error("User has no phone number")
+				self.close()
+				return
+
+			# Join user's group
+			self.group_name = str(self.phone)
+			async_to_sync(self.channel_layer.group_add)(
+				self.group_name,
+				self.channel_name
+			)
+			self.accept()
+			logger.info(f"Successfully connected user {self.phone}")
+
+		except Exception as e:
+			logger.error(f"Connection error: {str(e)}")
+			self.close()
 
 	def disconnect(self, close_code):
-		# Leave room/group
-		async_to_sync(self.channel_layer.group_discard)(
-			self.phone, self.channel_name
-		)
-
-	#-----------------------
-	#    Handle requests
-	#-----------------------
+		try:
+			if hasattr(self, 'group_name') and self.group_name:
+				async_to_sync(self.channel_layer.group_discard)(
+					self.group_name,
+					self.channel_name
+				)
+				logger.info(f"Disconnected user from group {self.group_name}")
+		except Exception as e:
+			logger.error(f"Disconnect error: {str(e)}")
 
 	def receive(self, text_data):
-		# Receive message from websocket
-		data = json.loads(text_data)
-		# Log incoming message
+		try:
+			if not self.user or not self.user.is_authenticated:
+				return
+			
+			data = json.loads(text_data)
+			data_source = data.get('source')
+			logger.debug(f"Received message: {data_source}")
 
+			if data_source == 'trip.lookForDriver':
+				self.receive_trip_lookForDriver(data)
+			elif data_source == 'friend.list':
+				self.receive_friend_list(data)
+			elif data_source == 'message.list':
+				self.receive_message_list(data)
+			elif data_source == 'message.send':
+				self.receive_message_send(data)
+			elif data_source == 'message.type':
+				self.receive_message_type(data)
+			elif data_source == 'request.accept':
+				logger.debug("request.accept")
+				self.receive_request_accept(data)
+			elif data_source == 'request.connect':
+				self.receive_request_connect(data)
+			elif data_source == 'request.list':
+				self.receive_request_list(data)
+			elif data_source == 'search':
+				self.receive_search(data)
+			elif data_source == 'thumbnail':
+				self.receive_thumbnail(data)
+			elif data_source == 'create.food.order':
+				logger.debug('hello')
+				self.receive_order_create(data)
+			elif data_source == 'order.list':
+				self.receive_order_list(data)
+			elif data_source == 'order.accept':
+				self.receive_order_accept(data)
+			elif data_source == 'order.decline':
+				self.receive_order_decline(data)
+			elif data_source == 'driver.accepted':
+				self.receive_start_trip(data)
+			elif data_source == 'driver.arrived':
+				self.receive_driver_arrived(data)
+			elif data_source == 'trip.start':
+				self.receive_start_trip(data)
+			elif data_source == 'trip.ended':
+				self.receive_trip_ended(data)
+			elif data_source == 'trip.done':
+				self.receive_trip_done(data)
+			elif data_source == 'trip.rating':
+				self.receive_rating(data)
+			elif data_source == 'foodOrder.create':
+				self.receive_food_order_create(data)
+			elif data_source == 'confirm.payment':
+				self.receive_trip_confirm_payment(data)
+			elif data_source == 'driver.location':
+				self.receive_locationUpdate(data)
+			elif data_source == 'user.update':
+				self.receive_userUpdate(data)
+			elif data_source == 'request.cancel':
+				self.receive_request_cancel(data)
+		except Exception as e:
+			logger.error(f"Error processing message: {str(e)}")
 
-		print('Received message:', json.dumps(data, indent=2))
-		
-		data_source = data.get('source') 
-
-		print('data_source chat:',data_source)
-		
-		# Pretty print  python dict
-		print('receive', json.dumps(data, indent=2))
-		# Get friend list
-		if data_source == 'trip.lookForDriver':
-			self.receive_trip_lookForDriver(data)
-
-		# Get friend list
-		if data_source == 'friend.list':
-			self.receive_friend_list(data)
-
-		# Message List
-		elif data_source == 'message.list':
-			self.receive_message_list(data)
-
-		# Message has been sent
-		elif data_source == 'message.send':
-			self.receive_message_send(data)
-
-		# User is typing message
-		elif data_source == 'message.type':
-			self.receive_message_type(data)
-
-		# Accept friend request
-		elif data_source == 'request.accept':
-			print("request.accept",)
-			self.receive_request_accept(data)
-
-		# Make friend request
-		elif data_source == 'request.connect':
-			self.receive_request_connect(data)
-
-		# Get request list
-		elif data_source == 'request.list':
-			self.receive_request_list(data)
-
-		# Search / filter users
-		elif data_source == 'search':
-			self.receive_search(data)
-
-		# Thumbnail upload
-		elif data_source == 'thumbnail':
-			self.receive_thumbnail(data)
-
-		elif data_source == 'create.food.order':
-			print('hello')
-			self.receive_order_create(data)
-
-		elif data_source == 'order.list':
-			self.receive_order_list(data)
-
-		elif data_source == 'order.accept':
-			self.receive_order_accept(data)
-
-		elif data_source == 'order.decline':
-			self.receive_order_decline(data)
-
-		elif data_source == 'driver.accepted':
-			self.receive_start_trip(data)
-		
-		elif data_source == 'driver.arrived':
-			self.receive_driver_arrived(data)
-
-		elif data_source == 'trip.start':
-			self.receive_start_trip(data)
-
-		elif data_source == 'trip.ended':
-			self.receive_trip_ended(data)
-
-		elif data_source == 'trip.done':
-			self.receive_trip_done(data)
-
-		elif data_source == 'trip.rating':
-			self.receive_rating(data)
-
-
-		elif data_source == 'foodOrder.create':
-			self.receive_food_order_create(data)
-		
-		elif data_source == 'confirm.payment':
-			self.receive_trip_confirm_payment(data)
-
-		elif data_source == 'driver.location':
-			self.receive_locationUpdate(data)
-
-		elif data_source == 'user.update':
-			self.receive_userUpdate(data)
-
-
-	# def receive_food_order_create(self, data):
-	# 	user = self.scope['user']
-	# 	restaurant_id = data.get('restaurant_id')
-	# 	food_items = data.get('food_items')
-
-	# 	# Assuming you have a model for FoodOrder and serializer defined
-	# 	# Replace with your actual models and serializers
-	# 	food_order = Order.objects.create(
-	# 		user=user,
-	# 		restaurant_id=restaurant_id,
-	# 		food_items=food_items
-	# 	)
-
-	# 	serialized_order = OrderSerializer(food_order).data
-	# 	self.send_group(user.phone, 'foodOrder.create', serialized_order)
-
-	# 	self.send_group('552297798', 'foodOrder.create', serialized_order)
-
-	# def receive_order_create(self, data):
-	
-	# 	user = self.scope['user']
-	# 	print(user)
-	# 	order_data = data.get('order')
-
-	# 	print("order",order_data)
-	# 	# order_number = data.get('order_number')
-	# 	# order_number = data.get('order_number')
-	# 	# description = data.get('description')
-
-	# 	receiverInstance = Restaurant.objects.get(user=order_data['restaurant'])
- 
-
-	# 	order = Order.objects.create(
-	# 		sender=user,
-	# 		status=order_data['status'],
-	# 		# items=order['items'],
-	# 		total_price=order_data['total_price'],
-	# 		location=order_data['location'],
-	# 		receiver= receiverInstance
-	# 	)
-
-	# 	# Assuming `order_data` is the original dictionary containing the order information, including items
-	# 	for item in order_data['items']:
-	# 		print(item)
-	# 		food_menu_item = FoodMenu.objects.get(id=item['item_id'])  # Fetch FoodMenu object using 'item_id'
-	# 		OrderItem.objects.create(
-	# 			order=order,  # This is the created Order object
-	# 			item=food_menu_item,
-	# 			quantity=item['quantity']
-	# 		)
-
-
-	# 	print("order",order)
-	# 	print("food_menu_item",food_menu_item)
-
-	# 	serialized_order = OrderSerializer(order)
-	# 	serialized_food = FoodMenuSerializer(food_menu_item)
-
-	# 	print("serialized_food",serialized_food.data) 
-	# 	self.send_group(user.phone, 'create.food.order', serialized_order.data) 
-	# 	# self.send_group(order['restaurant'], 'create.food.order', serialized_order.data)
 	def receive_order_create(self, data):
 		user = self.scope['user']
 		 
@@ -529,7 +455,7 @@ class ChatConsumer(WebsocketConsumer):
 		push_token = data.get('push_token')
 		riderPushToken = data.get('riderPushToken')
 
-		print("receive_request_connect data",data)
+		 
 		# Attempt to fetch the receiving user
 		try:
 			receiver = CustomUser.objects.get(phone=phone)
@@ -667,6 +593,8 @@ class ChatConsumer(WebsocketConsumer):
 		connection.save()
 		
 		serialized = TripSerializer(connection)
+
+		print('Serialized trip' ,	serialized.data)
 
 		# Send accepted request to sender
 		self.send_group(
@@ -986,5 +914,32 @@ class ChatConsumer(WebsocketConsumer):
 			'data': event['data']
 		}))
 		
+	def receive_request_cancel(self, data):
+		print("data",data)
+		connection_id = data.get('connectionId')
+		
+		try:
+			# Find and delete the connection
+			connection = Connection.objects.get(id=connection_id)
+			
+			# Store phones before deletion for notifications
+			sender_phone = connection.sender.phone
+			receiver_phone = connection.receiver.phone
+			
+			# Delete the connection
+			connection.delete()
+			
+			# Notify both parties about the cancellation
+			cancel_data = {
+				'id': connection_id,
+				'status': 'cancelled'
+			}
+			
+			self.send_group(sender_phone, 'request.cancel', cancel_data)
+			self.send_group(receiver_phone, 'request.cancel', cancel_data)
+			
+		except Connection.DoesNotExist:
+			print('Error: Connection not found')
+			pass
 
 

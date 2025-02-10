@@ -47,6 +47,7 @@ class FoodConsumer(WebsocketConsumer):
     def receive(self, text_data):
         data = json.loads(text_data)
         data_source = data.get('source') 
+        print(data_source,)
 
         if data_source == 'request.connect.food':
             self.receive_food_request_connect(data)
@@ -279,19 +280,21 @@ class FoodConsumer(WebsocketConsumer):
     #     )
     def receive_food_request_connect(self, data):
  
-        print("data",data)
+        # print("data",data)
         daseData = data.get('data')
-
+        print("daseData",daseData)
         location = daseData['location']
         # print("location",location)
         phone = daseData['phone']
-        restaurant_id = daseData['restaurant']
+        # restaurant_id = daseData['restaurant']
         pushToken = daseData['pushToken']
         items = daseData['items']
         total_price = daseData['total_price']
         status = daseData['status']
         user = self.scope['user']
+        order_info=  daseData['order_info']
 
+   
         if not user:
             self.send(text_data=json.dumps({
                 'error': 'User is not authenticated'
@@ -299,7 +302,7 @@ class FoodConsumer(WebsocketConsumer):
             return
 
         try:
-            restaurant = CustomUser.objects.get(id=restaurant_id)
+            restaurant = CustomUser.objects.get(id=31)
         except CustomUser.DoesNotExist:
             self.send(text_data=json.dumps({
                 'error': 'Restaurant not found'
@@ -313,7 +316,8 @@ class FoodConsumer(WebsocketConsumer):
             location=location,
             pushToken=pushToken,
             defaults={'items': items},
-            status=status
+            status=status,
+            order_info=order_info
         ) 
 
         print('connection',connection)

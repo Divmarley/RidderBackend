@@ -32,7 +32,7 @@ class TripHistoryListView(generics.ListCreateAPIView):
         # return  TripHistory.objects.filter(driver=self.request.user.id)
         # else:
         
-        print("self.request.user.id",self.request.user.id)
+        print("self.request.user.id",self.request.user)
         if (self.request.user.account_type == 'driver'):
             print('driver')
             return  TripHistory.objects.filter(driver=self.request.user.id).order_by('-created_at')

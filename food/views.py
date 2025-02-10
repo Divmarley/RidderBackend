@@ -22,16 +22,17 @@ class OrderAndFoodMenuCountView(APIView):
  
         try:
             order_count = Order.objects.filter(receiver=request.user.id).count()
-            food_menu_count = FoodMenu.objects.filter(restaurant=request.user.id).count()
-            reviews_summary = Review.objects.filter(user=request.user.id,food_menu=food_menu_count).aggregate(
-                total_reviews=Count('id'),
-                accumulated_ratings=Sum('rating')
-            )
+            food_menu_count = FoodMenu.objects.filter(restaurant=request.user).count()
+            print('food_menu_countxx',food_menu_count)
+            # reviews_summary = Review.objects.filter(user=request.user.id,food_menu=food_menu_count).aggregate(
+            #     total_reviews=Count('id'),
+            #     accumulated_ratings=Sum('rating')
+            # )
             return Response(
                 {
                     'order_count': order_count,
                     'food_menu_count': food_menu_count,
-                    'accumulated_ratings': reviews_summary.get('accumulated_ratings', 0) or 0
+                    # 'accumulated_ratings': reviews_summary.get('accumulated_ratings', 0) or 0
                 },
                 status=status.HTTP_200_OK
             )
@@ -39,19 +40,17 @@ class OrderAndFoodMenuCountView(APIView):
             print("error",e)
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-class CategoryListView(ListAPIView):
+class CategoryListView(generics.ListCreateAPIView):
     serializer_class = CategorySerializer
-    permission_classes = [AllowAny]
-
+    permission_classes = [IsAuthenticated]
+    
     def get_queryset(self):
-        restaurant_id = self.request.user.id
-        # print("restaurant_id", restaurant_id)
-        if restaurant_id:
-            cat= Category.objects.all()
-            # cat= Category.objects.filter(restaurant_id=restaurant_id)
-            print( "cat", cat)
-            return cat
-        return Category.objects.all()
+        """Filter categories by restaurant (user) ID"""
+        return Category.objects.filter(restaurant=self.request.user)
+    
+    def perform_create(self, serializer):
+        """Add restaurant (user) when creating category"""
+        serializer.save(restaurant=self.request.user)
 
 class RestaurantListView(generics.ListAPIView):
     """
@@ -60,6 +59,8 @@ class RestaurantListView(generics.ListAPIView):
     queryset = Restuarant.objects.all()  # Ensure model name is correctly spelled
     serializer_class = RestaurantSerializer
     permission_classes = [AllowAny]
+
+ 
 
 
     # def perform_create(self, serializer):
@@ -218,7 +219,7 @@ class FoodMenuList(generics.ListAPIView):
         try:
             if user.is_authenticated:
                 # Try to get the restaurant
-                restaurant = Restuarant.objects.filter(user=user).first()
+                restaurant = Restaurant.objects.filter(user=user).first()
                 print('restaurant',restaurant)
                 if restaurant:
                     print(f"Found restaurant: {restaurant.id}")
@@ -582,3 +583,71 @@ def create_restaurant(request):
             "message": "An unexpected error occurred",
             "details": str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Restaurant
+from .serializers import RestaurantNewSerializer
+
+''' sammple data 
+{
+  "id": 1,
+  "name": "Pizza Palace",
+  "image_main": "https://images.unsplash.com/photo-1513104890138-7c749659a591",
+  "image_featured": [
+    "https://images.unsplash.com/photo-1513104890138-7c749659a591",
+    "https://images.unsplash.com/photo-1513104890138-7c749659a591"
+  ],
+  "rating": 4.5,
+  "delivery_time": "25-30 mins",
+  "cuisine": "Italian",
+  "promoted": false,
+  "open": true,
+  "about_us": "Best Italian Pizza in town.",
+  "delivery_modes": ["delivery", "pickup"],
+  "location": {
+    "address": "123 Pizza Lane",
+    "city": "Naples",
+    "country": "Italy",
+    "latitude": 40.8518,
+    "longitude": 14.2681
+  },
+  "contact": [
+    {"type": "call", "value": "024444444"},
+    {"type": "email", "value": "demo@example.com"},
+    {"type": "website", "value": "www.pizzapalace.com"}
+  ],
+  "delivery_fee": "23.00",
+  "most_popular": [
+    {"id": 1, "name": "Margherita Pizza", "price": "8.99"},
+    {"id": 2, "name": "Pepperoni Pizza", "price": "10.99"}
+  ],
+  "price_range": "$2-$5",
+  "operational_hours": {
+    "weekdays": {"open": "10:00 AM", "close": "10:00 PM"},
+    "weekends": {"open": "9:00 AM", "close": "11:00 PM"}
+  },
+  "payment_options": ["Cash", "Credit Card", "PayPal"],
+  "categories": ["Pizza", "Pasta"]
+}
+
+'''
+class RestaurantAPIView(APIView):
+ 
+    def get(self, request):
+        restaurants = Restaurant.objects.all()
+        print("Getting",restaurants )
+    
+        serializer = RestaurantNewSerializer(restaurants, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        # print(request.data)
+        serializer = RestaurantNewSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED) 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

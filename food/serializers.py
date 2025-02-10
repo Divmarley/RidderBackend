@@ -13,7 +13,7 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 class FoodConnectionSerializer(serializers.ModelSerializer):
-    
+
     buyer = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
     restaurant = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
     items = serializers.JSONField()
@@ -21,7 +21,7 @@ class FoodConnectionSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = FoodConnection
-        fields = ['id', 'buyer', 'restaurant', 'location', 'status', 'pushToken', 'items', 'updated', 'created']
+        fields = ['id', 'buyer', 'restaurant', 'location', 'status', 'pushToken', 'items', 'updated', 'created','order_info']
 
 class ImageSerializer(serializers.ModelSerializer):
     uri = serializers.CharField()  # Accept Base64 string
@@ -58,7 +58,8 @@ class DetailsSerializer(serializers.ModelSerializer):
         fields = ['name', 'price_range', 'delivery_time']
 
 class FoodMenuSerializer(serializers.ModelSerializer):
-    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())  # Category as a PrimaryKey
+    category = CategorySerializer(read_only=True)  # Use nested serializer
+    # category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())  # Category as a PrimaryKey
     # category =  serializers.CharField(source='category.name', read_only=True)  # Category as a PrimaryKey
     order_type = serializers.CharField(max_length=50)  # New field: order_type
     free_addons = serializers.JSONField()  # New field: free_addons (expects a JSON list)
@@ -222,3 +223,53 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = ['id', 'rating', 'comment', 'created_at']
+
+
+# ==========new =================================================
+from rest_framework import serializers
+from .models import Location, Contact, Restaurant, Review, Promotion
+
+class LocationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Location
+        fields = '__all__'
+
+
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = '__all__'
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = '__all__'
+
+
+class PromotionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Promotion
+        fields = '__all__'
+
+
+class RestaurantNewSerializer(serializers.ModelSerializer):
+    location = LocationSerializer()
+    contact = ContactSerializer(many=True)
+    reviews = ReviewSerializer(many=True, read_only=True)
+    promotions = PromotionSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Restaurant
+        fields = '__all__'
+
+    def create(self, validated_data):
+        # print("validated_data",validated_data)
+        location_data = validated_data.pop('location')
+        contact_data = validated_data.pop('contact')
+        location = Location.objects.create(**location_data)
+        restaurant = Restaurant.objects.create(location=location, **validated_data)
+        for contact in contact_data:
+            contact_obj = Contact.objects.create(**contact)
+            restaurant.contact.add(contact_obj)
+        return restaurant

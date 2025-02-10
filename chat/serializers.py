@@ -40,7 +40,8 @@ class RequestSerializer(serializers.ModelSerializer):
             'location',
             'created',
             'status',
-            'extras'
+            'extras',
+            'data_driver'
             
 
         ]
@@ -120,14 +121,12 @@ class TripSerializer(serializers.ModelSerializer):
 # TripHistorySerializer
 
 class TripHistorySerializer(serializers.ModelSerializer):
-    sender = UserSerializer()
-    receiver = UserSerializer()
+    # sender = UserSerializer()
+    # receiver = UserSerializer()
 
     class Meta:
         model = TripHistory
-        fields = [
-            'sender','receiver','status','paymentStatus','created_at'
-        ]
+        fields = '__all__'
 
   
 

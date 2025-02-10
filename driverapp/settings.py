@@ -218,10 +218,10 @@ REST_FRAMEWORK = {
 }
  
  
-FILE_UPLOAD_HANDLERS = [
-    'django.core.files.uploadhandler.TemporaryFileUploadHandler',
-    'django.core.files.uploadhandler.MemoryFileUploadHandler',
-]
+# FILE_UPLOAD_HANDLERS = [
+#     'django.core.files.uploadhandler.TemporaryFileUploadHandler',
+#     'django.core.files.uploadhandler.MemoryFileUploadHandler',
+# ]
  
 
 # Optionally, you can increase the max upload size if the image is large
@@ -253,5 +253,5 @@ TWILIO_PHONE_NUMBER = '447860099299'
 
 
 
-USE_X_FORWARDED_HOST = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# USE_X_FORWARDED_HOST = True
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
