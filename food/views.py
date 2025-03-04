@@ -255,7 +255,7 @@ class UserFoodMenuList(generics.ListAPIView):
             # restaurant = Restuarant.objects.get(user=restaurant_id)
             # print('restaurant===>',restaurant.restaurant)
             # Filter food menu by the restaurant 
-            # print('Restaurant', FoodMenu.objects.filter(restaurant=restaurant_id))
+            print('Restaurant', FoodMenu.objects.filter(restaurant=restaurant_id))
             return FoodMenu.objects.filter(restaurant=restaurant_id)
         except Restuarant.DoesNotExist:
             return FoodMenu.objects.none()  # Return empty queryset if the restaurant does not exist
@@ -639,13 +639,14 @@ class RestaurantAPIView(APIView):
  
     def get(self, request):
         restaurants = Restaurant.objects.all()
-        print("Getting",restaurants )
+        # print("Getting",restaurants )
     
         serializer = RestaurantNewSerializer(restaurants, many=True)
+        # print("Serializing",serializer)
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
-        # print(request.data)
+    def post(self, request): 
         serializer = RestaurantNewSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()

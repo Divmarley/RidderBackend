@@ -77,68 +77,75 @@ class ChatConsumer(WebsocketConsumer):
 			logger.error(f"Disconnect error: {str(e)}")
 
 	def receive(self, text_data):
-		try:
-			if not self.user or not self.user.is_authenticated:
-				return
+		# try:
+		# 	if not self.user or not self.user.is_authenticated:
+		# 		return
 			
-			data = json.loads(text_data)
-			data_source = data.get('source')
-			logger.debug(f"Received message: {data_source}")
+		data = json.loads(text_data)
+		data_source = data.get('source')
 
-			if data_source == 'trip.lookForDriver':
-				self.receive_trip_lookForDriver(data)
-			elif data_source == 'friend.list':
-				self.receive_friend_list(data)
-			elif data_source == 'message.list':
-				self.receive_message_list(data)
-			elif data_source == 'message.send':
-				self.receive_message_send(data)
-			elif data_source == 'message.type':
-				self.receive_message_type(data)
-			elif data_source == 'request.accept':
-				logger.debug("request.accept")
-				self.receive_request_accept(data)
-			elif data_source == 'request.connect':
-				self.receive_request_connect(data)
-			elif data_source == 'request.list':
-				self.receive_request_list(data)
-			elif data_source == 'search':
-				self.receive_search(data)
-			elif data_source == 'thumbnail':
-				self.receive_thumbnail(data)
-			elif data_source == 'create.food.order':
-				logger.debug('hello')
-				self.receive_order_create(data)
-			elif data_source == 'order.list':
-				self.receive_order_list(data)
-			elif data_source == 'order.accept':
-				self.receive_order_accept(data)
-			elif data_source == 'order.decline':
-				self.receive_order_decline(data)
-			elif data_source == 'driver.accepted':
-				self.receive_start_trip(data)
-			elif data_source == 'driver.arrived':
-				self.receive_driver_arrived(data)
-			elif data_source == 'trip.start':
-				self.receive_start_trip(data)
-			elif data_source == 'trip.ended':
-				self.receive_trip_ended(data)
-			elif data_source == 'trip.done':
-				self.receive_trip_done(data)
-			elif data_source == 'trip.rating':
-				self.receive_rating(data)
-			elif data_source == 'foodOrder.create':
-				self.receive_food_order_create(data)
-			elif data_source == 'confirm.payment':
-				self.receive_trip_confirm_payment(data)
-			elif data_source == 'driver.location':
-				self.receive_locationUpdate(data)
-			elif data_source == 'user.update':
-				self.receive_userUpdate(data)
-			elif data_source == 'request.cancel':
-				self.receive_request_cancel(data)
-		except Exception as e:
-			logger.error(f"Error processing message: {str(e)}")
+		# Pretty print  python dict
+		print('receive', json.dumps(data, indent=2))
+
+		if data_source == 'trip.lookForDriver':
+			self.receive_trip_lookForDriver(data)
+		elif data_source == 'friend.list':
+			self.receive_friend_list(data)
+		elif data_source == 'message.list':
+			self.receive_message_list(data)
+		elif data_source == 'message.send':
+			self.receive_message_send(data)
+		elif data_source == 'message.type':
+			self.receive_message_type(data)
+		elif data_source == 'request.accept':
+			logger.debug("request.accept")
+			self.receive_request_accept(data)
+		elif data_source == 'request.connect':
+			self.receive_request_connect(data)
+		elif data_source == 'request.list':
+			self.receive_request_list(data)
+		elif data_source == 'search':
+			self.receive_search(data)
+		elif data_source == 'thumbnail':
+			self.receive_thumbnail(data)
+		elif data_source == 'create.food.order':
+			logger.debug('hello')
+			self.receive_order_create(data)
+		elif data_source == 'order.list':
+			self.receive_order_list(data)
+		elif data_source == 'order.accept':
+			self.receive_order_accept(data)
+		elif data_source == 'order.decline':
+			self.receive_order_decline(data)
+		elif data_source == 'driver.accepted':
+			self.receive_start_trip(data)
+		elif data_source == 'driver.arrived':
+			self.receive_driver_arrived(data)
+		elif data_source == 'trip.start':
+			self.receive_start_trip(data)
+		elif data_source == 'trip.ended':
+			self.receive_trip_ended(data)
+		elif data_source == 'trip.done':
+			self.receive_trip_done(data)
+		elif data_source == 'trip.rating':
+			self.receive_rating(data)
+		elif data_source == 'foodOrder.create':
+			self.receive_food_order_create(data)
+		elif data_source == 'confirm.payment':
+			self.receive_trip_confirm_payment(data)
+		elif data_source == 'driver.location':
+			self.receive_locationUpdate(data)
+		elif data_source == 'user.update':
+			self.receive_userUpdate(data)
+		elif data_source == 'request.cancel':
+			self.receive_request_cancel(data)
+		elif data_source == 'location.rider.update':
+			self.receive_rider_location_update(data)
+			# location.driver.update
+		elif data_source == 'location.driver.update':
+			self.receive_driver_location_update(data)
+		# except Exception as e:
+		# 	logger.error(f"Error processing message: {str(e)}")
 
 	def receive_order_create(self, data):
 		user = self.scope['user']
@@ -454,13 +461,12 @@ class ChatConsumer(WebsocketConsumer):
 		location = data.get('location')
 		push_token = data.get('push_token')
 		riderPushToken = data.get('riderPushToken')
-
-		 
+  
 		# Attempt to fetch the receiving user
 		try:
 			receiver = CustomUser.objects.get(phone=phone)
 		except CustomUser.DoesNotExist:
-			print('Error: User not found')
+			print('Error: User not found') 
 			return
 		# Create connection
 		connection, _ = Connection.objects.get_or_create(
@@ -885,7 +891,142 @@ class ChatConsumer(WebsocketConsumer):
 		# Send response through WebSocket
 		self.send_group(self.scope['user'].phone, 'drivers.online', {
 			'online_drivers': drivers_data
-		})
+			})
+
+	def receive_rider_location_update(self, data):
+		print('Received location update', data)
+		try:
+			# Get the user and location data
+			user = self.scope['user']
+			location_data = data.get('data')
+			
+			if not location_data:
+				print('No location data received')
+				return
+				
+			# Extract location details
+			latitude = location_data.get('latitude')
+			longitude = location_data.get('longitude')
+			accuracy = location_data.get('accuracy')
+			speed = location_data.get('speed')
+			timestamp = location_data.get('timestamp')
+			
+			# Find active connection for the driver
+			try:
+				connection = Connection.objects.filter(
+				 
+					accepted=True,
+					receiver__phone=user.phone,
+					# status__in=['DRIVER ACCEPTED', 'TRIP STARTED']
+				).first()
+
+				connection = Connection.objects.filter(
+					sender__phone=user.phone, accepted=True
+				).first()
+
+				print("Connection", connection)
+				
+				if connection:
+					# Prepare location update data
+					location_update = {
+						'driver_id': user.id,
+						'latitude': latitude,
+						'longitude': longitude,
+						'accuracy': accuracy,
+						'speed': speed,
+						'timestamp': timestamp
+					}
+					
+					# Send to rider
+					# self.send_group(
+					# 	connection.receiver.phone,
+					# 	'location.rider.update',
+					# 	location_update
+					# )
+
+					self.send_group(connection.receiver.phone, 'location.rider.update', location_update)
+					# self.send_group(connection.sender.phone, 'location.rider.update', location_update)
+					
+					# Send confirmation to driver
+					# self.send_group(
+					# 	user.phone,
+					# 	'location.rider.update.confirmed',
+					# 	{'status': 'success'}
+					# )
+					
+			except Exception as e:
+				print(f'Error finding connection: {str(e)}')
+				
+		except Exception as e:
+			print(f'Error in location update: {str(e)}')
+
+
+	def receive_driver_location_update(self, data):
+		print('Received location update', data)
+		try:
+			# Get the user and location data
+			user = self.scope['user']
+			location_data = data.get('data')
+			
+			if not location_data:
+				print('No location data received')
+				return
+				
+			# Extract location details
+			latitude = location_data.get('latitude')
+			longitude = location_data.get('longitude')
+			accuracy = location_data.get('accuracy')
+			speed = location_data.get('speed')
+			timestamp = location_data.get('timestamp')
+			
+			# Find active connection for the driver
+			try:
+				# connection = Connection.objects.filter(
+				 
+				# 	accepted=True,
+				# 	sender__phone=user.phone,
+				# 	# status__in=['DRIVER ACCEPTED', 'TRIP STARTED']
+				# ).first()
+
+				connection = Connection.objects.filter(
+					receiver__phone=user.phone
+				).first()
+
+				print("Connection", connection.sender)
+				
+				if connection:
+					# Prepare location update data
+					location_update = {
+						'sender': connection.sender.phone, 
+						'latitude': latitude,
+						'longitude': longitude,
+						'accuracy': accuracy,
+						'speed': speed,
+						'timestamp': timestamp 
+					}
+					
+					# Send to rider
+					# self.send_group(
+					# 	connection.receiver.phone,
+					# 	'location.rider.update',
+					# 	location_update
+					# )
+
+					# self.send_group(connection.receiver.phone, 'location.rider.update', location_update)
+					self.send_group(connection.sender.phone, 'location.driver.update', location_update)
+					
+					# Send confirmation to driver
+					# self.send_group(
+					# 	user.phone,
+					# 	'location.rider.update.confirmed',
+					# 	{'status': 'success'}
+					# )
+					
+			except Exception as e:
+				print(f'Error finding connection: {str(e)}')
+				
+		except Exception as e:
+			print(f'Error in location update: {str(e)}')
 
 	#--------------------------------------------
 	#   Catch/all broadcast to client helpers

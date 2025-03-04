@@ -4,7 +4,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import DriverOnline, Message
 from .serializers import DriverOnlineSerializer, MessageSerializer
-
+from rest_framework.permissions import AllowAny
 class MessageListCreateAPIView(generics.ListCreateAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
@@ -28,6 +28,7 @@ from rest_framework import status
 class DriverOnlineListCreateAPIView(generics.ListCreateAPIView):
     # queryset = DriverOnline.objects.all()
     serializer_class = DriverOnlineSerializer
+    permission_classes = [AllowAny]  # Add this line
     def get_queryset(self):
         return DriverOnline.objects.filter(is_online=True)
 
