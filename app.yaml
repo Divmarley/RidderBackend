@@ -4,7 +4,7 @@ entrypoint: gunicorn driverapp.wsgi:application
 
 env_variables:
   SECRET_KEY: "your-django-secret-key"
-  DEBUG: "False"
+  DEBUG: "True"
 
 handlers:
   - url: /static
