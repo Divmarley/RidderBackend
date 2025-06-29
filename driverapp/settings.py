@@ -115,26 +115,48 @@ ASGI_APPLICATION = 'driverapp.asgi.application'
 # }
 
 
-if os.getenv("GAE_ENV", "").startswith("standard"):
-    # Running in production on App Engine
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql_psycopg2",
-            "HOST": "/cloudsql/circular-music-463403-p3:us-central:django-db",
-            "NAME": "django-db",
-            "USER": "django_user",
-            "PASSWORD": "yawigo",
-        }
+# DATABASES = {
+#         "default": {
+#         "ENGINE": "django.db.backends.postgresql_psycopg2",
+#         "HOST": "/cloudsql/circular-music-463403-p3:us-central:django-db",
+#         "NAME": "django-db",
+#         "USER": "django_user",
+#         "PASSWORD": "yawigo",
+#         "PORT": "3306",
+#     }
+# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django--db',              # your actual DB name
+        'USER': 'root',            # your DB user
+        'PASSWORD': 'yawigo',             # your DB password
+        'HOST': '34.10.38.34',            # Cloud SQL public IP
+        'PORT': '3306',                   # ✅ MySQL default port
     }
-else:
-    # Local development
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-        }
-    }
+}
+# 
 
+# if os.getenv("GAE_ENV", "").startswith("standard"):
+    # Production (App Engine uses socket)
+# DATABASES = {
+#     "default": {
+#     "ENGINE": "django.db.backends.postgresql_psycopg2",
+#     "HOST": "/cloudsql/circular-music-463403-p3:us-central:django-db",
+#     "NAME": "django-db",
+#     "USER": "django_user",
+#     "PASSWORD": "yawigo",
+#     "PORT": "5432",
+# }
+# }
+# else:
+#     # Local (via TCP using proxy)
+#      DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
