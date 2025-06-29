@@ -107,23 +107,33 @@ ASGI_APPLICATION = 'driverapp.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': os.environ.get("DB_ENGINE", "django.db.backends.mysql"),
-#         'NAME': os.environ.get("MYSQL_DATABASE", 'ridderapp'),
-#         'USER': os.environ.get("MYSQL_USER", "admin"),
-#         'PASSWORD': os.environ.get("MYSQL_ROOT_PASSWORD", "ehhfaIhYCSJ7LvE"),
-#         'HOST': os.environ.get("MYSQL_HOST", "localhost"),
-#         'PORT': 3306,
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+
+if os.getenv("GAE_ENV", "").startswith("standard"):
+    # Running in production on App Engine
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "HOST": "/cloudsql/circular-music-463403-p3:us-central:django-db",
+            "NAME": "django-db",
+            "USER": "django_user",
+            "PASSWORD": "yawigo",
+        }
+    }
+else:
+    # Local development
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        }
+    }
 
 
 # Password validation
@@ -177,7 +187,7 @@ else:
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
- 
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -193,7 +203,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'kofikumi64@gmail.com'  # Replace with your email
 EMAIL_HOST_PASSWORD = 'vzpo udjs pwwd dbzb'  # Replace with your email password
 
- 
+
 # settings.py
 ASGI_APPLICATION = 'driverapp.asgi.application'
 
@@ -209,7 +219,7 @@ CHANNEL_LAYERS = {
  
 	}
 }
- 
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -217,17 +227,17 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,  # Adjust this to your needs
 }
- 
- 
+
+
 # FILE_UPLOAD_HANDLERS = [
 #     'django.core.files.uploadhandler.TemporaryFileUploadHandler',
 #     'django.core.files.uploadhandler.MemoryFileUploadHandler',
 # ]
- 
+
 
 # Optionally, you can increase the max upload size if the image is large
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # Example: 10MB
- 
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(weeks=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -251,7 +261,6 @@ SIMPLE_JWT = {
 TWILIO_ACCOUNT_SID = 'baabcff8-2553-477b-a5b9-9ff179788989'
 TWILIO_AUTH_TOKEN = '975655e042f7c2907273b7978e195c26-746c53cc-5443-4a7a-a269-b9520da9a9a3'
 TWILIO_PHONE_NUMBER = '447860099299'
-
 
 
 USE_X_FORWARDED_HOST = True

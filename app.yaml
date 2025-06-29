@@ -6,6 +6,9 @@ env_variables:
   SECRET_KEY: "your-django-secret-key"
   DEBUG: "True"
 
+beta_settings:
+  cloud_sql_instances: circular-music-463403-p3:us-central:django-db
+  
 handlers:
   - url: /static
     static_dir: staticfiles/
