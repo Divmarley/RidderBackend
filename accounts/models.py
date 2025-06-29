@@ -41,21 +41,20 @@ class CustomUserManager(BaseUserManager):
 
 
 def upload_thumbnail(instance, filename):
-    
-	path = f'thumbnails/{instance.phone}'
-    
-	extension = filename.split('.')[-1]
-	if extension:
-		path = path + '.' + extension
-	return path
+    if not filename:
+        filename = f'default_thumbnail.jpg'  # Provide a default filename
+    extension = filename.split('.')[-1]
+    return f'thumbnails/{instance.phone}.{extension}'
 
 
 class CustomUser(AbstractBaseUser,PermissionsMixin):
     ACCOUNT_TYPE_CHOICES = [
         ('driver', 'Driver'),
         ('rider', 'Rider'),
+        ('repair', 'Repair'),
         ('user', 'User'),
         ('restaurant', 'Restaurant'),
+        ('pharmacy','Pharmacy'),
     ]
 
     email = models.EmailField(unique=True, null=True, blank=True)
@@ -98,16 +97,16 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
         verbose_name = 'User'
         verbose_name_plural = 'Users'
 
-class Profile(models.Model):
+class RepairProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     access_token = models.CharField(max_length=255, blank=True, null=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
 
     class Meta:
-        db_table = 'Profile'
+        db_table = 'Repair Profile'
         managed = True
-        verbose_name = 'Profile'
-        verbose_name_plural = 'Profiles'
+        verbose_name = 'Repair Profile'
+        verbose_name_plural = 'Repair Profiles'
 
     def update_profile_picture_from_base64(self, base64_data):
         if base64_data:
@@ -138,6 +137,11 @@ class DriverProfile(models.Model):
             data = ContentFile(base64.b64decode(imgstr), name=f'{self.user.id}.{ext}')
             self.profile_picture = data
             self.save()
+    class Meta:
+        db_table = 'Driver Profile'
+        managed = True
+        verbose_name = 'Driver Profile'
+        verbose_name_plural = 'Driver Profile'
 
 class RiderProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='rider_profile')
@@ -156,6 +160,12 @@ class RiderProfile(models.Model):
             data = ContentFile(base64.b64decode(imgstr), name=f'{self.user.id}.{ext}')
             self.profile_picture = data
             self.save()
+    
+    class Meta:
+        db_table = 'Rider Profile'
+        managed = True
+        verbose_name = 'Rider Profile'
+        verbose_name_plural = 'Riders Profile'
 
 
 
@@ -177,6 +187,37 @@ class RestaurantProfile(models.Model):
             self.profile_picture = data
             self.save()
 
+    class Meta:
+        db_table = 'Restaurant Profile'
+        managed = True
+        verbose_name = 'Restaurant Profile'
+        verbose_name_plural = 'Restaurants Profile'
+
+
+class PharmacyProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='pharmacy_profile')
+    payment_method = models.CharField(max_length=50, blank=True, null=True)
+    preferred_pharmacy_rating = models.FloatField(default=0)
+    access_token = models.CharField(max_length=255, blank=True, null=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    
+    def __str__(self):
+        return f"{self.user.name} - Pharmacy Profile"
+    
+    def update_profile_picture_from_base64(self, base64_data):
+        if base64_data:
+            format, imgstr = base64_data.split(';base64,')
+            ext = format.split('/')[-1]
+            data = ContentFile(base64.b64decode(imgstr), name=f'{self.user.id}.{ext}')
+            self.profile_picture = data
+            self.save()
+
+    class Meta:
+        db_table = 'Pharmacy Profile'
+        managed = True
+        verbose_name = 'Pharmacy Profile'
+        verbose_name_plural = 'Pharmacys Profile'
+
 @receiver(post_save, sender=CustomUser)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
@@ -186,6 +227,10 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
             profile = RiderProfile.objects.create(user=instance)
         elif instance.account_type == 'restaurant':
             profile = RestaurantProfile.objects.create(user=instance)
+        elif instance.account_type == 'repair':
+            profile = RepairProfile.objects.create(user=instance)
+        elif instance.account_type == 'pharmacy':
+            profile = PharmacyProfile.objects.create(user=instance)
         # else:
         #     profile = Profile.objects.create(user=instance)
         
@@ -210,6 +255,13 @@ class PersonalInfo(models.Model):
     phone = models.CharField(max_length=15,null=True, blank=True)
     address = models.TextField(null=True, blank=True)
 
+
+    class Meta:
+        db_table = 'Personal Information'
+        managed = True
+        verbose_name = 'Personal Information'
+        verbose_name_plural = 'Personal Informations'
+
 class VehicleInfo(models.Model):
     driver = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     vehicle_name = models.CharField(max_length=100,null=True, blank=True)
@@ -218,6 +270,12 @@ class VehicleInfo(models.Model):
     year = models.IntegerField(null=True, blank=True)
     vehicle_registration_number = models.CharField(max_length=50,null=True, blank=True)
     vehicle_license_number = models.CharField(max_length=50, null=True, blank=True)
+
+    class Meta:
+        db_table = 'Vehicle Information'
+        managed = True
+        verbose_name = 'Vehicle Information'
+        verbose_name_plural = 'Vehicle Informations'
 
 class Document(models.Model):
     driver = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -228,10 +286,20 @@ class Document(models.Model):
     identification_card = models.ImageField(upload_to='documents/',null=True, blank=True)
     document_file = models.FileField(upload_to='documents/',null=True, blank=True)
 
+    class Meta:
+        db_table = 'Document'
+        managed = True
+        verbose_name = 'Document'
+        verbose_name_plural = 'Documents'
+
 class Upload(models.Model):
     driver = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     upload_file = models.FileField(upload_to='uploads/',null=True, blank=True)
     
-
+    class Meta:
+        db_table = 'Upload'
+        managed = True
+        verbose_name = 'Upload'
+        verbose_name_plural = 'Uploads'
 
 

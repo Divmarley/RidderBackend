@@ -41,9 +41,8 @@ class RequestSerializer(serializers.ModelSerializer):
             'created',
             'status',
             'extras',
-            'data_driver'
-            
-
+            'data_driver',
+            'riderPushToken'
         ]
 
 class FriendSerializer(serializers.ModelSerializer):
@@ -99,7 +98,6 @@ class RideRequestSerializer(serializers.ModelSerializer):
         model = RideRequest
         fields = '__all__'
 
-
 class TripSerializer(serializers.ModelSerializer):
     sender = UserSerializer()
     receiver = UserSerializer()
@@ -117,7 +115,6 @@ class TripSerializer(serializers.ModelSerializer):
             
         ]
 
-
 # TripHistorySerializer
 
 class TripHistorySerializer(serializers.ModelSerializer):
@@ -128,11 +125,7 @@ class TripHistorySerializer(serializers.ModelSerializer):
         model = TripHistory
         fields = '__all__'
 
-  
-
-
 class DriverOnlineSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = DriverOnline
-        fields = ['driver', 'phone', 'location', 'latitude', 'longitude','is_online','push_token']
+        fields = ['driver', 'phone', 'location', 'latitude', 'longitude','is_online','push_token','ride_type']

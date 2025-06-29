@@ -36,5 +36,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('driver-profile/<int:id>/', DriverProfileByIdView.as_view(), name='driver-profile-by-id'),
     path('rider-profile/<int:id>/', RiderProfileByIdView.as_view(), name='rider-profile-by-id'),
+    path('update-profile/', UpdateUserProfileView.as_view(), name='update-profile'),
 
 ]

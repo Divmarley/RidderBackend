@@ -71,8 +71,18 @@ class RideRequest(models.Model):
         return f'Ride request from {self.rider.phone} to {self.driver.phone} at ({self.latitude}, {self.longitude})'
 
 class DriverOnline(models.Model):
+    RIDE_TYPE_CHOICES = [
+        ('CAR', 'Car'),
+        ('MOTO', 'Motorcycle'),
+        ('PACKAGE', 'Package Delivery'),
+    ]
     driver = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user_driver')
     phone = models.CharField(max_length=15, unique=True)
+    ride_type = models.CharField(
+        max_length=15,
+        choices=RIDE_TYPE_CHOICES,
+        default='CAR'
+    )
     location = models.CharField(max_length=255,null=True, blank=True)
     latitude = models.CharField(max_length=255,null=True, blank=True)
     longitude = models.CharField(max_length=255,null=True, blank=True)

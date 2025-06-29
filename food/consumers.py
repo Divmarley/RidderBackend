@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from accounts.models import CustomUser
 import json
 from asgiref.sync import async_to_sync
-from food.models import FoodConnection, FoodMenu, Order, OrderItem,Restuarant
+from food.models import FoodConnection, FoodMenu, Order, OrderItem
 from food.serializers import FoodConnectionSerializer, OrderSerializer, RequestFoodSerializer
 import random
 import string
@@ -47,7 +47,7 @@ class FoodConsumer(WebsocketConsumer):
     def receive(self, text_data):
         data = json.loads(text_data)
         data_source = data.get('source') 
-        print(data_source,)
+ 
 
         if data_source == 'request.connect.food':
             self.receive_food_request_connect(data)
@@ -60,7 +60,7 @@ class FoodConsumer(WebsocketConsumer):
 
  
     def update_order_status(self, data):
-        print("data", data)
+        # print("data", data)
         """
         Function to update the order and FoodConnection status.
         """
@@ -69,11 +69,11 @@ class FoodConsumer(WebsocketConsumer):
         order_id = data.get('order_id')
         user = self.scope['user']
 
-        if not user:
-            self.send(text_data=json.dumps({
-                'error': 'User is not authenticated'
-            }))
-            return
+        # if not user:
+        #     self.send(text_data=json.dumps({
+        #         'error': 'User is not authenticated'
+        #     }))
+        #     return
 
         try:
             food_connection = FoodConnection.objects.get(id=food_connection_id)
@@ -84,11 +84,11 @@ class FoodConsumer(WebsocketConsumer):
             return
 
         # Ensure that the user is either the buyer or the restaurant involved in the connection
-        if food_connection.buyer != user and food_connection.restaurant != user:
-            self.send(text_data=json.dumps({
-                'error': 'You are not authorized to update this order'
-            }))
-            return
+        # if food_connection.buyer != user and food_connection.restaurant != user:
+        #     self.send(text_data=json.dumps({
+        #         'error': 'You are not authorized to update this order'
+        #     }))
+        #     return
 
         # Fetch the related order
         try:
@@ -116,11 +116,11 @@ class FoodConsumer(WebsocketConsumer):
 
         # Serialize the updated order and food connection
         order_data = OrderSerializer(order).data
-        print("order_data==>", order_data)
+        # print("order_data==>", order_data)
         food_connection_data = FoodConnectionSerializer(food_connection).data
 
         # Notify both the buyer (sender) and restaurant (receiver) about the status update
-        print("food_connection_data", food_connection_data)
+        # print("food_connection_data", food_connection_data)
         self.send_group(
             food_connection.buyer.phone, 'update.order.status', order_data
         )
@@ -280,29 +280,35 @@ class FoodConsumer(WebsocketConsumer):
     #     )
     def receive_food_request_connect(self, data):
  
-        # print("data",data)
+        print("data",data)
+        
         daseData = data.get('data')
         print("daseData",daseData)
         location = daseData['location']
         # print("location",location)
         phone = daseData['phone']
-        # restaurant_id = daseData['restaurant']
+        restaurant_id = daseData['receiver']
         pushToken = daseData['pushToken']
         items = daseData['items']
         total_price = daseData['total_price']
         status = daseData['status']
         user = self.scope['user']
         order_info=  daseData['order_info']
+        print("restaurant_id-->",restaurant_id[0].get('restaurantId'))
+       
 
    
-        if not user:
-            self.send(text_data=json.dumps({
-                'error': 'User is not authenticated'
-            }))
-            return
+        # if not user:
+        #     self.send(text_data=json.dumps({
+        #         'error': 'User is not authenticated'
+        #     }))
+        #     return
+
+        user = self.scope['user']
+        print('user-->>>',user.id)
 
         try:
-            restaurant = CustomUser.objects.get(id=31)
+            restaurant = CustomUser.objects.get(id=restaurant_id[0].get('restaurantId'))
         except CustomUser.DoesNotExist:
             self.send(text_data=json.dumps({
                 'error': 'Restaurant not found'
@@ -319,8 +325,9 @@ class FoodConsumer(WebsocketConsumer):
             status=status,
             order_info=order_info
         ) 
-
         print('connection',connection)
+
+
         # Create Order instance
         order_id = generate_order_id()
         order = Order.objects.create(
@@ -369,42 +376,49 @@ class FoodConsumer(WebsocketConsumer):
                 "phone": connection.buyer.phone,
             },
             "restaurant": {
-                "id": connection.restaurant.id,
-    
+                "id": connection.restaurant.id, 
                 "phone": connection.restaurant.phone,
             } 
             
         }
 
+
         # Send response
+        print('Response buyer from restaurant:',response_data )
         self.send_group(
             connection.buyer.phone, 'request.connect.food', response_data
         )
+
+        print('Response restaurant from restaurant:', )
         self.send_group(
             connection.restaurant.phone, 'request.connect.food', response_data
         )
 
     def list_orders(self):
+  
         user = self.scope['user']
-        if not user:
-            self.send(text_data=json.dumps({
-                'source': 'list.orders',
-                'error': 'User is not authenticated'
-            }))
-            return
+        print('user',user.phone)
+        # if not user:
+        #     self.send(text_data=json.dumps({
+        #         'source': 'list.orders',
+        #         'error': 'User is not authenticated'
+        #     }))
+        #     return
 
         # Fetch orders where the user is the sender or receiver
         orders = Order.objects.filter(
-            sender=user
-        ) | Order.objects.filter(receiver=user)
-
+            sender__id=user.id
+        ) | Order.objects.filter(receiver__id=user.id)
+        print('list_orders-->>orders',orders)
         # Prepare serialized orders data with item details
         orders_data = []
         for order in orders:
+          
             # Fetch items related to the order
             order_items = []
-            for item in order.items.all():
+            for item in order.items.all(): 
                 item_data = {
+                    "order_id": order.order_id,  # Use order.order_id for the order ID
                     "item_id": item.food_menu.id,  # Corrected here
                     "quantity": item.quantity,
                     "name": item.food_menu.name,
@@ -412,7 +426,9 @@ class FoodConsumer(WebsocketConsumer):
                     # "image": item.food_menu.image,
                     "price": float(item.food_menu.price)  # Convert Decimal to float
 
+
                 }
+                print('item_data',item_data)
                 order_items.append(item_data)
 
             # Add order details including item data
@@ -437,28 +453,28 @@ class FoodConsumer(WebsocketConsumer):
         # Send serialized data back to the client
         self.send(text_data=json.dumps(response_data))
 
-        # self.send_group(
-		# 	user, 'list.orders', response_data
-		# )
+        self.send_group(
+			user.phone , 'list.orders', response_data
+		)
 
 
-    def  receive_food_list(self, data):
+    def receive_food_list(self, data):
         user = self.scope['user']
-        print("user",user)
-        if not user:
-            self.send(text_data=json.dumps({
-                'error': 'User is not authenticated'
-            }))
-            return
-        print("receive_food_list", data)
-        print("receive_request_connect data",data)
-		# Attempt to fetch the receiving user
-        # try:
-        #     resturant = CustomUser.objects.get(phone='233262639764')
-        # except CustomUser.DoesNotExist:
-        #     print('Error: User not found')
+        print("receive_food_list user",user)
+        # if not user:
+        #     self.send(text_data=json.dumps({
+        #         'error': 'User is not authenticated'
+        #     }))
         #     return
-		# # Create connection
+        # print("receive_food_list", data)
+        # print("receive_request_connect data",data)
+		# Attempt to fetch the receiving user
+        try:
+            resturant = CustomUser.objects.get(phone=user.phone)
+        except CustomUser.DoesNotExist:
+            print('Error: User not found')
+            return
+		# Create connection
         # connection, _ = FoodConnection.objects.get_or_create(
 		# 	sender=self.scope['user'],
 		# 	receiver=resturant,

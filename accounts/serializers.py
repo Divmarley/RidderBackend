@@ -78,7 +78,7 @@ class RiderProfileSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=False, default="")
-
+    
     class Meta:
         model = CustomUser
         fields = ['email', 'phone', 'name', 'password', 'account_type','is_active']
@@ -94,7 +94,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=validated_data.get('email'),
             phone=validated_data.get('phone'),
             name=validated_data.get('name'),  # Making name optional
-            is_active=validated_data.get('is_active'),  # Making name optional
+            is_active=validated_data.get('is_active'), 
             password=validated_data['password'],
             account_type=validated_data['account_type']
         )
@@ -134,8 +134,23 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['profile_picture','email', 'name',]
+        fields = ['profile_picture','email', 'name']
 
+
+class EditProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id','email', 'name']  # Include all fields or specify the ones needed
+        read_only_fields = ['id']  # Ensure user field is not changed
+
+    def update(self, instance, validated_data):
+        """Handles updating the profile"""
+        instance.name = validated_data.get('name', instance.name)
+        instance.phone = validated_data.get('phone', instance.phone) 
+        instance.save()
+        return instance
+
+    
 class DriverSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
@@ -171,7 +186,7 @@ class CreateAllDataSerializer(serializers.Serializer):
         # Ensure the driver is provided or fetched
         
         user_id = self.context.get('user_id')
-        print("user_id",user_id)
+        print("create user_id",user_id)
  
         user = CustomUser.objects.get(id=user_id)
 
@@ -186,7 +201,7 @@ class CreateAllDataSerializer(serializers.Serializer):
         # Create Document instances
         documents_data = validated_data.pop('documents')
         documents = [Document.objects.create(driver=user, **doc_data) for doc_data in documents_data]
-
+        print("documents",documents)
         # Return serialized data
         return {
             'personal_info': PersonalInfoSerializer(personal_info).data,
@@ -219,3 +234,21 @@ class RiderProfileSerializer(serializers.ModelSerializer):
         model = RiderProfile
         fields = ['id', 'user'] #'license_number', 'vehicle_registration_number', 'vehicle_model', 'vehicle_color', 'available', 'completed_trips','access_token'
 
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['name', 'email', 'phone']
+
+    def validate_email(self, value):
+        """Ensure email is valid and unique."""
+        if CustomUser.objects.filter(email=value).exclude(id=self.instance.id).exists():
+            raise serializers.ValidationError("This email is already in use.")
+        return value
+
+    def validate_phone(self, value):
+        """Ensure phone number is valid and unique."""
+        if CustomUser.objects.filter(phone=value).exclude(id=self.instance.id).exists():
+            raise serializers.ValidationError("This phone number is already in use.")
+        return value

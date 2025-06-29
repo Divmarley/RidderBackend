@@ -1,4 +1,3 @@
- 
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from rest_framework import status, generics
@@ -11,14 +10,15 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from accounts import send_verification_code
 from chat.models import DriverOnline
-from food.models import Details, Image, Location, Rating, Restuarant
-from .models import CustomUser, DriverProfile, PersonalInfo, Profile, RiderProfile, Upload, VehicleInfo,Document
-from .serializers import CreateAllDataSerializer, DocumentSerializer, DriverProfileSerializer, DriverSerializer, LoginSerializer, PersonalInfoSerializer, RegisterSerializer, RiderProfileSerializer, UploadSerializer, UserSerializer, VehicleInfoSerializer, VerifyLoginSerializer, ProfileSerializer
+from food.models import Image, Location, Rating, Restaurant
+from .models import CustomUser, DriverProfile, PersonalInfo, RepairProfile, RiderProfile, Upload, VehicleInfo,Document
+from .serializers import CreateAllDataSerializer, DocumentSerializer, DriverProfileSerializer, DriverSerializer, EditProfileSerializer, LoginSerializer, PersonalInfoSerializer, RegisterSerializer, RiderProfileSerializer, UploadSerializer, UserProfileSerializer, UserSerializer, VehicleInfoSerializer, VerifyLoginSerializer, ProfileSerializer
 
 class RegisterView(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
+        print("request", request.data)
         serializer = RegisterSerializer(data=request.data)
         
         if serializer.is_valid():
@@ -44,8 +44,7 @@ class RegisterView(APIView):
 
             print("user",user.account_type) 
 
-            if user.account_type=='driver':
-
+            if user.account_type=='driver': 
                 DriverOnline.objects.create(
                     driver=user,
                     phone=request.data.get('phone'),  # Ensure phone number is part of registration data
@@ -53,6 +52,8 @@ class RegisterView(APIView):
                     latitude=request.data.get('latitude'),     # Default latitude, adjust as needed
                     longitude=request.data.get('longitude'),   # Default longitude, adjust as needed
                     push_token=request.data.get('push_token'),
+                    ride_type=request.data.get('ride_type'),
+                    # ride_type='Car'  # Ensure phone number is part of registration data
                     # rideType='Car'
                 )
                 
@@ -69,11 +70,11 @@ class RegisterView(APIView):
                     number_of_ratings=request.data.get('number_of_ratings', 0)
                 )
                 
-                details = Details.objects.create(
-                    name=request.data.get('restaurant_name'),
-                    price_range=request.data.get('price_range', '$0 - $100'),
-                    delivery_time=request.data.get('delivery_time', '20-30 mins')
-                )
+                # details = Details.objects.create(
+                #     name=request.data.get('restaurant_name'),
+                #     price_range=request.data.get('price_range', '$0 - $100'),
+                #     delivery_time=request.data.get('delivery_time', '20-30 mins')
+                # )
                 
                 location = Location.objects.create(
                     address=request.data.get('address'),
@@ -84,29 +85,14 @@ class RegisterView(APIView):
                         'longitude': request.data.get('longitude', '0.0')
                     }
                 )
-
-                # Create Restaurant with all related information
-                # Restaurant.objects.create(
-                #     user=user,
-                #     available=request.data.get('available', 'open'),
-                #     image=image,
-                #     rating=rating,
-                #     details=details,
-                #     location=location,
-                #     cuisine=request.data.get('cuisine', 'International'),
-                #     is_open=request.data.get('is_open', True),
-                #     about_us=request.data.get('about_us', 'About us text'),
-                #     delivery_fee=request.data.get('delivery_fee', '5.00'),
-                # )
-                
-            print('verification_code', user.verification_code)
+  
             return Response({
                 'detail': 'User created successfully',
                 'access_token': access_token,
                 'verification_code': user.verification_code,
                 'id': user.id
             }, status=status.HTTP_201_CREATED) 
-        print(serializer.errors)
+ 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TokenObtainView(APIView):
@@ -129,6 +115,7 @@ class LoginView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         phone = request.data.get('phone')
+        print('Phone' , phone)
 
         email = request.data.get('email')
         print('Email',email)
@@ -296,26 +283,27 @@ class VerifyLoginView(APIView):
 
 
 class ProfileView(generics.RetrieveUpdateAPIView):
-    queryset = RiderProfile.objects.all()
+ 
     permission_classes = [IsAuthenticated]
-    serializer_class = ProfileSerializer
+    serializer_class = EditProfileSerializer
 
     def get_object(self):
-        print('self',self.request.user.thumbnail)    
-        return RiderProfile.objects.filter(user = self.request.user)
-        # return Response(self.request.user, status=status.HTTP_400_BAD_REQUEST) 
+        """Ensure this returns a single user instance, not a queryset"""
+        return self.request.user  # This returns the logged-in user instance
 
     def update(self, request, *args, **kwargs):
-         
+        """Handles profile updates"""
         partial = kwargs.pop('partial', False)
-        instance = self.get_object()
+        instance = self.get_object()  # Ensure it's a single instance
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        print(serializer)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        if not serializer.is_valid():
+            print("Validation Errors:", serializer.errors)  # Debugging step
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class UserListCreateAPIView(generics.ListCreateAPIView):
     queryset = CustomUser.objects.all()
@@ -414,19 +402,58 @@ class DeleteUserView(APIView):
     
 
  
+import json
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
 class CreateAllDataView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+    
     def post(self, request, *args, **kwargs):
-        print("request", request.user.id)
-        serializer = CreateAllDataSerializer(data=request.data, context={'user_id': request.user.id})
-        if serializer.is_valid():
-            data = serializer.save()
-            return Response(data, status=status.HTTP_201_CREATED)
-        print(serializer.errors)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            # Handle documents - convert to list if single file
+            documents = request.FILES.getlist('documents')
+            if not isinstance(documents, list):
+                documents = [documents]
 
+            # Parse JSON data
+            personal_info = json.loads(request.data.get('personal_info', '{}'))
+            vehicle_info = json.loads(request.data.get('vehicle_info', '{}'))
+            user_id = json.loads(request.data.get('user_id'))
+
+            # Combine data and documents
+            serializer_data = {
+                'documents': [],
+                'personal_info': personal_info,
+                'vehicle_info': vehicle_info,
+                'user_id': user_id
+            }
+
+            serializer = CreateAllDataSerializer(
+                data=serializer_data, 
+                context={'user_id': user_id}
+            )
+
+            if serializer.is_valid():
+                result = serializer.save()
+                return Response(result, status=status.HTTP_201_CREATED)
+            
+            print("Validation errors:", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+        except json.JSONDecodeError as e:
+            return Response(
+                {'error': f'Invalid JSON format: {str(e)}'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            print(f"Error processing request: {str(e)}")
+            return Response(
+                {'error': str(e)}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 class GetDriverVehicleInfoByIdViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk=None):
@@ -446,3 +473,19 @@ class GetDriverInfoByIdViewSet(viewsets.ViewSet):
             return Response(serializer.data)
         except PersonalInfo.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+        
+
+
+class UpdateUserProfileView(APIView):
+    """API to update user profile (name, email, phone)"""
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+        serializer = UserProfileSerializer(user, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Profile updated successfully", "user": serializer.data}, status=status.HTTP_200_OK)
+        print('serializer.errors', serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

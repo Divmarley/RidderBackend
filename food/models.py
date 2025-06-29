@@ -52,34 +52,9 @@ class Rating(models.Model):
     class Meta:
         verbose_name = "Rating"
         verbose_name_plural = "Ratings"
-
-class Location(models.Model):
-    address = models.CharField(max_length=255)
-    city = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
-    coordinates = models.JSONField()
-
-    def __str__(self):
-        return f"{self.address}, {self.city}, {self.country}"
-
-    class Meta:
-        verbose_name = "Location"
-        verbose_name_plural = "Locations"
-
-class Details(models.Model):
-    name = models.CharField(max_length=100)
-    price_range = models.CharField(max_length=100)
-    delivery_time = models.CharField(max_length=50)
-
-    def __str__(self):
-        return f"{self.name} - {self.price_range} - {self.delivery_time}"
-
-    class Meta:
-        verbose_name = "Details"
-        verbose_name_plural = "Details"
-
-from django.db import models
-import json
+ 
+ 
+ 
 
 # Category model for food items
 class Category(models.Model):
@@ -119,7 +94,8 @@ class Category(models.Model):
     "paid_addons": [],
     "price": "12.00"
    }
-  '''
+'''
+
 class FoodMenu(models.Model):
     restaurant = models.ForeignKey(CustomUser, related_name="user_food_menu", on_delete=models.CASCADE)
     category = models.ForeignKey(Category, related_name="food_items", on_delete=models.CASCADE)  # Link to Category
@@ -134,56 +110,7 @@ class FoodMenu(models.Model):
     def __str__(self):
         return f"{self.name} - {self.category.name}"
 
-# class Restaurant(models.Model):
-#     user = models.ForeignKey(CustomUser, related_name='restaurants', on_delete=models.CASCADE)
-#     AVAILABLE_CHOICES = [
-#         ('open', 'Open'),
-#         ('closed', 'Closed'),
-#     ]
-#     available = models.CharField(max_length=6, choices=AVAILABLE_CHOICES)
-#     # image = models.OneToOneField(Image, on_delete=models.CASCADE)
-#     image = models.ImageField(upload_to='images/')
-#     rating = models.OneToOneField(Rating, on_delete=models.CASCADE)
-#     details = models.OneToOneField(Details, on_delete=models.CASCADE)
-#     location = models.OneToOneField(Location, on_delete=models.CASCADE)
  
-#     cuisine = models.CharField(max_length=255)
-#     is_open = models.BooleanField(default=False)
-#     about_us = models.TextField(null=True, blank=True)
-#     delivery_fee = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-
-#     def __str__(self):
-#         return self.details.name
-
-#     class Meta:
-#         verbose_name = "Restaurant"
-#         verbose_name_plural = "Restaurants"
-
-AVAILABLE_CHOICES = [
-        ('open', 'Open'),
-        ('closed', 'Closed'),
-    ]
-class Restuarant(models.Model):
-    user = models.ForeignKey(CustomUser, related_name='restaurants', on_delete=models.CASCADE)
-    name = models.CharField(max_length=200)
-    price_range = models.CharField(max_length=100)
-    delivery_time = models.CharField(max_length=100)
-    address = models.CharField(max_length=255)
-    city = models.CharField(max_length=100)
-    country = models.CharField(max_length=100)
-    coordinates = models.JSONField() 
-    image = models.ImageField(upload_to='images/', blank=True, null=True)
-    rating = models.IntegerField(default=0)
-    cuisine = models.CharField(max_length=255)
-    is_open = models.BooleanField(default=True)
-    about_us = models.TextField(null=True, blank=True)
-    delivery_fee = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = "Restaurant"
-        verbose_name_plural = "Restaurants"
  
 import random
 import string
@@ -231,25 +158,12 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField()
 
     def __str__(self):
-        return f"OrderItem {self.id} for Order {self.order.id}: {self.item.name}"
+        return f"OrderItem {self.id} for Order {self.order.id}: {self.food_menu.name}"
 
     class Meta:
         verbose_name = "Order Item"
         verbose_name_plural = "Order Items"
-
-
-class Review(models.Model):
-    food_menu = models.ForeignKey('FoodMenu', related_name='reviews', on_delete=models.CASCADE)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    rating = models.PositiveIntegerField()  # E.g., 1 to 5 stars
-    comment = models.TextField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Review by {self.user.name} on {self.food_menu.name}"
-    
-
-
+ 
 # ===========================new============================
 
 class Location(models.Model):
@@ -293,6 +207,11 @@ class Restaurant(models.Model):
 
     def __str__(self):
         return self.name
+    class Meta:
+        db_table = 'Restaurant'
+        managed = True
+        verbose_name = 'Restaurant'
+        verbose_name_plural = 'Restaurants'
 
 class Review(models.Model):
     restaurant = models.ForeignKey(Restaurant, related_name='reviews', on_delete=models.CASCADE)

@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'chat',
     'food',
     'ride.apps.RideConfig', 
+    'pharmacy.apps.PharmacyConfig', 
 ]
 
 MIDDLEWARE = [

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from accounts.models import CustomUser
-from .models import Category, OrderItem, Restuarant, Image, Rating, Location, Details, FoodMenu,FoodConnection, Review
+from .models import Category, OrderItem, Restaurant, Image, Rating, Location, FoodMenu,FoodConnection, Review
 import base64
 from django.core.files.base import ContentFile
 from rest_framework.exceptions import ValidationError
@@ -52,13 +52,18 @@ class LocationSerializer(serializers.ModelSerializer):
         model = Location
         fields = ['address', 'city', 'country','coordinates']
 
-class DetailsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Details
-        fields = ['name', 'price_range', 'delivery_time']
+# class DetailsSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Details
+#         fields = ['name', 'price_range', 'delivery_time']
 
 class FoodMenuSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)  # Use nested serializer
+    category_id = serializers.PrimaryKeyRelatedField(
+        queryset=Category.objects.all(),
+        source='category',
+        write_only=True
+    )  # For writing
     # category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())  # Category as a PrimaryKey
     # category =  serializers.CharField(source='category.name', read_only=True)  # Category as a PrimaryKey
     order_type = serializers.CharField(max_length=50)  # New field: order_type
@@ -67,7 +72,7 @@ class FoodMenuSerializer(serializers.ModelSerializer):
     image = serializers.CharField()  # Accepts a Base64 string
     class Meta:
         model = FoodMenu
-        fields = ['id', 'name', 'description', 'price', 'image', 'order_type', 'free_addons', 'paid_addons','category',]
+        fields = ['id', 'name', 'description', 'price', 'image', 'order_type', 'free_addons', 'paid_addons','category','category_id']
         read_only_fields = ['id']
 
     # Handle unique constraint validation on the name field
@@ -85,7 +90,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
  
 
     class Meta:
-        model = Restuarant
+        model = Restaurant
         # fields = ['id', 'available', 'image', 'rating', 'details', 'location', 'cuisine', 'is_open', 'food_menu', 'about_us', 'delivery_fee']
         fields = '__all__'
 

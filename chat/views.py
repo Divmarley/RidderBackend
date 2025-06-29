@@ -39,6 +39,7 @@ class DriverOnlineListCreateAPIView(generics.ListCreateAPIView):
         longitude = request.data.get('longitude')
         is_online = request.data.get('is_online')
         push_token= request.data.get('push_token')
+        ride_type= request.data.get('ride_type')
 
         # Check if a driver with the given phone number already exists
         existing_driver = DriverOnline.objects.filter(phone=phone).first()

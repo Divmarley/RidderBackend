@@ -13,7 +13,7 @@ from .serializers import CategorySerializer, RestaurantSerializer, FoodMenuSeria
 from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
-from .models import Category, OrderItem, Restuarant, Image, Rating, Details, Location, FoodMenu, Review
+from .models import Category, OrderItem, Restaurant, Image, Rating, Location, FoodMenu, Review
 from django.db.models import Sum, Count
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -56,7 +56,7 @@ class RestaurantListView(generics.ListAPIView):
     """
     View to list all restaurants for authenticated users.
     """
-    queryset = Restuarant.objects.all()  # Ensure model name is correctly spelled
+    queryset = Restaurant.objects.all()  # Ensure model name is correctly spelled
     serializer_class = RestaurantSerializer
     permission_classes = [AllowAny]
 
@@ -93,8 +93,41 @@ class RestaurantListView(generics.ListAPIView):
     #     # return restaurant
     
 class RestaurantDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Restuarant.objects.all()
     serializer_class = RestaurantSerializer
+
+    def get_queryset(self):
+        return Restaurant.objects.all()
+
+    def get_object(self):
+        user_id = self.kwargs.get('pk')
+        try:
+            return Restaurant.objects.get(user__id=user_id)
+        except Restaurant.DoesNotExist:
+            # Manually return a 404 Response
+            self.response = Response(
+                {"error": "Restaurant not found for the given user ID."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+            return None
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance is None:
+            return self.response
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance is None:
+            return self.response
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance is None:
+            return self.response
+        return super().destroy(request, *args, **kwargs)
 
 # class FoodMenuCreate(generics.CreateAPIView):
 #     queryset = FoodMenu.objects.all()
@@ -105,11 +138,11 @@ class RestaurantDetail(generics.RetrieveUpdateDestroyAPIView):
 #         try:
 #             # Assuming the logged-in user's restaurant is tied to their account
 #             print("self.request.user",self.request.user.id)
-#             restaurant = Restuarant.objects.get(user= self.request.user.id)
+#             restaurant = Restaurant.objects.get(user= self.request.user.id)
              
           
 #             serializer.save(restaurant=self.request.user)
-#         except Restuarant.DoesNotExist:
+#         except Restaurant.DoesNotExist:
 #             raise serializers.ValidationError("No restaurant is associated with the current user.")
 
 #     def create(self, request, *args, **kwargs):
@@ -146,13 +179,13 @@ from django.core.files.base import ContentFile
 class FoodMenuCreate(generics.CreateAPIView):
     queryset = FoodMenu.objects.all()
     serializer_class = FoodMenuSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         try:
             # Get the restaurant associated with the user
             restaurant = self.request.user
-            print(f"Creating food menu for user/restaurant: {restaurant.id}")
+            print(f"Creating food menu for user/restaurant: {restaurant}")
             
             # Save with the user as restaurant (since FoodMenu.restaurant points to CustomUser)
             serializer.save(restaurant=restaurant)
@@ -173,7 +206,7 @@ class FoodMenuCreate(generics.CreateAPIView):
                 'name': request.data.get('name'),
                 'description': request.data.get('description'),
                 'price': request.data.get('price'),
-                'category': request.data.get('category'),
+                'category_id': request.data.get('category_id'),
                 'order_type': request.data.get('order_type', ''),
                 'free_addons': request.data.get('free_addons', []),
                 'paid_addons': request.data.get('paid_addons', [])
@@ -187,6 +220,7 @@ class FoodMenuCreate(generics.CreateAPIView):
 
             # Create and validate serializer
             serializer = self.get_serializer(data=menu_data)
+            
             if not serializer.is_valid():
                 print("Validation errors:", serializer.errors)
                 return Response({
@@ -248,16 +282,16 @@ class UserFoodMenuList(generics.ListAPIView):
 
         # if not user.is_authenticated:
         #     return FoodMenu.objects.none()  # Return empty queryset for unauthenticated users
-        # restaurant = Restuarant.objects.all()
+        # restaurant = Restaurant.objects.all()
         # print('restaurant,restaurant',restaurant)
         try:
             # Get the restaurant object
-            # restaurant = Restuarant.objects.get(user=restaurant_id)
+            # restaurant = Restaurant.objects.get(user=restaurant_id)
             # print('restaurant===>',restaurant.restaurant)
             # Filter food menu by the restaurant 
             print('Restaurant', FoodMenu.objects.filter(restaurant=restaurant_id))
             return FoodMenu.objects.filter(restaurant=restaurant_id)
-        except Restuarant.DoesNotExist:
+        except Restaurant.DoesNotExist:
             return FoodMenu.objects.none()  # Return empty queryset if the restaurant does not exist
 
 class FoodMenuDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -525,7 +559,7 @@ def create_restaurant(request):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         # Check if restaurant already exists for user
-        if Restuarant.objects.filter(user=user).exists():
+        if Restaurant.objects.filter(user=user).exists():
             return Response({
                 "status": "error",
                 "code": "restaurant_exists",
@@ -537,7 +571,7 @@ def create_restaurant(request):
         
         try:
             # Create restaurant
-            restaurant = Restuarant.objects.create(
+            restaurant = Restaurant.objects.create(
                 user=user,
                 name=data.get('name'),
                 price_range=data.get('price_range'),
@@ -651,4 +685,19 @@ class RestaurantAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED) 
+        print('serializer.errors',serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+# add get Restaurant based on userid 
+
+@api_view(['GET'])
+def get_restaurant_by_id(request, pk):
+    try:
+        restaurant = Restaurant.objects.get(user=pk)
+        serializer = RestaurantNewSerializer(restaurant)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Restaurant.DoesNotExist:
+     
+        return Response({"error": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND)
