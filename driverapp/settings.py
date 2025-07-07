@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-n0kn2qx+n78vlb(*dgm$q29rxix7n761wk1$erc2+8bgh*-lkc
 DEBUG = True
 
 
-ALLOWED_HOSTS = ["*",'127.0.0.1','localhost','192.168.100.5','ubintax.com']
+ALLOWED_HOSTS = ["*",'127.0.0.1','localhost','192.168.100.5']
 
 CSRF_TRUSTED_ORIGINS = ['https://ubintax.com']
 
@@ -107,34 +107,36 @@ ASGI_APPLICATION = 'driverapp.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-
-# DATABASES = {
-#         "default": {
-#         "ENGINE": "django.db.backends.postgresql_psycopg2",
-#         "HOST": "/cloudsql/circular-music-463403-p3:us-central:django-db",
-#         "NAME": "django-db",
-#         "USER": "django_user",
-#         "PASSWORD": "yawigo",
-#         "PORT": "3306",
-#     }
-# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django--db',              # your actual DB name
-        'USER': 'root',            # your DB user
-        'PASSWORD': 'yawigo',             # your DB password
-        'HOST': '34.10.38.34',            # Cloud SQL public IP
-        'PORT': '3306',                   # ✅ MySQL default port
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+ 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'django--db',              # your actual DB name
+#         'USER': 'root',            # your DB user
+#         'PASSWORD': 'yawigo',             # your DB password
+#         'HOST': '34.10.38.34',            # Cloud SQL public IP
+#         'PORT': '3306',                   # ✅ MySQL default port
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'django--db',              # your actual DB name
+#         'USER': 'root',            # your DB user
+#         'PASSWORD': '',             # your DB password
+#         'HOST': '127.0.0.1',            # Cloud SQL public IP
+#         'PORT': '3306',                   # ✅ MySQL default port
+#     }
+# }
 # 
 
 # if os.getenv("GAE_ENV", "").startswith("standard"):

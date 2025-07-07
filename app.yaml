@@ -1,14 +1,18 @@
-runtime: python311  # or python310
+# @format
 
-entrypoint: gunicorn driverapp.wsgi:application
+runtime: python311 # or python310
+entrypoint: daphne -b :$PORT driverapp.asgi:application
+# entrypoint: gunicorn driverapp.wsgi:application
 
 env_variables:
-  SECRET_KEY: "your-django-secret-key"
-  DEBUG: "True"
+  SECRET_KEY: 'django-insecure-n0kn2qx+n78vlb(*dgm$q29rxix7n761wk1$erc2+8bgh*-lkc'
+  DEBUG: 'True'
+  DJANGO_SETTINGS_MODULE: driverapp.settings
+  PYTHONUNBUFFERED: 'true'
 
 beta_settings:
   cloud_sql_instances: circular-music-463403-p3:us-central:django-db
-  
+
 handlers:
   - url: /static
     static_dir: staticfiles/

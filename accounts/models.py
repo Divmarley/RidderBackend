@@ -167,8 +167,6 @@ class RiderProfile(models.Model):
         verbose_name = 'Rider Profile'
         verbose_name_plural = 'Riders Profile'
 
-
-
 class RestaurantProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='restaurant_profile')
     payment_method = models.CharField(max_length=50, blank=True, null=True)
@@ -192,7 +190,6 @@ class RestaurantProfile(models.Model):
         managed = True
         verbose_name = 'Restaurant Profile'
         verbose_name_plural = 'Restaurants Profile'
-
 
 class PharmacyProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='pharmacy_profile')
