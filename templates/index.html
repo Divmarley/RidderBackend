@@ -1,0 +1,1803 @@
+<!-- @format -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Yawigo Food Delivery</title>
+    <style>
+      body {
+        font-family: 'Inter', Arial, sans-serif;
+        background: #fff;
+        color: #222;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Section spacing */
+      section {
+        margin: 0 auto 48px auto;
+        max-width: 1200px;
+        padding: 0 16px;
+      }
+
+      .showcase-header {
+        background: linear-gradient(90deg, #ff5c03 0%, #ffe5d1 100%);
+        color: #fff;
+        text-align: center;
+        padding: 48px 16px 32px 16px;
+      }
+
+      .logo {
+        width: 80px;
+        margin-bottom: 16px;
+      }
+
+      .main-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin: 0 0 12px 0;
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 28px;
+        color: #fff;
+      }
+
+      .download-btn {
+        display: inline-block;
+        background: #fff;
+        color: #ff5c03;
+        font-weight: 700;
+        padding: 14px 32px;
+        border-radius: 30px;
+        font-size: 1.1rem;
+        text-decoration: none;
+        box-shadow: 0 2px 8px rgba(255, 92, 3, 0.08);
+        transition: background 0.2s, color 0.2s;
+      }
+
+      .download-btn:hover {
+        background: #ffe5d1;
+        color: #ff5c03;
+      }
+
+      .features-section {
+        padding: 40px 16px 24px 16px;
+        background: #f8f6f4;
+      }
+
+      .features-title {
+        text-align: center;
+        font-size: 2rem;
+        color: #ff5c03;
+        margin-bottom: 32px;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 28px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .feature-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+        padding: 32px 20px 24px 20px;
+        text-align: center;
+        transition: box-shadow 0.2s, transform 0.2s;
+      }
+
+      .feature-card:hover {
+        box-shadow: 0 6px 32px rgba(255, 92, 3, 0.1);
+        transform: translateY(-4px) scale(1.02);
+      }
+
+      .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 16px;
+      }
+
+      .feature-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #ff5c03;
+        margin-bottom: 8px;
+      }
+
+      .feature-desc {
+        font-size: 1rem;
+        color: #444;
+      }
+
+      .footer {
+        background: #fff;
+        color: #888;
+        font-size: 1rem;
+        border-top: 1px solid #f0f0f0;
+        padding: 32px 0 0 0;
+      }
+
+      .footer-grid {
+        display: flex;
+        flex-wrap: wrap;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 16px;
+        gap: 32px;
+        justify-content: space-between;
+      }
+
+      .footer-col {
+        flex: 1 1 180px;
+        min-width: 180px;
+        margin-bottom: 24px;
+      }
+
+      .footer-title {
+        color: #222;
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin: 18px 0 8px 0;
+      }
+
+      .footer-col ul {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 12px 0;
+      }
+
+      .footer-col ul li {
+        margin-bottom: 6px;
+      }
+
+      .footer-col ul li a {
+        color: #888;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: color 0.2s;
+      }
+
+      .footer-col ul li a:hover {
+        color: #ff5c03;
+      }
+
+      .footer-select {
+        width: 100%;
+        padding: 8px 6px;
+        border-radius: 6px;
+        border: 1px solid #eee;
+        font-size: 1rem;
+        margin-bottom: 8px;
+        background: #f8f6f4;
+        color: #222;
+      }
+
+      .footer-bottom {
+        text-align: center;
+        padding: 18px 0 12px 0;
+        color: #888;
+        font-size: 1rem;
+        border-top: 1px solid #f0f0f0;
+        margin-top: 12px;
+      }
+
+      @media (max-width: 900px) {
+        .footer-grid {
+          flex-direction: column;
+          gap: 0;
+          padding: 0 8vw;
+        }
+
+        .footer-col {
+          margin-bottom: 0;
+          padding-bottom: 18px;
+          border-bottom: 1px solid #f0f0f0;
+        }
+
+        .footer-col:last-child {
+          border-bottom: none;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .main-title {
+          font-size: 2rem;
+        }
+
+        .features-title {
+          font-size: 1.3rem;
+        }
+
+        .feature-card {
+          padding: 20px 10px 16px 10px;
+        }
+
+        .footer-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .footer-col {
+          text-align: center;
+        }
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(40px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+
+        to {
+          opacity: 1;
+        }
+      }
+
+      .feature-card,
+      .how-step,
+      .screenshots-gallery img {
+        opacity: 0;
+        transform: translateY(40px);
+        animation: fadeInUp 0.8s forwards;
+      }
+
+      .feature-card {
+        animation-delay: 0.2s;
+      }
+
+      .feature-card:nth-child(2) {
+        animation-delay: 0.4s;
+      }
+
+      .feature-card:nth-child(3) {
+        animation-delay: 0.6s;
+      }
+
+      .feature-card:nth-child(4) {
+        animation-delay: 0.8s;
+      }
+
+      .feature-card:nth-child(5) {
+        animation-delay: 1s;
+      }
+
+      .how-step {
+        animation-delay: 0.2s;
+      }
+
+      .how-step:nth-child(2) {
+        animation-delay: 0.4s;
+      }
+
+      .how-step:nth-child(3) {
+        animation-delay: 0.6s;
+      }
+
+      .how-step:nth-child(4) {
+        animation-delay: 0.8s;
+      }
+
+      .screenshots-gallery img {
+        animation: fadeIn 1s forwards;
+      }
+
+      .screenshots-gallery img:nth-child(1) {
+        animation-delay: 0.2s;
+      }
+
+      .screenshots-gallery img:nth-child(2) {
+        animation-delay: 0.4s;
+      }
+
+      .screenshots-gallery img:nth-child(3) {
+        animation-delay: 0.6s;
+      }
+
+      .screenshots-gallery img:nth-child(4) {
+        animation-delay: 0.8s;
+      }
+
+      /* Ensure animation only runs once when visible */
+      .features-grid,
+      .how-steps,
+      .screenshots-gallery {
+        will-change: opacity, transform;
+      }
+
+      /* Navbar styles */
+      .navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #fff;
+        box-shadow: 0 2px 8px rgba(255, 92, 3, 0.06);
+        padding: 0 24px;
+        height: 64px;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .navbar-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 800;
+        font-size: 1.3rem;
+        color: #ff5c03;
+      }
+
+      .navbar-logo img {
+        width: 36px;
+        height: 36px;
+      }
+
+      .navbar-links {
+        display: flex;
+        gap: 24px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .navbar-links li a {
+        color: #222;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s;
+      }
+
+      .navbar-links li a:hover,
+      .navbar-links .navbar-download {
+        color: #ff5c03;
+      }
+
+      .navbar-download {
+        background: #ff5c03;
+        color: #fff !important;
+        padding: 8px 18px;
+        border-radius: 20px;
+        font-weight: 700;
+        margin-left: 8px;
+        transition: background 0.2s;
+      }
+
+      .navbar-download:hover {
+        background: #ff7d36;
+      }
+
+      /* Responsive navbar */
+      @media (max-width: 700px) {
+        .navbar-links {
+          flex-direction: column;
+          background: #fff;
+          position: absolute;
+          top: 64px;
+          left: 0;
+          right: 0;
+          display: none;
+          z-index: 101;
+        }
+
+        .navbar-links.open {
+          display: flex;
+        }
+
+        .navbar {
+          flex-direction: column;
+          align-items: flex-start;
+          height: auto;
+        }
+
+        .navbar-logo {
+          margin: 10px 0;
+        }
+
+        .navbar-toggle {
+          display: block;
+          background: none;
+          border: none;
+          font-size: 2rem;
+          color: #ff5c03;
+          position: absolute;
+          right: 16px;
+          top: 16px;
+          z-index: 102;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .how-steps {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .screenshots-gallery {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .testimonial-video-card {
+          width: 100%;
+          flex: 1 1 100%;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .main-title {
+          font-size: 1.3rem;
+        }
+
+        .features-title,
+        .screenshots-title,
+        .how-title,
+        .faq-title,
+        .contact-title {
+          font-size: 1.1rem;
+        }
+
+        .feature-card,
+        .how-step {
+          padding: 16px 6px 12px 6px;
+          font-size: 0.95rem;
+        }
+
+        .screenshots-gallery img {
+          width: 90vw;
+          height: 160px;
+        }
+      }
+
+      /* Vehicle animation styles */
+      .vehicle-animation {
+        position: relative;
+        width: 100%;
+        height: 60px;
+        margin: 30px 0 10px 0;
+        overflow: hidden;
+        background: transparent;
+      }
+
+      .vehicle-animation .car,
+      .vehicle-animation .moto {
+        position: absolute;
+        top: 10px;
+        left: -70px;
+      }
+
+      .vehicle-animation .car {
+        animation: car-move 6s linear infinite;
+      }
+
+      .vehicle-animation .moto {
+        top: 30px;
+        animation: moto-move 5s linear 1s infinite;
+      }
+
+      @keyframes car-move {
+        0% {
+          left: -70px;
+        }
+
+        90% {
+          left: calc(100% + 70px);
+        }
+
+        100% {
+          left: calc(100% + 70px);
+        }
+      }
+
+      @keyframes moto-move {
+        0% {
+          left: -70px;
+        }
+
+        90% {
+          left: calc(100% + 70px);
+        }
+
+        100% {
+          left: calc(100% + 70px);
+        }
+      }
+
+      /* Chat box styles */
+      .chatbox-fab {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        z-index: 999;
+        background: #ff5c03;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 56px;
+        height: 56px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .chatbox-fab:hover {
+        background: #ff7d36;
+      }
+
+      .chatbox-window {
+        position: fixed;
+        right: 24px;
+        bottom: 90px;
+        width: 320px;
+        max-width: 95vw;
+        height: 400px;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 32px rgba(0, 0, 0, 0.18);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        animation: fadeIn 0.3s;
+      }
+
+      .chatbox-header {
+        background: #ff5c03;
+        color: #fff;
+        padding: 14px 18px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .chatbox-messages {
+        flex: 1;
+        padding: 12px;
+        overflow-y: auto;
+        background: #f8f6f4;
+        font-size: 0.98rem;
+      }
+
+      .chatbox-input-row {
+        display: flex;
+        border-top: 1px solid #eee;
+        background: #fff;
+      }
+
+      .chatbox-input-row input {
+        flex: 1;
+        border: none;
+        padding: 12px;
+        font-size: 1rem;
+        outline: none;
+        background: #fff;
+      }
+
+      .chatbox-input-row button {
+        background: #ff5c03;
+        color: #fff;
+        border: none;
+        padding: 0 18px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .chatbox-input-row button:hover {
+        background: #ff7d36;
+      }
+
+      /* Video Testimonial Section */
+      .testimonial-section {
+        background: #fff;
+        padding: 40px 16px 24px 16px;
+        text-align: center;
+      }
+
+      .testimonial-title {
+        font-size: 2rem;
+        color: #ff5c03;
+        margin-bottom: 32px;
+      }
+
+      .testimonial-videos {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        justify-content: center;
+      }
+
+      .testimonial-video-card {
+        background: #f8f6f4;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        width: 300px;
+        flex: 1 1 300px;
+      }
+
+      .testimonial-video-card video {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .testimonial-caption {
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        color: #444;
+        margin: 0;
+        text-align: left;
+      }
+
+      @media (max-width: 900px) {
+        .testimonial-videos {
+          flex-direction: column;
+          gap: 24px;
+          align-items: center;
+        }
+
+        .testimonial-video-card {
+          width: 98vw;
+          max-width: 400px;
+        }
+      }
+
+      /* Responsive for screenshots gallery */
+      .screenshots-gallery {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        justify-content: center;
+      }
+
+      .screenshots-gallery img {
+        width: 180px;
+        height: 380px;
+        object-fit: cover;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        background: #f8f6f4;
+      }
+
+      @media (max-width: 900px) {
+        .screenshots-gallery img {
+          width: 120px;
+          height: 240px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .screenshots-gallery img {
+          width: 90vw;
+          height: 160px;
+        }
+      }
+
+      /* Responsive for how-steps */
+      @media (max-width: 900px) {
+        .how-steps {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .how-step {
+          width: 98vw;
+          max-width: 400px;
+          margin-bottom: 18px;
+        }
+      }
+
+      /* Responsive for navbar */
+      @media (max-width: 700px) {
+        .navbar-links {
+          flex-direction: column;
+          background: #fff;
+          position: absolute;
+          top: 64px;
+          left: 0;
+          right: 0;
+          display: none;
+          z-index: 101;
+        }
+
+        .navbar-links.open {
+          display: flex;
+        }
+
+        .navbar {
+          flex-direction: column;
+          align-items: flex-start;
+          height: auto;
+        }
+
+        .navbar-logo {
+          margin: 10px 0;
+        }
+
+        .navbar-toggle {
+          display: block;
+          background: none;
+          border: none;
+          font-size: 2rem;
+          color: #ff5c03;
+          position: absolute;
+          right: 16px;
+          top: 16px;
+          z-index: 102;
+        }
+      }
+
+      .yango-hero {
+        background: linear-gradient(90deg, #ffe5d1 0%, #fff 100%);
+        padding: 48px 16px 32px 16px;
+        text-align: center;
+      }
+
+      .yango-hero-content h1 {
+        font-size: 2.2rem;
+        color: #ff5c03;
+        margin-bottom: 12px;
+      }
+
+      .yango-lead {
+        font-size: 1.2rem;
+        margin-bottom: 24px;
+      }
+
+      .yango-app-btn,
+      .yango-order-btn,
+      .yango-learn-btn {
+        display: inline-block;
+        background: #ff5c03;
+        color: #fff;
+        font-weight: 700;
+        padding: 12px 28px;
+        border-radius: 24px;
+        font-size: 1rem;
+        text-decoration: none;
+        margin: 8px 0;
+        transition: background 0.2s;
+      }
+
+      .yango-app-btn:hover,
+      .yango-order-btn:hover,
+      .yango-learn-btn:hover {
+        background: #ff7d36;
+      }
+
+      .yango-why {
+        background: #fff;
+        padding: 40px 16px 24px 16px;
+        text-align: center;
+      }
+
+      .yango-why-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+        justify-content: center;
+        margin-top: 24px;
+      }
+
+      .yango-why-grid > div {
+        background: #f8f6f4;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        padding: 24px 18px;
+        width: 260px;
+        min-width: 180px;
+        flex: 1 1 220px;
+        text-align: left;
+      }
+
+      .yango-why-grid ul {
+        padding-left: 18px;
+      }
+
+      .yango-service-classes {
+        background: #f8f6f4;
+        padding: 40px 16px 24px 16px;
+        text-align: center;
+      }
+
+      .yango-service-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+        justify-content: center;
+        margin-bottom: 16px;
+      }
+
+      .yango-service-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        padding: 32px 20px;
+        text-align: center;
+        flex: 1 1 220px;
+        min-width: 180px;
+      }
+
+      .yango-order-btn {
+        display: inline-block;
+        background: #ff5c03;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: background 0.2s;
+        margin-top: 12px;
+      }
+
+      .yango-order-btn:hover {
+        background: #ff7d36;
+      }
+
+      .yango-driver {
+        padding: 40px 16px;
+        text-align: center;
+        background: #fff;
+      }
+
+      .yango-learn-btn {
+        display: inline-block;
+        background: transparent;
+        color: #ff5c03;
+        padding: 10px 20px;
+        border: 2px solid #ff5c03;
+        border-radius: 20px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+        margin-top: 12px;
+      }
+
+      .yango-learn-btn:hover {
+        background: #ff5c03;
+        color: #fff;
+      }
+
+      .yango-testimonials {
+        padding: 40px 16px;
+        text-align: center;
+        background: #f8f6f4;
+      }
+
+      .yango-testimonial-list {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: left;
+      }
+
+      .yango-testimonial-list blockquote {
+        border-left: 4px solid #ff5c03;
+        background: #fff;
+        padding: 20px 28px;
+        border-radius: 10px;
+        margin-bottom: 24px;
+        font-style: italic;
+        color: #333;
+      }
+
+      .yango-award {
+        padding: 40px 16px;
+        text-align: center;
+      }
+
+      .yango-ratings {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        margin: 24px 0;
+      }
+
+      .yango-rating-score {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #ff5c03;
+      }
+
+      .yango-countries {
+        padding: 40px 16px;
+        text-align: center;
+        background: #f8f6f4;
+      }
+
+      .yango-country-list {
+        display: inline-block;
+        text-align: left;
+        max-width: 600px;
+        margin: 0 auto;
+        font-size: 1rem;
+        color: #444;
+      }
+
+      @media (max-width: 900px) {
+        section {
+          padding: 0 4vw;
+        }
+
+        .features-grid,
+        .how-steps,
+        .screenshots-gallery,
+        .testimonial-videos {
+          flex-direction: column;
+          gap: 24px;
+          align-items: center;
+        }
+
+        .feature-card,
+        .how-step,
+        .testimonial-video-card {
+          width: 98vw;
+          max-width: 400px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .yango-hero {
+          padding: 60px 16px;
+        }
+
+        .yango-lead {
+          font-size: 1rem;
+          margin-bottom: 16px;
+        }
+
+        .yango-app-btn {
+          padding: 10px 20px;
+          font-size: 1rem;
+        }
+
+        .yango-service-card {
+          padding: 24px 16px;
+        }
+
+        .yango-order-btn {
+          padding: 8px 16px;
+          font-size: 0.9rem;
+        }
+
+        .yango-driver {
+          padding: 24px 16px;
+        }
+
+        .yango-testimonial-list blockquote {
+          padding: 12px 16px;
+        }
+
+        .yango-award {
+          padding: 24px 16px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="navbar-logo">
+        <img src="./logolightnobg.png" alt="Yawigo Logo" />
+        <span>Yawigo</span>
+      </div>
+      <ul class="navbar-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#screenshots">Screenshots</a></li>
+        <li><a href="#how">How It Works</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li>
+          <a href="/yawigo-latest.apk" class="navbar-download" download
+            >Download APK</a
+          >
+        </li>
+      </ul>
+    </nav>
+
+    <header class="showcase-header">
+      <img src="./logolightnobg.png" alt="Yawigo Logo" class="logo" />
+      <h1 class="main-title">Yawigo Ride & Food Delivery</h1>
+      <p class="subtitle">
+        Fast, reliable, and easy ride hailing & food delivery.<br />
+        Book a ride or order from your favorite restaurants and track everything
+        in real time!
+      </p>
+      <a href="/yawigo-latest.apk" class="download-btn" download>
+        Download Android APK
+      </a>
+    </header>
+    <svg
+      width="1200"
+      height="300"
+      viewBox="0 0 1200 300"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style="display: block; margin: auto">
+      <g transform="translate(439.42,30.60)" opacity="1" style="display: block">
+        <g opacity="1" transform="translate(658.50,120.76)">
+          <path
+            fill="rgb(255,255,255)"
+            fill-opacity="1"
+            d="M-0.5189999938011169,-3.691999912261963 C-0.6620000004768372,-3.621000051498413 -0.7900000214576721,-3.5230000019073486 -0.8939999938011169,-3.4019999504089355 C-1,-3.2809998989105225 -1.0800000429153442,-3.140000104904175 -1.128000020980835,-2.98799991607666 C-1.1779999732971191,-2.835999965667724 -1.1970000267028809,-2.674999952316284 -1.184000015258789,-2.5160000324249268 C-1.1690000295639038,-2.3570001125335693 -1.1239999532699585,-2.2019999027252197 -1.0499999523162842,-2.059999942779541 C-0.7419999837875366,-1.4299999475479126 -0.6209999918937683,-0.7250000238418579 -0.703000009059906,-0.02800000086426735 C-0.7829999923706055,0.6690000295639038 -1.059000015258789,1.3279999494552612 -1.503000020980835,1.871999979019165 C-1.6399999856948853,2.049999952316284 -1.7259999513626099,2.26200008392334 -1.7519999742507935,2.484999895095825 C-1.7760000228881836,2.7079999446868896 -1.7389999628067017,2.934999942779541 -1.6419999599456787,3.138000011444092 C-1.5470000505447388,3.3410000801086426 -1.3980000019073486,3.515000104904175 -1.2100000381469727,3.638000011444092 C-1.0219999551773071,3.760999917984009 -0.8029999732971191,3.8310000896453857 -0.578000009059906,3.8380000591278076 C-0.39800000190734863,3.8359999656677246 -0.21899999678134918,3.793999910354614 -0.0560000017285347,3.7160000801086426 C0.10700000077486038,3.638000011444092 0.25,3.5250000953674316 0.36500000953674316,3.384999990463257 C1.1169999837875366,2.4790000915527344 1.5870000123977661,1.3739999532699585 1.7209999561309814,0.20399999618530273 C1.8530000448226929,-0.9660000205039978 1.6410000324249268,-2.1489999294281006 1.1119999885559082,-3.200000047683716 C1.0379999876022339,-3.3399999141693115 0.9380000233650208,-3.4639999866485596 0.8149999976158142,-3.565000057220459 C0.6919999718666077,-3.6659998893737793 0.5509999990463257,-3.740000009536743 0.39899998903274536,-3.7860000133514404 C0.24899999797344208,-3.8320000171661377 0.08900000154972076,-3.8469998836517334 -0.0689999982714653,-3.8310000896453857 C-0.22699999809265137,-3.815000057220459 -0.3790000021457672,-3.691999912261963 -0.5189999938011169,-3.691999912261963 Z" />
+        </g>
+      </g>
+    </svg>
+    <section class="features-section" id="features">
+      <h2 class="features-title">Why Choose Yawigo?</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🍔</div>
+          <div class="feature-title">Wide Variety of Food</div>
+          <div class="feature-desc">
+            Choose from hundreds of restaurants and dishes.
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <div class="feature-title">Fast Delivery</div>
+          <div class="feature-desc">
+            Get your food delivered in under 30 minutes.
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <div class="feature-title">Secure Payment</div>
+          <div class="feature-desc">
+            Pay with mobile money or cash on delivery.
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <div class="feature-title">Real-time Tracking</div>
+          <div class="feature-desc">
+            Track your order from kitchen to doorstep.
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌍</div>
+          <div class="feature-title">Multi-language Support</div>
+          <div class="feature-desc">Available in English and Français.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⭐</div>
+          <div class="feature-title">Rated 5 Stars</div>
+          <div class="feature-desc">Join thousands of happy customers.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screenshots Section -->
+    <section class="screenshots-section" id="screenshots">
+      <h2 class="screenshots-title">App Screenshots</h2>
+      <div class="screenshots-gallery">
+        <img
+          src="https://via.placeholder.com/180x380?text=Screenshot+1"
+          alt="Screenshot 1" />
+        <img
+          src="https://via.placeholder.com/180x380?text=Screenshot+2"
+          alt="Screenshot 2" />
+        <img
+          src="https://via.placeholder.com/180x380?text=Screenshot+3"
+          alt="Screenshot 3" />
+        <img
+          src="https://via.placeholder.com/180x380?text=Screenshot+4"
+          alt="Screenshot 4" />
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-section" id="how">
+      <h2 class="how-title">How Yawigo Works</h2>
+      <div class="how-steps">
+        <div class="how-step">
+          <span class="how-number">1</span>
+          <h3>Choose Your Favorite Food</h3>
+          <p>Browse through our menu and select your favorite dishes.</p>
+        </div>
+        <div class="how-step">
+          <span class="how-number">2</span>
+          <h3>Place Your Order</h3>
+          <p>Enter your delivery details and make a secure payment.</p>
+        </div>
+        <div class="how-step">
+          <span class="how-number">3</span>
+          <h3>Track Your Order</h3>
+          <p>
+            Watch your order move from kitchen to your doorstep in real time.
+          </p>
+        </div>
+        <div class="how-step">
+          <span class="how-number">4</span>
+          <h3>Enjoy Your Meal</h3>
+          <p>Receive your food hot and fresh, and rate your experience!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq-section">
+      <h2 class="faq-title">Frequently Asked Questions</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <h4>How do I download the app?</h4>
+          <p>
+            Click the "Download Android APK" button above to get the latest
+            version for Android devices.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h4>Is Yawigo available on iOS?</h4>
+          <p>iOS support is coming soon! Stay tuned for updates.</p>
+        </div>
+        <div class="faq-item">
+          <h4>How can I pay for my order?</h4>
+          <p>
+            We support cash on delivery and mobile money payments. More options
+            coming soon.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h4>Can I track my order?</h4>
+          <p>
+            Yes! You can track your order and driver in real time from the app.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+      <h2 class="contact-title">Contact Us</h2>
+      <p>
+        Have questions or need help? Email us at
+        <a href="mailto:support@yawigo.com">support@yawigo.com</a>
+      </p>
+    </section>
+
+    <!-- Video Testimonial Section -->
+    <section id="testimonials" class="testimonial-section">
+      <h2 class="testimonial-title">What Our Users Say</h2>
+      <div class="testimonial-videos">
+        <div class="testimonial-video-card">
+          <video controls poster="https://placehold.co/300x180?text=User+1">
+            <source src="#" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <p class="testimonial-caption">
+            <b>Ama, Accra:</b> “Yawigo makes ordering food so easy and fast!”
+          </p>
+        </div>
+        <div class="testimonial-video-card">
+          <video controls poster="https://placehold.co/300x180?text=User+2">
+            <source src="#" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <p class="testimonial-caption">
+            <b>Kofi, Kumasi:</b> “I love the real-time tracking and friendly
+            support.”
+          </p>
+        </div>
+        <div class="testimonial-video-card">
+          <video controls poster="https://placehold.co/300x180?text=User+3">
+            <source src="#" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <p class="testimonial-caption">
+            <b>Fatou, Abidjan:</b> “Multi-language support is a big plus for
+            me!”
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- yawigo Content Section -->
+    <section class="yango-hero">
+      <div class="yango-hero-content">
+        <h1>Ride with comfort in Ghana</h1>
+        <p class="yango-lead">
+          yawigo, more than just a taxi in Ghana. Forget about regular taxis,
+          book rides, become a driver, or be a partner.
+        </p>
+        <a href="#" class="yango-app-btn">Get the App</a>
+      </div>
+    </section>
+
+    <section class="yango-why">
+      <h2>Why is yawigo better than a taxi?</h2>
+      <div class="yango-why-grid">
+        <div>
+          <h3>Book your rides online</h3>
+          <p>No more calls to taxi services or street hailing in Ghana.</p>
+        </div>
+        <div>
+          <h3>See the price right from the beginning</h3>
+          <p>
+            You don’t need to negotiate — you already know the price when
+            requesting a ride.
+          </p>
+        </div>
+        <div>
+          <h3>See your driver’s location</h3>
+          <p>Track your car before arrival or during the ride.</p>
+        </div>
+        <div>
+          <h3>Ride safe</h3>
+          <ul>
+            <li>Route sharing</li>
+            <li>SOS-button</li>
+            <li>24/7 support</li>
+            <li>Verified drivers</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="yango-service-classes">
+      <h2>Service classes</h2>
+      <div class="yango-service-grid">
+        <div class="yango-service-card">
+          <h3>Economy</h3>
+          <p>Nothing fancy, just a good old ride</p>
+          <small>Kia Rio, Volkswagen Polo, Hyundai Solaris</small>
+          <a href="#" class="yango-order-btn">Order now</a>
+        </div>
+        <div class="yango-service-card">
+          <h3>Comfort</h3>
+          <p>Get around the city with comfort</p>
+          <small>Kia Rio, Mitsubishi Mirage, Suzuki Dzire</small>
+          <a href="#" class="yango-order-btn">Order now</a>
+        </div>
+      </div>
+      <p class="yango-cities">You can find us in Accra and Kumasi</p>
+    </section>
+
+    <section class="yango-driver">
+      <h2>Drive with yawigo Pro</h2>
+      <p>Become our partner and earn up to 7000 GHC a month</p>
+      <a href="#" class="yango-app-btn">Download the yawigo Pro App</a>
+      <p>
+        Team up with yawigo and embark on an exciting journey with your
+        transportation venture. Discover endless possibilities, from attracting
+        drivers to unlocking exclusive vehicle deals. With our unwavering
+        support, navigating the road to success has never been easier.
+      </p>
+      <a href="#" class="yango-learn-btn">Learn more</a>
+    </section>
+
+    <section class="yango-testimonials">
+      <h2>What people think about us</h2>
+      <div class="yango-testimonial-list">
+        <blockquote>
+          <p>
+            This app is a life saver :)) I stopped being always late because of
+            no taxis in the streets. Now, with online request, it’s much easier
+          </p>
+          <footer>— Enam, 1 w ago</footer>
+        </blockquote>
+        <blockquote>
+          <p>
+            Booking a ride with this service is a breeze. I like the simplicity,
+            especially during busy days
+          </p>
+          <footer>— Oko, 2 w ago</footer>
+        </blockquote>
+        <blockquote>
+          <p>hassle-free rides with great cars</p>
+          <footer>— Sabir, 2 w ago</footer>
+        </blockquote>
+        <blockquote>
+          <p>
+            I appreciate good driving. It’s not a common thing to catch a ride
+            with a decent driver, but with yawigo, every ride is a pleasure
+          </p>
+          <footer>— Jojo, 1 mo ago</footer>
+        </blockquote>
+        <blockquote>
+          <p>
+            Comfort class makes me feel like a celebrity haha :) cars are cool
+            and drivers are really courteous
+          </p>
+          <footer>— Amma, 2 mo ago</footer>
+        </blockquote>
+      </div>
+    </section>
+
+    <section class="yango-award">
+      <h2>Ghana’s #1 transport app</h2>
+      <p>
+        yawigo is the proud recipient of the Transportation App of the Year 2023
+        from Ghana’s National Customers' Choice Awards.
+      </p>
+      <a href="#" class="yango-learn-btn">Learn more</a>
+      <div class="yango-ratings">
+        <div>
+          <span class="yango-rating-score">4.9</span>
+          <span>58.3K Ratings</span>
+        </div>
+        <div>
+          <span class="yango-rating-score">4.8</span>
+          <span>1.19M reviews</span>
+        </div>
+      </div>
+      <a href="#" class="yango-app-btn">Download now</a>
+    </section>
+
+    <section class="yango-countries">
+      <h2>Here for you, wherever you are</h2>
+      <div class="yango-country-list">
+        <span>🇦🇪 United Arab Emirates</span>
+        <span>🇿🇲 Zambia</span>
+        <span>🇴🇲 Oman</span>
+        <span>🇬🇭 Ghana</span>
+        <span>🇨🇲 Cameroon</span>
+        <span>🇸🇳 Senegal</span>
+        <span>🇨🇬 R. D. Congo</span>
+        <span>🇳🇦 Namibia</span>
+        <span>🇵🇰 Pakistan</span>
+        <span>🇲🇿 Mozambique</span>
+        <span>🇨🇮 Côte d’Ivoire</span>
+        <span>🇧🇴 Bolivia</span>
+        <span>🇬🇹 Guatemala</span>
+        <span>🇵🇪 Peru</span>
+        <span>🇫🇮 Finland</span>
+        <span>🇳🇴 Norway</span>
+        <span>🇦🇿 Azerbaijan</span>
+        <span>🇦🇴 Angola</span>
+        <span>🇪🇹 Ethiopia</span>
+        <span>🇨🇴 Colombia</span>
+        <span>🇲🇦 Morocco</span>
+        <span>🇳🇵 Nepal</span>
+        <span>🇪🇬 Egypt</span>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4 class="footer-title">Yawigo</h4>
+          <ul>
+            <li><a href="#">Visit Help Center</a></li>
+          </ul>
+          <h4 class="footer-title">Company</h4>
+          <ul>
+            <li><a href="#">About us</a></li>
+            <li><a href="#">Our offerings</a></li>
+            <li><a href="#">Newsroom</a></li>
+            <li><a href="#">Investors</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-title">Products</h4>
+          <ul>
+            <li><a href="#">Ride</a></li>
+            <li><a href="#">Drive</a></li>
+            <li><a href="#">Eat</a></li>
+            <li><a href="#">Yawigo for Business</a></li>
+            <li><a href="#">Yawigo Freight</a></li>
+            <li><a href="#">Gift cards</a></li>
+            <li><a href="#">Yawigo Health</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-title">Global citizenship</h4>
+          <ul>
+            <li><a href="#">Safety</a></li>
+            <li><a href="#">Sustainability</a></li>
+          </ul>
+          <h4 class="footer-title">Travel</h4>
+          <ul>
+            <li><a href="#">Reserve</a></li>
+            <li><a href="#">Airports</a></li>
+            <li><a href="#">Cities</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-title">Language</h4>
+          <div style="display: flex; align-items: center; gap: 10px">
+            <button
+              id="langToggle"
+              style="
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-size: 1.2rem;
+              ">
+              <span id="langIcon" role="img" aria-label="Language">🇬🇧</span>
+              <span id="langLabel">English</span>
+            </button>
+          </div>
+          <h4 class="footer-title" style="margin-top: 18px">Location</h4>
+          <select class="footer-select">
+            <option>Accra</option>
+            <option>Kumasi</option>
+            <option>Abidjan</option>
+          </select>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; 2025 Yawigo. All rights reserved.</div>
+    </footer>
+
+    <style>
+      .screenshots-section {
+        background: #fff;
+        padding: 40px 16px 24px 16px;
+        text-align: center;
+      }
+
+      .screenshots-title {
+        font-size: 2rem;
+        color: #ff5c03;
+        margin-bottom: 32px;
+      }
+
+      .screenshots-gallery {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        justify-content: center;
+      }
+
+      .screenshots-gallery img {
+        width: 180px;
+        height: 380px;
+        object-fit: cover;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        background: #f8f6f4;
+      }
+
+      @media (max-width: 900px) {
+        .screenshots-gallery img {
+          width: 120px;
+          height: 240px;
+        }
+      }
+
+      .how-section {
+        background: #f8f6f4;
+        padding: 40px 16px 24px 16px;
+        text-align: center;
+      }
+
+      .how-title {
+        font-size: 2rem;
+        color: #ff5c03;
+        margin-bottom: 32px;
+      }
+
+      .how-steps {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 28px;
+        justify-content: center;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .how-step {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        padding: 32px 20px 24px 20px;
+        text-align: center;
+        width: 220px;
+        min-width: 180px;
+        flex: 1 1 220px;
+      }
+
+      .how-number {
+        display: inline-block;
+        background: #ff5c03;
+        color: #fff;
+        font-weight: bold;
+        border-radius: 50%;
+        width: 36px;
+        height: 36px;
+        line-height: 36px;
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+      }
+
+      .faq-section {
+        background: #fff;
+        padding: 40px 16px 24px 16px;
+        text-align: center;
+      }
+
+      .faq-title {
+        font-size: 2rem;
+        color: #ff5c03;
+        margin-bottom: 32px;
+      }
+
+      .faq-list {
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: left;
+      }
+
+      .faq-item {
+        margin-bottom: 24px;
+      }
+
+      .faq-item h4 {
+        margin: 0 0 6px 0;
+        color: #ff5c03;
+        font-size: 1.1rem;
+      }
+
+      .faq-item p {
+        margin: 0;
+        color: #444;
+        font-size: 1rem;
+      }
+
+      .contact-section {
+        background: #ffe5d1;
+        padding: 40px 16px 24px 16px;
+        text-align: center;
+      }
+
+      .contact-title {
+        font-size: 2rem;
+        color: #ff5c03;
+        margin-bottom: 16px;
+      }
+
+      .contact-section a {
+        color: #ff5c03;
+        text-decoration: underline;
+      }
+
+      .testimonial-section {
+        background: #fff;
+        padding: 40px 16px 24px 16px;
+        text-align: center;
+      }
+
+      .testimonial-title {
+        font-size: 2rem;
+        color: #ff5c03;
+        margin-bottom: 32px;
+      }
+
+      .testimonial-videos {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        justify-content: center;
+      }
+
+      .testimonial-video-card {
+        background: #f8f6f4;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        width: 300px;
+        flex: 1 1 300px;
+      }
+
+      .testimonial-video-card video {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .testimonial-caption {
+        padding: 12px 16px;
+        font-size: 0.95rem;
+        color: #444;
+        margin: 0;
+        text-align: left;
+      }
+
+      @media (max-width: 900px) {
+        .testimonial-video-card {
+          width: 100%;
+          flex: 1 1 100%;
+        }
+      }
+    </style>
+
+    <!-- Chat Box Floating Button and Window -->
+    <button class="chatbox-fab" id="chatboxFab" aria-label="Open chat">
+      💬
+    </button>
+    <div class="chatbox-window" id="chatboxWindow" style="display: none">
+      <div class="chatbox-header">
+        Chat with us
+        <span style="cursor: pointer" id="chatboxClose">&times;</span>
+      </div>
+      <div class="chatbox-messages" id="chatboxMessages">
+        <div><b>Support:</b> Hi! How can we help you?</div>
+      </div>
+      <form class="chatbox-input-row" id="chatboxForm" autocomplete="off">
+        <input
+          type="text"
+          id="chatboxInput"
+          placeholder="Type your message..." />
+        <button type="submit">➤</button>
+      </form>
+    </div>
+
+    <script>
+      // Smooth scroll for navbar links
+      document
+        .querySelectorAll('.navbar-links a[href^="#"]')
+        .forEach((link) => {
+          link.addEventListener('click', function (e) {
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+              e.preventDefault();
+              window.scrollTo({
+                top: target.offsetTop - 70, // adjust for navbar height
+                behavior: 'smooth',
+              });
+            }
+          });
+        });
+
+      // Navbar background on scroll
+      const navbar = document.querySelector('.navbar');
+      window.addEventListener('scroll', function () {
+        if (window.scrollY > 30) {
+          navbar.style.boxShadow = '0 2px 12px rgba(255,92,3,0.12)';
+          navbar.style.background = '#fff';
+        } else {
+          navbar.style.boxShadow = '0 2px 8px rgba(255,92,3,0.06)';
+          navbar.style.background = '#fff';
+        }
+      });
+
+      // FAQ accordion (optional)
+      document.querySelectorAll('.faq-item h4').forEach((h4) => {
+        h4.style.cursor = 'pointer';
+        h4.addEventListener('click', function () {
+          const p = this.nextElementSibling;
+          if (!p) return;
+          if (p.style.maxHeight) {
+            p.style.maxHeight = null;
+            p.style.marginTop = null;
+          } else {
+            p.style.maxHeight = p.scrollHeight + 'px';
+            p.style.marginTop = '8px';
+          }
+        });
+        // Start collapsed
+        const p = h4.nextElementSibling;
+        if (p) {
+          p.style.overflow = 'hidden';
+          p.style.transition = 'max-height 0.3s, margin-top 0.3s';
+          p.style.maxHeight = '0';
+          p.style.marginTop = '0';
+        }
+      });
+
+      // Chatbox toggle
+      const chatboxFab = document.getElementById('chatboxFab');
+      const chatboxWindow = document.getElementById('chatboxWindow');
+      const chatboxClose = document.getElementById('chatboxClose');
+
+      chatboxFab.addEventListener('click', () => {
+        chatboxWindow.style.display = 'flex';
+        chatboxFab.style.display = 'none';
+      });
+
+      chatboxClose.addEventListener('click', () => {
+        chatboxWindow.style.display = 'none';
+        chatboxFab.style.display = 'flex';
+      });
+
+      // Chatbox form submit (mock)
+      const chatboxForm = document.getElementById('chatboxForm');
+      const chatboxMessages = document.getElementById('chatboxMessages');
+
+      chatboxForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const input = document.getElementById('chatboxInput');
+        const message = input.value.trim();
+        if (message) {
+          // Add user message
+          const userMessage = document.createElement('div');
+          userMessage.textContent = `You: ${message}`;
+          chatboxMessages.appendChild(userMessage);
+
+          // Mock bot response
+          setTimeout(() => {
+            const botMessage = document.createElement('div');
+            botMessage.innerHTML = `<b>Support:</b> We have received your message: "${message}".`;
+            chatboxMessages.appendChild(botMessage);
+            chatboxMessages.scrollTop = chatboxMessages.scrollHeight; // Scroll to bottom
+          }, 1000);
+
+          input.value = '';
+          chatboxMessages.scrollTop = chatboxMessages.scrollHeight; // Scroll to bottom
+        }
+      });
+
+      // Language toggle logic
+      function setLangUI(lang) {
+        const langIcon = document.getElementById('langIcon');
+        const langLabel = document.getElementById('langLabel');
+        if (lang === 'fr') {
+          langIcon.textContent = '🇫🇷';
+          langLabel.textContent = 'Français';
+        } else {
+          langIcon.textContent = '🇬🇧';
+          langLabel.textContent = 'English';
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        let lang =
+          localStorage.getItem('yawigo_lang') ||
+          (navigator.language.startsWith('fr') ? 'fr' : 'en');
+        setLangUI(lang);
+        applyTranslations(lang);
+
+        document
+          .querySelector('#langToggle')
+          .addEventListener('click', function () {
+            lang = lang === 'en' ? 'fr' : 'en';
+            localStorage.setItem('yawigo_lang', lang);
+            setLangUI(lang);
+            applyTranslations(lang);
+          });
+      });
+    </script>
+    <!-- Add this before your document.addEventListener('DOMContentLoaded', ...) -->
+    <script>
+      // Minimal translation dictionary
+      const translations = {
+        en: {
+          mainTitle: 'Yawigo Ride & Food Delivery',
+          subtitle:
+            'Fast, reliable, and easy ride hailing & food delivery.<br>Book a ride or order from your favorite restaurants and track everything in real time!',
+          downloadBtn: 'Download Android APK',
+          // ...add other keys as needed...
+        },
+        fr: {
+          mainTitle: 'Yawigo Livraison & Transport',
+          subtitle:
+            'Commandez un trajet ou un repas rapidement et facilement.<br>Réservez un trajet ou commandez dans vos restaurants préférés et suivez tout en temps réel !',
+          downloadBtn: "Télécharger l'APK Android",
+          // ...add other keys as needed...
+        },
+      };
+
+      function applyTranslations(lang) {
+        const t = translations[lang] || translations.en;
+        // Example for main header
+        document.querySelector('.main-title').innerHTML = t.mainTitle;
+        document.querySelector('.subtitle').innerHTML = t.subtitle;
+        document.querySelector('.download-btn').textContent = t.downloadBtn;
+        // Add more selectors for other translatable elements as needed
+      }
+    </script>
+  </body>
+</html>

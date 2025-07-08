@@ -276,12 +276,8 @@ class VehicleInfo(models.Model):
 
 class Document(models.Model):
     driver = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    driver_photo = models.ImageField(upload_to='documents/',null=True, blank=True)
-    document_type = models.CharField(max_length=50,null=True, blank=True)
-    proof_of_insurance = models.ImageField(upload_to='documents/',null=True, blank=True)
-    roadworthiness = models.ImageField(upload_to='documents/',null=True, blank=True)
-    identification_card = models.ImageField(upload_to='documents/',null=True, blank=True)
-    document_file = models.FileField(upload_to='documents/',null=True, blank=True)
+    document_type = models.CharField(max_length=50, null=True, blank=True)  # e.g. 'driver_photo', 'proof_of_insurance', etc.
+    document_file = models.FileField(upload_to='documents/', null=True, blank=True)
 
     class Meta:
         db_table = 'Document'

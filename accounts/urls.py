@@ -25,6 +25,7 @@ router.register(r'vehicles-info-by-id', GetDriverVehicleInfoByIdViewSet, basenam
 
 
 urlpatterns = [
+    path('', HomeView.as_view(), name='index'),
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
     path('verify-login/', VerifyLoginView.as_view(), name='verify-login'),
@@ -37,5 +38,6 @@ urlpatterns = [
     path('driver-profile/<int:id>/', DriverProfileByIdView.as_view(), name='driver-profile-by-id'),
     path('rider-profile/<int:id>/', RiderProfileByIdView.as_view(), name='rider-profile-by-id'),
     path('update-profile/', UpdateUserProfileView.as_view(), name='update-profile'),
+    path('driver/documents/', DriverDocumentsView.as_view(), name='driver-documents'),
 
 ]
