@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-n0kn2qx+n78vlb(*dgm$q29rxix7n761wk1$erc2+8bgh*-lkc
 DEBUG = True
 
 
-ALLOWED_HOSTS = ["*",'127.0.0.1','localhost','192.168.100.5','ubintax.com']
+ALLOWED_HOSTS = ["*",'127.0.0.1','localhost','192.168.100.5']
 
 CSRF_TRUSTED_ORIGINS = ['https://ubintax.com']
 
@@ -71,7 +71,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -88,7 +88,7 @@ ROOT_URLCONF = 'driverapp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [ BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -114,17 +114,51 @@ DATABASES = {
     }
 }
 
+
+ 
 # DATABASES = {
 #     'default': {
-#         'ENGINE': os.environ.get("DB_ENGINE", "django.db.backends.mysql"),
-#         'NAME': os.environ.get("MYSQL_DATABASE", 'ridderapp'),
-#         'USER': os.environ.get("MYSQL_USER", "admin"),
-#         'PASSWORD': os.environ.get("MYSQL_ROOT_PASSWORD", "ehhfaIhYCSJ7LvE"),
-#         'HOST': os.environ.get("MYSQL_HOST", "localhost"),
-#         'PORT': 3306,
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'django--db',              # your actual DB name
+#         'USER': 'root',            # your DB user
+#         'PASSWORD': 'yawigo',             # your DB password
+#         'HOST': '34.10.38.34',            # Cloud SQL public IP
+#         'PORT': '3306',                   # ✅ MySQL default port
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'django--db',              # your actual DB name
+#         'USER': 'root',            # your DB user
+#         'PASSWORD': '',             # your DB password
+#         'HOST': '127.0.0.1',            # Cloud SQL public IP
+#         'PORT': '3306',                   # ✅ MySQL default port
+#     }
+# }
+# 
+
+# if os.getenv("GAE_ENV", "").startswith("standard"):
+    # Production (App Engine uses socket)
+# DATABASES = {
+#     "default": {
+#     "ENGINE": "django.db.backends.postgresql_psycopg2",
+#     "HOST": "/cloudsql/circular-music-463403-p3:us-central:django-db",
+#     "NAME": "django-db",
+#     "USER": "django_user",
+#     "PASSWORD": "yawigo",
+#     "PORT": "5432",
+# }
+# }
+# else:
+#     # Local (via TCP using proxy)
+#      DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -177,7 +211,7 @@ else:
     STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
- 
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -193,7 +227,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'kofikumi64@gmail.com'  # Replace with your email
 EMAIL_HOST_PASSWORD = 'vzpo udjs pwwd dbzb'  # Replace with your email password
 
- 
+
 # settings.py
 ASGI_APPLICATION = 'driverapp.asgi.application'
 
@@ -209,7 +243,7 @@ CHANNEL_LAYERS = {
  
 	}
 }
- 
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -217,17 +251,17 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,  # Adjust this to your needs
 }
- 
- 
+
+
 # FILE_UPLOAD_HANDLERS = [
 #     'django.core.files.uploadhandler.TemporaryFileUploadHandler',
 #     'django.core.files.uploadhandler.MemoryFileUploadHandler',
 # ]
- 
+
 
 # Optionally, you can increase the max upload size if the image is large
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760  # Example: 10MB
- 
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(weeks=30),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -251,7 +285,6 @@ SIMPLE_JWT = {
 TWILIO_ACCOUNT_SID = 'baabcff8-2553-477b-a5b9-9ff179788989'
 TWILIO_AUTH_TOKEN = '975655e042f7c2907273b7978e195c26-746c53cc-5443-4a7a-a269-b9520da9a9a3'
 TWILIO_PHONE_NUMBER = '447860099299'
-
 
 
 USE_X_FORWARDED_HOST = True

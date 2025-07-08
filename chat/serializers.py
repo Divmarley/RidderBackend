@@ -42,7 +42,9 @@ class RequestSerializer(serializers.ModelSerializer):
             'status',
             'extras',
             'data_driver',
-            'riderPushToken'
+            'riderPushToken',
+            'pushToken'
+
         ]
 
 class FriendSerializer(serializers.ModelSerializer):
@@ -128,4 +130,4 @@ class TripHistorySerializer(serializers.ModelSerializer):
 class DriverOnlineSerializer(serializers.ModelSerializer):
     class Meta:
         model = DriverOnline
-        fields = ['driver', 'phone', 'location', 'latitude', 'longitude','is_online','push_token','ride_type']
+        fields = '__all__'
