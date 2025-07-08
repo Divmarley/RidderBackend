@@ -23,7 +23,7 @@ class OrderAndFoodMenuCountView(APIView):
         try:
             order_count = Order.objects.filter(receiver=request.user.id).count()
             food_menu_count = FoodMenu.objects.filter(restaurant=request.user).count()
-            print('food_menu_countxx',food_menu_count)
+            # print('food_menu_countxx',food_menu_count)
             # reviews_summary = Review.objects.filter(user=request.user.id,food_menu=food_menu_count).aggregate(
             #     total_reviews=Count('id'),
             #     accumulated_ratings=Sum('rating')
@@ -248,15 +248,15 @@ class FoodMenuList(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        print(f"Getting food menu for user: {user.id}")
+        # print(f"Getting food menu for user: {user.id}")
         
         try:
             if user.is_authenticated:
                 # Try to get the restaurant
                 restaurant = Restaurant.objects.filter(user=user).first()
-                print('restaurant',restaurant)
+                # print('restaurant',restaurant)
                 if restaurant:
-                    print(f"Found restaurant: {restaurant.id}")
+                    # print(f"Found restaurant: {restaurant.id}")
                     return FoodMenu.objects.filter(restaurant=user)
                 else:
                     print("No restaurant found for user")

@@ -280,7 +280,7 @@ class FoodConsumer(WebsocketConsumer):
     #     )
     def receive_food_request_connect(self, data):
  
-        print("data",data)
+        print("receive_food_request_connect data",data)
         
         daseData = data.get('data')
         print("daseData",daseData)
@@ -294,7 +294,7 @@ class FoodConsumer(WebsocketConsumer):
         status = daseData['status']
         user = self.scope['user']
         order_info=  daseData['order_info']
-        print("restaurant_id-->",restaurant_id[0].get('restaurantId'))
+     
        
 
    
@@ -305,8 +305,7 @@ class FoodConsumer(WebsocketConsumer):
         #     return
 
         user = self.scope['user']
-        print('user-->>>',user.id)
-
+ 
         try:
             restaurant = CustomUser.objects.get(id=restaurant_id[0].get('restaurantId'))
         except CustomUser.DoesNotExist:
@@ -325,7 +324,7 @@ class FoodConsumer(WebsocketConsumer):
             status=status,
             order_info=order_info
         ) 
-        print('connection',connection)
+        # print('connection',connection)
 
 
         # Create Order instance
@@ -389,7 +388,7 @@ class FoodConsumer(WebsocketConsumer):
             connection.buyer.phone, 'request.connect.food', response_data
         )
 
-        print('Response restaurant from restaurant:', )
+        print('Response restaurant from restaurant:', response_data)
         self.send_group(
             connection.restaurant.phone, 'request.connect.food', response_data
         )
@@ -409,7 +408,7 @@ class FoodConsumer(WebsocketConsumer):
         orders = Order.objects.filter(
             sender__id=user.id
         ) | Order.objects.filter(receiver__id=user.id)
-        print('list_orders-->>orders',orders)
+        # print('list_orders-->>orders',orders)
         # Prepare serialized orders data with item details
         orders_data = []
         for order in orders:
@@ -428,11 +427,11 @@ class FoodConsumer(WebsocketConsumer):
 
 
                 }
-                print('item_data',item_data)
+                # print('item_data',item_data)
                 order_items.append(item_data)
 
             # Add order details including item data
-   
+            
             orders_data.append({
                 "id": order.id,
                 "status": order.status,
@@ -440,8 +439,13 @@ class FoodConsumer(WebsocketConsumer):
                 "total_price": float(order.total_price),  # Convert Decimal to float
                 "items": order_items,
                 "order_id": order.order_id,
-                "connection_id": order.food_connection_id
+                "connection_id": order.food_connection_id,
+                'created_at':str(order.created_at),
+                'updated_at':str(order.updated_at)
             })
+            # serialized = OrderSerializer(order_items)
+            # print('Order serialized-->',serialized)
+            
 
         # Send back the detailed orders list to the client
         response_data = {
@@ -469,11 +473,11 @@ class FoodConsumer(WebsocketConsumer):
         # print("receive_food_list", data)
         # print("receive_request_connect data",data)
 		# Attempt to fetch the receiving user
-        try:
-            resturant = CustomUser.objects.get(phone=user.phone)
-        except CustomUser.DoesNotExist:
-            print('Error: User not found')
-            return
+        # try:
+        #     resturant = CustomUser.objects.get(phone=user.phone)
+        # except CustomUser.DoesNotExist:
+        #     print('Error: User not found')
+        #     return
 		# Create connection
         # connection, _ = FoodConnection.objects.get_or_create(
 		# 	sender=self.scope['user'],

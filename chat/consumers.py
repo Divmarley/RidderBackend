@@ -16,6 +16,7 @@ from ride.models import DriverHistory, RideHistory, TripHistory
 from .models import Connection, DriverOnline, Message
 
 from .serializers import (
+	DriverOnlineSerializer,
 	TripHistorySerializer,
 	TripSerializer,
 	UserSerializer, 
@@ -145,6 +146,9 @@ class ChatConsumer(WebsocketConsumer):
 			self.receive_driver_location_update(data)
 		elif data_source == 'drivers.online':
 			self.receive_online_drivers(data)
+		elif data_source == 'driver.online':
+			self.receive_online_driver_data(data)
+
 		# except Exception as e:
 		# 	logger.error(f"Error processing message: {str(e)}")
 
@@ -153,8 +157,6 @@ class ChatConsumer(WebsocketConsumer):
 		 
 		order_data = data.get('order')
 
-		# print("order", order_data)
-		print("dataapp", data)
 
 		# Get the receiver instance
 		receiver_instance = Restaurant.objects.get(user=order_data['restaurant'])
@@ -172,7 +174,6 @@ class ChatConsumer(WebsocketConsumer):
 
 		# Loop through the items in the order and create OrderItem instances
 		for item in order_data['items']:
-			print(item)
 			food_menu_item = FoodMenu.objects.get(id=item['item_id'])  # Fetch FoodMenu object using 'item_id'
 			order_item = OrderItem.objects.create(
 				order=order,
@@ -188,7 +189,6 @@ class ChatConsumer(WebsocketConsumer):
 		serialized_order = OrderSerializer(order)
 
 		# Print the serialized food items
-		print("serialized_food_items", serialized_food_items)
 
 		# Send serialized order data along with serialized food items
 		response_data = {
@@ -210,7 +210,6 @@ class ChatConsumer(WebsocketConsumer):
 		try:
 			orders = Order.objects.filter(receiver=user)
 			serialized_orders = OrderSerializer(orders, many=True)
-			print('serialized_orders',serialized_orders)
 			self.send(text_data=json.dumps({
 				'type': 'order.list',
 				'orders': serialized_orders.data
@@ -251,7 +250,6 @@ class ChatConsumer(WebsocketConsumer):
 	
 	def receive_trip_lookForDriver(self,data):
 		user = self.scope['user']
-		print('received', data)
 		self.send_group(user.phone, 'trip.lookForDriver', data)
 
 	def receive_friend_list(self, data):
@@ -260,7 +258,6 @@ class ChatConsumer(WebsocketConsumer):
 		latest_message = Message.objects.filter(
 			connection=OuterRef('id')
 		).order_by('-created')[:1]
-		# print("latest_message",latest_message)
 		# Get connections for user
 		connections = Connection.objects.filter(
 			Q(sender=user) | Q(receiver=user),
@@ -328,7 +325,6 @@ class ChatConsumer(WebsocketConsumer):
 	def receive_message_send(self, data):
 		user = self.scope['user']
 		connectionId = data.get('connectionId')
-		print(connectionId)
 		message_text = data.get('message')
 		try:
 			connection = Connection.objects.get(id=connectionId)
@@ -376,7 +372,6 @@ class ChatConsumer(WebsocketConsumer):
 		self.send_group(recipient.phone, 'message.send', data)
 
 	def receive_message_type(self, data):
-		print('data',data)
 		user = self.scope['user']
 		recipient_phone = data.get('phone')
 		data = {
@@ -385,11 +380,14 @@ class ChatConsumer(WebsocketConsumer):
 		self.send_group(recipient_phone, 'message.type', data)
 
 	def receive_request_accept(self, data):
-		print('received', data)
 		phone = data.get('phone')
 		dataDriver = data.get('dataDriver')
-		print('dataDriver', dataDriver)
 		connectionId = data.get('connectionId')
+		pushToken = data.get('pushToken')
+		
+		print('receive_request_accept dataDriver,',dataDriver)
+		# print('receive_request_accept riderPushToken,',push_token)
+		# print('receive_request_accept data,',data)
 		
 		try:
 			# Fetch connection object
@@ -420,7 +418,7 @@ class ChatConsumer(WebsocketConsumer):
 		connection.accepted = True
 		connection.status = "DRIVER ACCEPTED"
 		connection.data_driver = dataDriver
-		print("Connection sender_id ", connection.sender_id)
+		connection.pushToken = 'ffefe'
 		connection.save()
 
 		# Delete other pending connections for this driver
@@ -429,7 +427,6 @@ class ChatConsumer(WebsocketConsumer):
 			accepted=False
 		).exclude(id=connectionId)
 
-		print('other_connections',other_connections)
 
 		# Notify other riders about cancellation before deleting
 		for other_conn in other_connections:
@@ -448,7 +445,6 @@ class ChatConsumer(WebsocketConsumer):
 		other_connections.delete()
 		
 		serialized = RequestSerializer(connection)
-		print("RequestSerializer", serialized.data)
 		
 		# Include vehicle data in serialized data
 		serialized_data = serialized.data
@@ -497,7 +493,6 @@ class ChatConsumer(WebsocketConsumer):
 		)
 
 	def receive_request_connect(self, data):
-		print('receive_request_connect received', data)
 		phone = data.get('phone')
 		location = data.get('location')
 		push_token = data.get('push_token')
@@ -582,7 +577,6 @@ class ChatConsumer(WebsocketConsumer):
 		user = self.scope['user']
 		# Convert base64 data  to django content file
 		image_str = data.get('base64')
-		print(image_str)
 		image = ContentFile(base64.b64decode(image_str))
 		# Update thumbnail field
 		filename = data.get('filename')
@@ -593,7 +587,6 @@ class ChatConsumer(WebsocketConsumer):
 		self.send_group(self.phone, 'thumbnail', serialized.data)
 
 	def receive_driver_arrived(self, data):
-		print('receive_driver_arrived-.....> ',data)   
 		phone = data.get('phone') 
 		connectionId = data.get('connectionId') 
 		# Fetch connection object
@@ -612,7 +605,6 @@ class ChatConsumer(WebsocketConsumer):
 		connection.save()
 		
 		serialized = TripSerializer(connection)
-		print("serialized.data",serialized.data)
 
 		# Send accepted request to sender
 		self.send_group(
@@ -624,7 +616,6 @@ class ChatConsumer(WebsocketConsumer):
 		)
 
 	def receive_start_trip(self, data): 
-		print('data',data)
 		phone = data.get('phone')
 		connectionId = data.get('connectionId')
 	 
@@ -645,7 +636,6 @@ class ChatConsumer(WebsocketConsumer):
 		
 		serialized = TripSerializer(connection)
 
-		print('Serialized trip' ,	serialized.data)
 
 		# Send accepted request to sender
 		self.send_group(
@@ -657,11 +647,9 @@ class ChatConsumer(WebsocketConsumer):
 		)
 
 	def receive_trip_ended(self, data): 
-		print("data: ",	data)
 		phone = data.get('phone')
 		connectionId = data.get('connectionId')
 		# Fetch connection object
-		print("user",self.scope['user'])
 		try:
 			connection = Connection.objects.get(
 				receiver__phone=phone,
@@ -702,10 +690,8 @@ class ChatConsumer(WebsocketConsumer):
 		)
 
 	def receive_trip_done(self, data): 
-		print("data: ",	data)
  
 		# Fetch connection object
-		print("user",self.scope['user'])
 		try:
 			connection = Connection.objects.get(
 				sender__phone=self.scope['user'],
@@ -746,16 +732,13 @@ class ChatConsumer(WebsocketConsumer):
 		)
 
 	def receive_rating(self, data): 
-		print("data: ",	data)
  
 		# Fetch connection object
-		print("user",self.scope['user'])
 		try:
 			connection = Connection.objects.get(
 				sender__phone=self.scope['user'],
 			
 			)
-			print("connection",connection)
 			
 		except Connection.DoesNotExist:
 			print('Error: connection  doesnt exists')
@@ -790,7 +773,6 @@ class ChatConsumer(WebsocketConsumer):
 		)
 
 	def receive_trip_confirm_payment(self, data): 
-		print("data: ",	data)
 		phone = data.get('phone')
 		connectionId = data.get('connectionId')
 		# Fetch connection object
@@ -801,7 +783,6 @@ class ChatConsumer(WebsocketConsumer):
 				receiver=self.scope['user'],
 				id= connectionId
 			)
-			print("connection",connection)
 		except Connection.DoesNotExist:
 			print('Error: connection  doesnt exists',)
 			return
@@ -838,7 +819,6 @@ class ChatConsumer(WebsocketConsumer):
 	def receive_locationUpdate(self, data):
 		try:
 			# Log the incoming location data
-			print('Receiving location update:', data)
 
 			# Extract the necessary fields from the incoming data
 		 
@@ -846,7 +826,6 @@ class ChatConsumer(WebsocketConsumer):
 			longitude = data['data']['longitude']
 			# Ensure all required data is present
 			if  latitude is None or longitude is None:
-				print('Invalid data received: missing fields')
 				return
 			
 			# Update the driver's location in the database
@@ -858,7 +837,6 @@ class ChatConsumer(WebsocketConsumer):
 				# driver.save()
 
 				# Log the update
-				# print(f"Updated location for driver {driver_id}: ({latitude}, {longitude})")
 				user = self.scope['user']
 				connection = Connection.objects.filter(
 					sender__phone=user.phone, accepted=True
@@ -925,18 +903,28 @@ class ChatConsumer(WebsocketConsumer):
 		else:
 			print("ℹ️ No changes detected, skipping update")
 
+	def receive_online_driver_data(self, data):
+		user = self.scope['user']
+		online_drivers = DriverOnline.objects.get(driver=user)
+		print('online_drivers',online_drivers)
+
+		serialized = DriverOnlineSerializer(online_drivers)
+		print('serialized',serialized.data)
+		self.send_group(user.phone, 'driver.online', serialized.data)
+
+ 
 	def receive_online_drivers(self, data):
 		# Get all online drivers
 		ride_type = data.get('data', {}).get('ride_type')
-		print('ride_type:', ride_type)
+		 
 		
 		# Filter online drivers by ride type if specified
 		query = Q(is_online=True)
 		if ride_type:
 			query &= Q(ride_type==ride_type)
 			
-		online_drivers = DriverOnline.objects.filter(is_online=True).select_related('driver')
-		print('online_drivers', online_drivers)
+		online_drivers = DriverOnline.objects.filter(is_online=True,ride_type=ride_type).select_related('driver')
+		print('online_drivers',online_drivers)
 		# Prepare response data
 		drivers_data = []
 		for driver in online_drivers:
@@ -949,18 +937,18 @@ class ChatConsumer(WebsocketConsumer):
 				'longitude': driver.longitude,
 				'ride_type': driver.ride_type
 			})
-		print('drivers_data',drivers_data)
+ 
 		# Send response through WebSocket
 		self.send_group(self.scope['user'].phone, 'drivers.online', {
 			'online_drivers': drivers_data
 		})
 
 	def receive_rider_location_update(self, data):
-		print('Received location update', data)
+		# print('Received location update', data)
 		try:
 			# Get the user and location data
 			user = self.scope['user']
-			print('user.phone',user.phone)
+			# print('user.phone',user.phone)
 			location_data = data.get('data')
 			
 			if not location_data:
@@ -987,10 +975,10 @@ class ChatConsumer(WebsocketConsumer):
 				# 	sender__phone=user.phone,  
 				# ).first()
 
-				print('connection Received location--->>>>>>',connection) 
+				# print('connection Received location--->>>>>>',connection) 
 				
 				if connection:
-					print('Received location updateddd', connection)
+					# print('Received location updateddd', connection)
 					# Prepare location update data
 					location_update = {
 						"receiver":connection.receiver.phone,
@@ -1001,7 +989,7 @@ class ChatConsumer(WebsocketConsumer):
 						'speed': speed,
 						'timestamp': timestamp
 					}
-					print('connection',connection.receiver)
+					# print('connection',connection.receiver)
 					
 					# Send to rider
 					# self.send_group(
@@ -1028,7 +1016,7 @@ class ChatConsumer(WebsocketConsumer):
 
 
 	def receive_driver_location_update(self, data):
-		print('Received driver location update', data)
+		# print('Received driver location update', data)
 		try:
 			# Get the user and location data
 			user = self.scope['user']
@@ -1057,7 +1045,7 @@ class ChatConsumer(WebsocketConsumer):
 				connection = Connection.objects.filter(
 					receiver__phone=user.phone
 				).first()
-				print('connection --location.driver.update ===',connection)
+				# print('connection --location.driver.update ===',connection)
 			 
 				
 				if connection:
@@ -1074,7 +1062,6 @@ class ChatConsumer(WebsocketConsumer):
 					}
 					
 
-					# print('location_update',location_update)
 					# Send to rider
 					# self.send_group(
 					# 	connection.receiver.phone,
@@ -1126,7 +1113,7 @@ class ChatConsumer(WebsocketConsumer):
 		}))
 		
 	def receive_request_cancel(self, data):
-		print("data",data)
+		# print("data",data)
 		connection_id = data.get('connectionId')
 		# 
 		try:

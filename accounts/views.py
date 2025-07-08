@@ -1,5 +1,6 @@
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
+from django.views.generic import ListView,View
 from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,12 +8,24 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.shortcuts import render
 from accounts import send_verification_code
 from chat.models import DriverOnline
 from food.models import Image, Location, Rating, Restaurant
 from .models import CustomUser, DriverProfile, PersonalInfo, RepairProfile, RiderProfile, Upload, VehicleInfo,Document
 from .serializers import CreateAllDataSerializer, DocumentSerializer, DriverProfileSerializer, DriverSerializer, EditProfileSerializer, LoginSerializer, PersonalInfoSerializer, RegisterSerializer, RiderProfileSerializer, UploadSerializer, UserProfileSerializer, UserSerializer, VehicleInfoSerializer, VerifyLoginSerializer, ProfileSerializer
+
+
+
+class HomeView(View):
+    template_name = 'index.html'  # Replace with your actual template
+
+    def get(self, request, *args, **kwargs):
+        context = {
+            # 'data': ...  # Add any data you want to pass to the template
+        }
+        return render(request, self.template_name, context)
+
 
 class RegisterView(APIView):
     permission_classes = (AllowAny,)
@@ -411,38 +424,36 @@ from rest_framework import status
 class CreateAllDataView(APIView):
     parser_classes = (MultiPartParser, FormParser)
     
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs): 
         try:
-            # Handle documents - convert to list if single file
-            documents = request.FILES.getlist('documents')
-            if not isinstance(documents, list):
-                documents = [documents]
-
             # Parse JSON data
             personal_info = json.loads(request.data.get('personal_info', '{}'))
             vehicle_info = json.loads(request.data.get('vehicle_info', '{}'))
             user_id = json.loads(request.data.get('user_id'))
 
-            # Combine data and documents
-            serializer_data = {
-                'documents': [],
-                'personal_info': personal_info,
-                'vehicle_info': vehicle_info,
-                'user_id': user_id
-            }
+            # Save PersonalInfo and VehicleInfo as before
+            user = CustomUser.objects.get(id=user_id)
+            personal_info_obj = PersonalInfo.objects.create(driver=user, **personal_info)
+            vehicle_info_obj = VehicleInfo.objects.create(driver=user, **vehicle_info)
 
-            serializer = CreateAllDataSerializer(
-                data=serializer_data, 
-                context={'user_id': user_id}
-            )
+            # Save each document by its key as document_type
+            created_documents = []
+            for key in request.FILES:
+                files = request.FILES.getlist(key)
+                for file in files:
+                    doc = Document.objects.create(
+                        driver=user,
+                        document_type=key,
+                        document_file=file
+                    )
+                    created_documents.append(doc)
 
-            if serializer.is_valid():
-                result = serializer.save()
-                return Response(result, status=status.HTTP_201_CREATED)
-            
-            print("Validation errors:", serializer.errors)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            
+            return Response({
+                'personal_info': PersonalInfoSerializer(personal_info_obj).data,
+                'vehicle_info': VehicleInfoSerializer(vehicle_info_obj).data,
+                'documents': DocumentSerializer(created_documents, many=True).data
+            }, status=status.HTTP_201_CREATED)
+
         except json.JSONDecodeError as e:
             return Response(
                 {'error': f'Invalid JSON format: {str(e)}'}, 
@@ -454,6 +465,7 @@ class CreateAllDataView(APIView):
                 {'error': str(e)}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+        
 
 class GetDriverVehicleInfoByIdViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk=None):
@@ -475,7 +487,6 @@ class GetDriverInfoByIdViewSet(viewsets.ViewSet):
             return Response(status=status.HTTP_404_NOT_FOUND)
         
 
-
 class UpdateUserProfileView(APIView):
     """API to update user profile (name, email, phone)"""
     permission_classes = [IsAuthenticated]
@@ -489,3 +500,13 @@ class UpdateUserProfileView(APIView):
             return Response({"message": "Profile updated successfully", "user": serializer.data}, status=status.HTTP_200_OK)
         print('serializer.errors', serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+ 
+
+class DriverDocumentsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        documents = Document.objects.filter(driver=user)
+        serializer = DocumentSerializer(documents, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

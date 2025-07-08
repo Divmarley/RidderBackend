@@ -169,7 +169,7 @@ class VehicleInfoSerializer(serializers.ModelSerializer):
 class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document
-        fields = ['id',  'driver_photo', 'document_type', 'proof_of_insurance', 'roadworthiness', 'identification_card', 'document_file']
+        fields = ['id',   'document_type',  'document_file']
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -177,39 +177,40 @@ from .models import CustomUser, PersonalInfo, VehicleInfo, Document
 # from .serializers import PersonalInfoSerializer, VehicleInfoSerializer, DocumentSerializer
 
 class CreateAllDataSerializer(serializers.Serializer):
+    documents = serializers.ListField(
+        child=serializers.FileField(),
+        allow_empty=True
+    )
     personal_info = PersonalInfoSerializer()
     vehicle_info = VehicleInfoSerializer()
-    documents = DocumentSerializer(many=True)
-    user_id= serializers.IntegerField()
+    user_id = serializers.IntegerField()
 
     def create(self, validated_data):
-        # Ensure the driver is provided or fetched
-        
         user_id = self.context.get('user_id')
-        print("create user_id",user_id)
- 
+        print("create user_id", user_id)
+
         user = CustomUser.objects.get(id=user_id)
 
-        # Create or update PersonalInfo 
+        # Create PersonalInfo
         personal_info_data = validated_data.pop('personal_info')
         personal_info = PersonalInfo.objects.create(driver=user, **personal_info_data)
 
-        # Create or update VehicleInfo
+        # Create VehicleInfo
         vehicle_info_data = validated_data.pop('vehicle_info')
         vehicle_info = VehicleInfo.objects.create(driver=user, **vehicle_info_data)
 
-        # Create Document instances
+        # Create Document instances for each uploaded file
         documents_data = validated_data.pop('documents')
-        documents = [Document.objects.create(driver=user, **doc_data) for doc_data in documents_data]
-        print("documents",documents)
-        # Return serialized data
+        created_documents = []
+        for file in documents_data: 
+            doc = Document.objects.create(driver=user, document_file=file)
+            created_documents.append(doc)
+
         return {
             'personal_info': PersonalInfoSerializer(personal_info).data,
             'vehicle_info': VehicleInfoSerializer(vehicle_info).data,
-            'documents': DocumentSerializer(documents, many=True).data
+            'documents': DocumentSerializer(created_documents, many=True).data
         }
-
-
 class UploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Upload

@@ -167,8 +167,6 @@ class RiderProfile(models.Model):
         verbose_name = 'Rider Profile'
         verbose_name_plural = 'Riders Profile'
 
-
-
 class RestaurantProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='restaurant_profile')
     payment_method = models.CharField(max_length=50, blank=True, null=True)
@@ -192,7 +190,6 @@ class RestaurantProfile(models.Model):
         managed = True
         verbose_name = 'Restaurant Profile'
         verbose_name_plural = 'Restaurants Profile'
-
 
 class PharmacyProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='pharmacy_profile')
@@ -279,12 +276,8 @@ class VehicleInfo(models.Model):
 
 class Document(models.Model):
     driver = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    driver_photo = models.ImageField(upload_to='documents/',null=True, blank=True)
-    document_type = models.CharField(max_length=50,null=True, blank=True)
-    proof_of_insurance = models.ImageField(upload_to='documents/',null=True, blank=True)
-    roadworthiness = models.ImageField(upload_to='documents/',null=True, blank=True)
-    identification_card = models.ImageField(upload_to='documents/',null=True, blank=True)
-    document_file = models.FileField(upload_to='documents/',null=True, blank=True)
+    document_type = models.CharField(max_length=50, null=True, blank=True)  # e.g. 'driver_photo', 'proof_of_insurance', etc.
+    document_file = models.FileField(upload_to='documents/', null=True, blank=True)
 
     class Meta:
         db_table = 'Document'
