@@ -5,21 +5,48 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta viewport="width=device-width, initial-scale=1.0" />
     <title>Yawigo Food Delivery</title>
+    <meta name="description" content="Yawigo - Fast & reliable food delivery at your doorstep.">
+    <meta name="keywords" content="Yawigo, food delivery, Ghana, order food online">
+    <meta name="author" content="Yawigo Team">
     <link rel="stylesheet" href="{% static "web/index.css" %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
       /** @format */
+      :root {
+        --primary: #ff5c03;
+        --primary-light: #ff8f00;
+        --primary-dark: #e65100;
+        --primary-bg: rgba(255, 92, 3, 0.1);
+        --text-dark: #222;
+        --text-light: #666;
+        --white: #fff;
+        --border-light: rgba(0, 0, 0, 0.1);
+        --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.08);
+        --shadow-lg: 0 12px 48px rgba(255, 92, 3, 0.12);
+        --radius-sm: 12px;
+        --radius-md: 24px;
+        --radius-lg: 32px;
+        --transition: all 0.3s ease;
+      }
+
       * {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
 
       body {
-        font-family: 'Inter', Arial, sans-serif;
-        background: #fff;
-        color: #222;
-        margin: 0;
-        padding: 0;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        background: var(--white);
+        color: var(--text-dark);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
 
       /* Section spacing */
@@ -30,10 +57,22 @@
       }
 
       .showcase-header {
-        background: linear-gradient(90deg, #ff5c03 0%, #ffe5d1 100%);
+        background: linear-gradient(135deg, #ff5c03 0%, #ff8f00 100%);
         color: #fff;
         text-align: center;
-        padding: 48px 16px 32px 16px;
+        padding: 72px 24px 56px 24px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .showcase-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='rgba(255,255,255,0.1)' fill-rule='evenodd'/%3E%3C/svg%3E");
       }
 
       .logo {
@@ -90,6 +129,18 @@
         max-width: 1100px;
         margin: 0 auto;
       }
+      
+      @media (max-width: 768px) {
+        .features-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        
+        .feature-card {
+          max-width: 100%;
+          margin: 0 auto;
+        }
+      }
 
       .feature-card {
         background: #fff;
@@ -106,8 +157,31 @@
       }
 
       .feature-icon {
-        font-size: 2.5rem;
-        margin-bottom: 16px;
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 24px auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 92, 3, 0.1);
+        border-radius: 16px;
+        transition: all 0.3s ease;
+      }
+
+      .feature-card:hover .feature-icon {
+        background: #ff5c03;
+        transform: scale(1.1);
+      }
+
+      .feature-icon svg {
+        width: 32px;
+        height: 32px;
+        fill: #ff5c03;
+        transition: all 0.3s ease;
+      }
+
+      .feature-card:hover .feature-icon svg {
+        fill: #fff;
       }
 
       .feature-title {
@@ -151,6 +225,247 @@
         font-size: 1.1rem;
         font-weight: 700;
         margin: 18px 0 8px 0;
+      }
+
+      /* How It Works Section Styles */
+      .how-section {
+        position: relative;
+        padding: 80px 0;
+        overflow: hidden;
+        background: #fff;
+      }
+
+      .how-title {
+        text-align: center;
+        font-size: 2.5rem;
+        color: var(--primary, #ff5c03);
+        margin-bottom: 16px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .how-subtitle {
+        text-align: center;
+        font-size: 1.2rem;
+        color: var(--text-light, #666);
+        margin-bottom: 64px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .how-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      
+      @media (max-width: 768px) {
+        .how-steps {
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+        
+        .how-step {
+          max-width: 100%;
+          margin: 0 auto;
+        }
+      }
+
+      .how-step {
+        text-align: center;
+        padding: 24px;
+        background: #fff;
+        border-radius: 24px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+      }
+
+      .how-step:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 48px rgba(255, 92, 3, 0.12);
+      }
+
+      .step-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 24px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--primary-bg, rgba(255, 92, 3, 0.1));
+        border-radius: 50%;
+        transition: all 0.3s ease;
+      }
+
+      .how-step:hover .step-icon {
+        background: var(--primary, #ff5c03);
+      }
+
+      .step-icon svg {
+        width: 40px;
+        height: 40px;
+        fill: var(--primary, #ff5c03);
+        transition: all 0.3s ease;
+      }
+
+      .how-step:hover .step-icon svg {
+        fill: #fff;
+      }
+
+      .step-icon span {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 32px;
+        height: 32px;
+        background: var(--primary, #ff5c03);
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.1rem;
+        border: 3px solid #fff;
+        box-shadow: 0 4px 12px rgba(255, 92, 3, 0.2);
+      }
+
+      .how-step h3 {
+        font-size: 1.4rem;
+        color: var(--text-dark, #222);
+        margin: 0 0 16px;
+        font-weight: 700;
+      }
+
+      .how-step p {
+        font-size: 1.1rem;
+        color: var(--text-light, #666);
+        line-height: 1.6;
+        margin: 0;
+      }
+
+      /* Screenshots Section Styles */
+      .screenshots-section {
+        position: relative;
+        padding: 80px 0;
+        overflow: hidden;
+      }
+
+      .section-background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+      }
+
+      .section-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      .screenshots-title {
+        text-align: center;
+        font-size: 2.5rem;
+        color: var(--primary, #ff5c03);
+        margin-bottom: 16px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .screenshots-subtitle {
+        text-align: center;
+        font-size: 1.2rem;
+        color: var(--text-light, #666);
+        margin-bottom: 48px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .screenshots-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 32px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      
+      @media (max-width: 768px) {
+        .screenshots-gallery {
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+        
+        .screenshot-card {
+          max-width: 100%;
+          margin: 0 auto;
+        }
+        
+        .screenshot-wrapper {
+          max-width: 320px;
+          margin: 0 auto;
+        }
+      }
+
+      .screenshot-card {
+        text-align: center;
+      }
+
+      .screenshot-wrapper {
+        position: relative;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        aspect-ratio: 9/16;
+      }
+
+      .screenshot-wrapper:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 48px rgba(255, 92, 3, 0.2);
+      }
+
+      .screenshot-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .screenshot-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 92, 3, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .screenshot-wrapper:hover .screenshot-overlay {
+        opacity: 1;
+      }
+
+      .screenshot-overlay svg {
+        width: 48px;
+        height: 48px;
+      }
+
+      .screenshot-card h3 {
+        margin-top: 16px;
+        font-size: 1.2rem;
+        color: var(--text-dark, #222);
+        font-weight: 600;
       }
 
       .footer-col ul {
@@ -705,14 +1020,36 @@
       /* Responsive for how-steps */
       @media (max-width: 900px) {
         .how-steps {
-          flex-direction: column;
-          align-items: center;
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 24px;
         }
 
         .how-step {
-          width: 98vw;
+          width: 100%;
           max-width: 400px;
-          margin-bottom: 18px;
+          margin: 0 auto 18px auto;
+          padding: 24px;
+        }
+      }
+      
+      @media (max-width: 768px) {
+        .how-steps {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        
+        .how-step {
+          max-width: 100%;
+          margin: 0 auto;
+        }
+        
+        .how-title {
+          font-size: 1.6rem;
+        }
+        
+        .how-subtitle {
+          font-size: 1rem;
         }
       }
 
@@ -1219,103 +1556,221 @@
         Download Android APK
       </a>
     </header>
-    <svg
-      width="100%"
-      height="300"
-      viewBox="0 0 1200 300"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      style="display: block; margin: auto">
-      <g transform="translate(439.42,30.60)" opacity="1" style="display: block">
-        <g opacity="1" transform="translate(658.50,120.76)">
-          <path
-            fill="rgb(255,255,255)"
-            fill-opacity="1"
-            d="M-0.5189999938011169,-3.691999912261963 C-0.6620000004768372,-3.621000051498413 -0.7900000214576721,-3.5230000019073486 -0.8939999938011169,-3.4019999504089355 C-1,-3.2809998989105225 -1.0800000429153442,-3.140000104904175 -1.128000020980835,-2.98799991607666 C-1.1779999732971191,-2.835999965667724 -1.1970000267028809,-2.674999952316284 -1.184000015258789,-2.5160000324249268 C-1.1690000295639038,-2.3570001125335693 -1.1239999532699585,-2.2019999027252197 -1.0499999523162842,-2.059999942779541 C-0.7419999837875366,-1.4299999475479126 -0.6209999918937683,-0.7250000238418579 -0.703000009059906,-0.02800000086426735 C-0.7829999923706055,0.6690000295639038 -1.059000015258789,1.3279999494552612 -1.503000020980835,1.871999979019165 C-1.6399999856948853,2.049999952316284 -1.7259999513626099,2.26200008392334 -1.7519999742507935,2.484999895095825 C-1.7760000228881836,2.7079999446868896 -1.7389999628067017,2.934999942779541 -1.6419999599456787,3.138000011444092 C-1.5470000505447388,3.3410000801086426 -1.3980000019073486,3.515000104904175 -1.2100000381469727,3.638000011444092 C-1.0219999551773071,3.760999917984009 -0.8029999732971191,3.8310000896453857 -0.578000009059906,3.8380000591278076 C-0.39800000190734863,3.8359999656677246 -0.21899999678134918,3.793999910354614 -0.0560000017285347,3.7160000801086426 C0.10700000077486038,3.638000011444092 0.25,3.5250000953674316 0.36500000953674316,3.384999990463257 C1.1169999837875366,2.4790000915527344 1.5870000123977661,1.3739999532699585 1.7209999561309814,0.20399999618530273 C1.8530000448226929,-0.9660000205039978 1.6410000324249268,-2.1489999294281006 1.1119999885559082,-3.200000047683716 C1.0379999876022339,-3.3399999141693115 0.9380000233650208,-3.4639999866485596 0.8149999976158142,-3.565000057220459 C0.6919999718666077,-3.6659998893737793 0.5509999990463257,-3.740000009536743 0.39899998903274536,-3.7860000133514404 C0.24899999797344208,-3.8320000171661377 0.08900000154972076,-3.8469998836517334 -0.0689999982714653,-3.8310000896453857 C-0.22699999809265137,-3.815000057220459 -0.3790000021457672,-3.691999912261963 -0.5189999938011169,-3.691999912261963 Z" />
-        </g>
-      </g>
-    </svg>
+    
+  <svg width="100%" height="300" viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg" style="display: block; margin: auto;">
+    <!-- Wave Background -->
+    <path 
+      fill="var(--color-primary-light, #f0f4ff)" 
+      d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
+    </path>
+    
+    <!-- Decorative Elements -->
+    <g transform="translate(600, 150)" fill="var(--color-primary, #4361ee)" opacity="0.7">
+      <!-- Food delivery themed decorative elements -->
+      <circle cx="-400" cy="-50" r="15" opacity="0.5" />
+      <circle cx="-350" cy="20" r="10" opacity="0.3" />
+      <circle cx="-300" cy="-30" r="12" opacity="0.4" />
+      <circle cx="-250" cy="40" r="8" opacity="0.6" />
+      <circle cx="-200" cy="-20" r="14" opacity="0.5" />
+      <circle cx="-150" cy="30" r="9" opacity="0.3" />
+      <circle cx="-100" cy="-40" r="11" opacity="0.4" />
+      <circle cx="-50" cy="10" r="13" opacity="0.6" />
+      <circle cx="0" cy="-25" r="15" opacity="0.5" />
+      <circle cx="50" cy="35" r="10" opacity="0.3" />
+      <circle cx="100" cy="-15" r="12" opacity="0.4" />
+      <circle cx="150" cy="25" r="8" opacity="0.6" />
+      <circle cx="200" cy="-35" r="14" opacity="0.5" />
+      <circle cx="250" cy="15" r="9" opacity="0.3" />
+      <circle cx="300" cy="-30" r="11" opacity="0.4" />
+      <circle cx="350" cy="20" r="13" opacity="0.6" />
+      <circle cx="400" cy="-10" r="15" opacity="0.5" />
+    </g>
+    
+    <!-- Food Delivery Icon -->
+    <g transform="translate(600, 120) scale(0.8)">
+      <!-- Delivery Box -->
+      <rect x="-40" y="-30" width="80" height="60" rx="10" fill="var(--color-primary, #4361ee)" />
+      
+      <!-- Box Details -->
+      <rect x="-30" y="-20" width="60" height="10" rx="2" fill="white" opacity="0.6" />
+      <rect x="-30" y="-5" width="40" height="10" rx="2" fill="white" opacity="0.6" />
+      <rect x="-30" y="10" width="50" height="10" rx="2" fill="white" opacity="0.6" />
+      
+      <!-- Delivery Scooter -->
+      <circle cx="-60" cy="40" r="15" fill="var(--color-accent, #ef476f)" />
+      <circle cx="0" cy="40" r="15" fill="var(--color-accent, #ef476f)" />
+      <path d="M-60,40 L-20,40 L0,40 L20,20 L-20,20 L-40,0 L-80,0 L-60,40 Z" fill="var(--color-secondary, #118ab2)" />
+      <circle cx="-10" cy="10" r="5" fill="white" opacity="0.8" />
+    </g>
+  </svg>
+
     <section class="features-section" id="features">
       <h2 class="features-title">Why Choose Yawigo?</h2>
       <div class="features-grid">
         <div class="feature-card">
-          <div class="feature-icon">🍔</div>
-          <div class="feature-title">Wide Variety of Food</div>
-          <div class="feature-desc">
-            Choose from hundreds of restaurants and dishes.
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.88 9.54-4.25 4.25c-.39.39-1.02.39-1.41 0L8.12 12.7a.996.996 0 1 1 1.41-1.41l2.29 2.29 3.65-3.65a.996.996 0 1 1 1.41 1.41z"/></svg>
           </div>
+          <h3 class="feature-title">Fast Delivery</h3>
+          <p class="feature-desc">Get your food delivered in minutes with our efficient delivery network</p>
         </div>
+
         <div class="feature-card">
-          <div class="feature-icon">⚡</div>
-          <div class="feature-title">Fast Delivery</div>
-          <div class="feature-desc">
-            Get your food delivered in under 30 minutes.
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
           </div>
+          <h3 class="feature-title">Secure Payments</h3>
+          <p class="feature-desc">Your transactions are protected with state-of-the-art security</p>
         </div>
+
         <div class="feature-card">
-          <div class="feature-icon">🛡️</div>
-          <div class="feature-title">Secure Payment</div>
-          <div class="feature-desc">
-            Pay with mobile money or cash on delivery.
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
           </div>
+          <h3 class="feature-title">Best Restaurants</h3>
+          <p class="feature-desc">Choose from a curated selection of top-rated restaurants</p>
         </div>
+
         <div class="feature-card">
-          <div class="feature-icon">📱</div>
-          <div class="feature-title">Real-time Tracking</div>
-          <div class="feature-desc">
-            Track your order from kitchen to doorstep.
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
           </div>
+          <h3 class="feature-title">24/7 Support</h3>
+          <p class="feature-desc">Our customer service team is always here to help you</p>
         </div>
         <div class="feature-card">
-          <div class="feature-icon">🌍</div>
-          <div class="feature-title">Multi-language Support</div>
-          <div class="feature-desc">Available in English and Français.</div>
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 9h-3.56c.35-.59.56-1.27.56-2 0-2.21-1.79-4-4-4-1.46 0-2.73.78-3.44 1.94C9.85 3.78 8.58 3 7.12 3 4.91 3 3.12 4.79 3.12 7c0 .73.21 1.41.56 2H2c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h1v6c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6h1c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1z"/></svg>
+          </div>
+          <h3 class="feature-title">Wide Variety</h3>
+          <p class="feature-desc">Choose from hundreds of restaurants and dishes</p>
         </div>
+
         <div class="feature-card">
-          <div class="feature-icon">⭐</div>
-          <div class="feature-title">Rated 5 Stars</div>
-          <div class="feature-desc">Join thousands of happy customers.</div>
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
+          </div>
+          <h3 class="feature-title">Real-time Tracking</h3>
+          <p class="feature-desc">Track your order from kitchen to doorstep</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>
+          </div>
+          <h3 class="feature-title">Multi-language</h3>
+          <p class="feature-desc">Available in English and Français</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z"/></svg>
+          </div>
+          <h3 class="feature-title">Loyalty Rewards</h3>
+          <p class="feature-desc">Earn points and get exclusive rewards</p>
         </div>
       </div>
     </section>
 
     <!-- Screenshots Section -->
     <section class="screenshots-section" id="screenshots">
-      <h2 class="screenshots-title">App Screenshots</h2>
-      <div class="screenshots-gallery">
-        <img src="{% static "2337676667666.jpg" %}" alt="Screenshot 1" /> <img
-        src="{% static "2337676667666.jpg" %}" alt="Screenshot 2" /> <img
-        src="{% static "2337676667666.jpg" %}" alt="Screenshot 3" /> <img
-        src="{% static "2337676667666.jpg" %}" alt="Screenshot 4" />
+      <div class="section-background">
+        <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M0,0 L100,0 L100,100 L0,85 Z" fill="#f8f6f4"/>
+        </svg>
+      </div>
+      <div class="section-content">
+        <h2 class="screenshots-title">Experience Our App</h2>
+        <p class="screenshots-subtitle">Beautiful, intuitive, and designed for you</p>
+        <div class="screenshots-gallery">
+          <div class="screenshot-card">
+            <div class="screenshot-wrapper">
+              <img src="{% static "2337676667666.jpg" %}" alt="Order Food Screenshot" loading="lazy" />
+              <div class="screenshot-overlay">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#fff"/></svg>
+              </div>
+            </div>
+            <h3>Easy Ordering</h3>
+          </div>
+          <div class="screenshot-card">
+            <div class="screenshot-wrapper">
+              <img src="{% static "2337676667666.jpg" %}" alt="Track Order Screenshot" loading="lazy" />
+              <div class="screenshot-overlay">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#fff"/></svg>
+              </div>
+            </div>
+            <h3>Real-time Tracking</h3>
+          </div>
+          <div class="screenshot-card">
+            <div class="screenshot-wrapper">
+              <img src="{% static "2337676667666.jpg" %}" alt="Payment Screenshot" loading="lazy" />
+              <div class="screenshot-overlay">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#fff"/></svg>
+              </div>
+            </div>
+            <h3>Secure Payments</h3>
+          </div>
+          <div class="screenshot-card">
+            <div class="screenshot-wrapper">
+              <img src="{% static "2337676667666.jpg" %}" alt="Reviews Screenshot" loading="lazy" />
+              <div class="screenshot-overlay">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#fff"/></svg>
+              </div>
+            </div>
+            <h3>Customer Reviews</h3>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- How It Works Section -->
     <section class="how-section" id="how">
-      <h2 class="how-title">How Yawigo Works</h2>
-      <div class="how-steps">
-        <div class="how-step">
-          <span class="how-number">1</span>
-          <h3>Choose Your Favorite Food</h3>
-          <p>Browse through our menu and select your favorite dishes.</p>
+      <div class="section-background">
+        <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M0,0 L100,0 L100,85 L0,100 Z" fill="#f8f6f4"/>
+        </svg>
+      </div>
+      <div class="section-content">
+        <h2 class="how-title">How Yawigo Works</h2>
+        <p class="how-subtitle">Simple steps to get your favorite food delivered</p>
+        <div class="how-steps">
+          <div class="how-step">
+            <div class="step-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+              <span>1</span>
+            </div>
+            <h3>Choose Your Food</h3>
+            <p>Browse through our extensive menu and select your favorite dishes from top-rated restaurants</p>
+          </div>
+
+          <div class="how-step">
+            <div class="step-icon">
+              <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+              <span>2</span>
+            </div>
+            <h3>Place Your Order</h3>
+            <p>Enter your delivery details and choose from our secure payment options for a seamless checkout</p>
+          </div>
+
+          <div class="how-step">
+            <div class="step-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              <span>3</span>
+            </div>
+            <h3>Track Real-time</h3>
+            <p>Watch your order's journey from the kitchen to your doorstep with our live tracking system</p>
+          </div>
+
+          <div class="how-step">
+            <div class="step-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+              <span>4</span>
+            </div>
+            <h3>Enjoy & Rate</h3>
+            <p>Receive your food fresh and hot, enjoy your meal, and share your valuable feedback</p>
+          </div>
         </div>
-        <div class="how-step">
-          <span class="how-number">2</span>
-          <h3>Place Your Order</h3>
-          <p>Enter your delivery details and make a secure payment.</p>
-        </div>
-        <div class="how-step">
-          <span class="how-number">3</span>
-          <h3>Track Your Order</h3>
-          <p>
-            Watch your order move from kitchen to your doorstep in real time.
-          </p>
-        </div>
-        <div class="how-step">
-          <span class="how-number">4</span>
-          <h3>Enjoy Your Meal</h3>
-          <p>Receive your food hot and fresh, and rate your experience!</p>
-        </div>
+      </div>
       </div>
     </section>
 
@@ -1349,6 +1804,55 @@
         </div>
       </div>
     </section>
+    
+    <style>
+      /* FAQ Section Mobile Styles */
+      .faq-section {
+        padding: 40px 20px;
+        background: #f8f8f8;
+      }
+      
+      .faq-title {
+        text-align: center;
+        margin-bottom: 32px;
+        color: var(--primary-color, #ff5c03);
+      }
+      
+      .faq-list {
+        max-width: 800px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+      }
+      
+      .faq-item {
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      }
+      
+      .faq-item h4 {
+        color: var(--primary-color, #ff5c03);
+        margin-bottom: 12px;
+        font-size: 1.1rem;
+      }
+      
+      @media (max-width: 768px) {
+        .faq-list {
+          grid-template-columns: 1fr;
+        }
+        
+        .faq-title {
+          font-size: 1.6rem;
+        }
+        
+        .faq-item {
+          max-width: 100%;
+        }
+      }
+    </style>
 
     <!-- Contact Section -->
     <section id="contact" class="contact-section">
@@ -1363,6 +1867,60 @@
     <section id="testimonials" class="testimonial-section">
       <h2 class="testimonial-title">What Our Users Say</h2>
       <div class="testimonial-videos">
+      
+      <style>
+        /* Testimonial Section Mobile Styles */
+        .testimonial-section {
+          padding: 40px 20px;
+          background: #fff;
+        }
+        
+        .testimonial-title {
+          text-align: center;
+          margin-bottom: 32px;
+          color: var(--primary-color, #ff5c03);
+        }
+        
+        .testimonial-videos {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+          gap: 24px;
+          max-width: 1000px;
+          margin: 0 auto;
+        }
+        
+        .testimonial-video-card {
+          background: #f8f8f8;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .testimonial-video-card video {
+          width: 100%;
+          display: block;
+        }
+        
+        .testimonial-caption {
+          padding: 16px;
+          text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+          .testimonial-videos {
+            grid-template-columns: 1fr;
+          }
+          
+          .testimonial-title {
+            font-size: 1.6rem;
+          }
+          
+          .testimonial-video-card {
+            max-width: 100%;
+            margin: 0 auto;
+          }
+        }
+      </style>
         <div class="testimonial-video-card">
           <video controls poster="https://placehold.co/300x180?text=User+1">
             <source src="#" type="video/mp4" />
@@ -1455,6 +2013,134 @@
       </div>
       <p class="yango-cities">You can find us in Accra and Kumasi</p>
     </section>
+    
+    <style>
+      /* Yawigo sections mobile styles */
+      .yango-hero {
+        padding: 40px 20px;
+        text-align: center;
+        background: linear-gradient(135deg, #ff5c03 0%, #ff8f00 100%);
+        color: white;
+      }
+      
+      .yango-hero h1 {
+        font-size: 2rem;
+        margin-bottom: 16px;
+      }
+      
+      .yango-lead {
+        margin-bottom: 24px;
+        font-size: 1.1rem;
+      }
+      
+      .yango-app-btn {
+        display: inline-block;
+        background: white;
+        color: #ff5c03;
+        padding: 12px 24px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: bold;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+      
+      .yango-why {
+        padding: 40px 20px;
+        background: #f8f6f4;
+      }
+      
+      .yango-why h2 {
+        text-align: center;
+        margin-bottom: 32px;
+        color: #ff5c03;
+      }
+      
+      .yango-why-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+      }
+      
+      .yango-why-grid > div {
+        background: white;
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      }
+      
+      .yango-why-grid h3 {
+        color: #ff5c03;
+        margin-bottom: 12px;
+      }
+      
+      .yango-service-classes {
+        padding: 40px 20px;
+        text-align: center;
+      }
+      
+      .yango-service-classes h2 {
+        color: #ff5c03;
+        margin-bottom: 32px;
+      }
+      
+      .yango-service-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        max-width: 900px;
+        margin: 0 auto 24px auto;
+      }
+      
+      .yango-service-card {
+        background: white;
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        text-align: center;
+      }
+      
+      .yango-service-card h3 {
+        color: #ff5c03;
+        margin-bottom: 12px;
+      }
+      
+      .yango-order-btn {
+        display: inline-block;
+        background: #ff5c03;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: bold;
+        margin-top: 16px;
+      }
+      
+      .yango-cities {
+        margin-top: 16px;
+        font-style: italic;
+        color: #666;
+      }
+      
+      @media (max-width: 768px) {
+        .yango-why-grid,
+        .yango-service-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .yango-hero h1 {
+          font-size: 1.6rem;
+        }
+        
+        .yango-lead {
+          font-size: 1rem;
+        }
+        
+        .yango-service-card {
+          max-width: 100%;
+          margin: 0 auto;
+        }
+      }
+    </style>
 
     <section class="yango-driver">
       <h2>Drive with yawigo Pro</h2>
