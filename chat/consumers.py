@@ -906,10 +906,10 @@ class ChatConsumer(WebsocketConsumer):
 	def receive_online_driver_data(self, data):
 		user = self.scope['user']
 		online_drivers = DriverOnline.objects.get(driver=user)
-		print('online_drivers',online_drivers)
+		# print('online_drivers',online_drivers)
 
 		serialized = DriverOnlineSerializer(online_drivers)
-		print('serialized',serialized.data)
+		# print('serialized',serialized.data)
 		self.send_group(user.phone, 'driver.online', serialized.data)
 
  
@@ -924,7 +924,7 @@ class ChatConsumer(WebsocketConsumer):
 			query &= Q(ride_type==ride_type)
 			
 		online_drivers = DriverOnline.objects.filter(is_online=True,ride_type=ride_type).select_related('driver')
-		print('online_drivers',online_drivers)
+		# connection  doesnt exists',online_drivers)
 		# Prepare response data
 		drivers_data = []
 		for driver in online_drivers:

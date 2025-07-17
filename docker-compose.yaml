@@ -1,27 +1,32 @@
+# @format
+
 services:
   nginx:
-   image: nginx:latest
-   ports:
-     - "1200:80"
-    #  - "443:443"
-   volumes:
-     - ./nginx:/etc/nginx/conf.d
-     - /etc/letsencrypt:/etc/letsencrypt
-   depends_on:
-     - web
-   networks:
-     - rider_network
+    image: nginx:latest
+    ports:
+      - '1200:80'
+      #  - "443:443"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - /etc/letsencrypt:/etc/letsencrypt
+    depends_on:
+      - web
+    networks:
+      - rider_network
 
   web:
     build: .
     # command: gunicorn driverapp.wsgi:application --bind 0.0.0.0:8000
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
       - static_volume:/code/staticfiles
       - media_volume:/code/media
     ports:
-      - "8001:8000"
+      - '8000:8000'
     env_file:
       - .env
     depends_on:
@@ -37,7 +42,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - '3306:3306'
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     networks:
@@ -52,10 +57,10 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       UPLOAD_LIMIT: 400M
-      MAX_EXECUTION_TIME : 2000
+      MAX_EXECUTION_TIME: 2000
       MEMORY_LIMIT: 800MB
     ports:
-      - "8080:80"
+      - '8080:80'
     depends_on:
       - db
     restart: always
@@ -65,7 +70,7 @@ services:
   redis:
     image: redis
     ports:
-      - "6379:6379"
+      - '6379:6379'
     restart: always
     networks:
       - rider_network
@@ -77,9 +82,7 @@ volumes:
 
 networks:
   rider_network:
-
-
-
+  
 # services:
 #   nginx:
 #     image: nginx:latest

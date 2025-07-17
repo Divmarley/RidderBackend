@@ -27,6 +27,8 @@ urlpatterns = [
     # path('api/', include('drivers.urls')),
     # path('api/', include('client.urls')),
     # path('api/', include('ride.urls')),
+
+    
     path('api/', include('chat.urls')),
     path('api/', include('food.urls')),
     path('api/', include('ride.urls')),

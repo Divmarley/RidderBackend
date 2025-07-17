@@ -30,8 +30,7 @@ class HomeView(View):
 class RegisterView(APIView):
     permission_classes = (AllowAny,)
 
-    def post(self, request):
-        print("request", request.data)
+    def post(self, request): 
         serializer = RegisterSerializer(data=request.data)
         
         if serializer.is_valid():

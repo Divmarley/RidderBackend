@@ -22,10 +22,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-n0kn2qx+n78vlb(*dgm$q29rxix7n761wk1$erc2+8bgh*-lkc'
+SECRET_KEY = os.environ.get("SECRET_KEY",'SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "DEBUG")
 
 
 ALLOWED_HOSTS = ["*",'127.0.0.1','localhost','192.168.100.5']
@@ -35,14 +35,14 @@ CSRF_TRUSTED_ORIGINS = ['https://ubintax.com']
 CORS_ORIGIN_ALLOW_ALL = True  
 # Allow all origins to access your API
 CORS_ALLOWED_ORIGINS = [
-    "https://www.ubintax.com",
+    # "https://www.ubintax.com",
     "http://localhost:3000",  # React Native development server URL
     "http://127.0.0.1:8081",  # Alternative localhost URL
     "http://192.168.100.5:8000",  # Alternative localhost URL
     # Add your production URLs here
     'http://localhost',
-    'http://172.20.10.3:8000',
-    'https://4cb6-154-161-162-196.ngrok-free.app',
+    # 'http://172.20.10.3:8000',
+    # 'https://4cb6-154-161-162-196.ngrok-free.app',
 
 ]
 
@@ -107,12 +107,28 @@ ASGI_APPLICATION = 'driverapp.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get("MYSQL_DATABASE", "ridderapp"),
+        'USER': os.environ.get("MYSQL_USER", "rider_user"),
+        'PASSWORD': os.environ.get("MYSQL_PASSWORD", "securepassword"),
+        'HOST': os.environ.get("MYSQL_HOST", "db"),  # 'db' is the Docker service name
+        'PORT': os.environ.get("MYSQL_PORT", "3306"),
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 
 
  
@@ -224,8 +240,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Replace with your email host
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'kofikumi64@gmail.com'  # Replace with your email
-EMAIL_HOST_PASSWORD = 'vzpo udjs pwwd dbzb'  # Replace with your email password
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "EMAIL_HOST_USER"),  # Replace with your email
+EMAIL_HOST_PASSWORD =  os.environ.get("EMAIL_HOST_PASSWORD", "EMAIL_HOST_PASSWORD"),  # Replace with your email password
 
 
 # settings.py
@@ -236,8 +252,8 @@ CHANNEL_LAYERS = {
 	'default': {
 		'BACKEND': 'channels_redis.core.RedisChannelLayer',
 		'CONFIG': {
-			# 'hosts': [('redis', 6379)]
-			'hosts': [('127.0.0.1', 6379)]
+			'hosts': [('redis', 6379)]
+			# 'hosts': [('127.0.0.1', 6379)]
 		},
        
  
@@ -282,9 +298,9 @@ SIMPLE_JWT = {
 }
 
 
-TWILIO_ACCOUNT_SID = 'baabcff8-2553-477b-a5b9-9ff179788989'
-TWILIO_AUTH_TOKEN = '975655e042f7c2907273b7978e195c26-746c53cc-5443-4a7a-a269-b9520da9a9a3'
-TWILIO_PHONE_NUMBER = '447860099299'
+# TWILIO_ACCOUNT_SID = 'baabcff8-2553-477b-a5b9-9ff179788989'
+# TWILIO_AUTH_TOKEN = '975655e042f7c2907273b7978e195c26-746c53cc-5443-4a7a-a269-b9520da9a9a3'
+# TWILIO_PHONE_NUMBER = '447860099299'
 
 
 USE_X_FORWARDED_HOST = True
