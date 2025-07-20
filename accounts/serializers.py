@@ -78,10 +78,12 @@ class RiderProfileSerializer(serializers.ModelSerializer):
 
 class RegisterSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=False, default="")
+    email_phone= serializers.CharField(required=False, allow_blank=True, default="")
+
     
     class Meta:
         model = CustomUser
-        fields = ['email', 'phone', 'name', 'password', 'account_type','is_active']
+        fields = ['email','phone','email_phone', 'name', 'password', 'account_type','is_active']
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate(self, attrs):
@@ -92,7 +94,8 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = CustomUser.objects.create_user(
             email=validated_data.get('email'),
-            phone=validated_data.get('phone'),
+            phone= validated_data.get('phone'),  # Making phone optional
+            email_phone=validated_data.get('email_phone'),  # Making email_phone optional
             name=validated_data.get('name'),  # Making name optional
             is_active=validated_data.get('is_active'), 
             password=validated_data['password'],

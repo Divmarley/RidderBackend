@@ -85,10 +85,16 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'driverapp.urls'
 
+# Site URL for absolute URLs in emails
+SITE_URL = 'http://localhost:8000'  # Change in production
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ BASE_DIR / 'templates'],
+        'DIRS': [
+            # ...existing dirs...
+            BASE_DIR / 'templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -239,11 +245,13 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Replace with your email host
 EMAIL_PORT = 587
+
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "EMAIL_HOST_USER"),  # Replace with your email
-EMAIL_HOST_PASSWORD =  os.environ.get("EMAIL_HOST_PASSWORD", "EMAIL_HOST_PASSWORD"),  # Replace with your email password
+# EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "EMAIL_HOST_USER"),  # Replace with your email
+# EMAIL_HOST_PASSWORD =  os.environ.get("EMAIL_HOST_PASSWORD", "EMAIL_HOST_PASSWORD"),  # Replace with your email password
 
-
+EMAIL_HOST_USER="kofikumi64@gmail.com"  
+EMAIL_HOST_PASSWORD="vzpo udjs pwwd dbzb" 
 # settings.py
 ASGI_APPLICATION = 'driverapp.asgi.application'
 
@@ -305,3 +313,6 @@ SIMPLE_JWT = {
 
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+if DEBUG:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
