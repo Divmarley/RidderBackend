@@ -18,20 +18,17 @@
       /** @format */
       :root {
         --primary: #ff5c03;
-        --primary-light: #ff8f00;
-        --primary-dark: #e65100;
-        --primary-bg: rgba(255, 92, 3, 0.1);
-        --text-dark: #222;
-        --text-light: #666;
+        --primary-light: #ff5c03; 
+        --primary-dark: #ff5c03;
+        --primary-bg: rgba(37, 99, 235, 0.1);
+        --accent: #f97316;
+        --text-dark: #1f2937;
+        --text-light: #6b7280;
         --white: #fff;
         --border-light: rgba(0, 0, 0, 0.1);
-        --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.06);
-        --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.08);
-        --shadow-lg: 0 12px 48px rgba(255, 92, 3, 0.12);
-        --radius-sm: 12px;
-        --radius-md: 24px;
-        --radius-lg: 32px;
-        --transition: all 0.3s ease;
+        --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
       }
 
       * {
@@ -55,12 +52,152 @@
         max-width: 1200px;
         padding: 0 16px;
       }
+/* Add this in your existing <style> tag */
 
+/* Smooth transitions */
+.feature-card,
+.how-step,
+.screenshot-card,
+.navbar,
+.download-btn,
+.navbar-links li a {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced animations */
+@keyframes floatUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Intersection Observer animations */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Enhanced card hover effects */
+.feature-card {
+  transform: translateY(0);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(255, 92, 3, 0.15);
+}
+
+/* Modern navbar styling */
+.navbar {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid rgba(255, 92, 3, 0.1);
+}
+
+/* Enhanced button styling */
+.download-btn {
+  background: var(--accent);
+  border: none;
+  padding: 1rem 2rem;
+  color: white;
+  font-weight: 600;
+  border-radius: 50px;
+  transform: translateY(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+}
+
+.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(249, 115, 22, 0.5);
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .features-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 0 16px;
+  }
+  
+  .how-steps {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .screenshot-card {
+    max-width: 320px;
+    margin: 0 auto;
+  }
+  
+  .navbar {
+    padding: 12px 16px;
+  }
+  
+  .main-title {
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    line-height: 1.2;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-bg: rgba(37, 99, 235, 0.2);
+    --text-dark: #f1f5f9;
+    --text-light: #cbd5e1;
+  }
+  
+  body {
+    background: #0f172a;
+  }
+  
+  .feature-card {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .navbar {
+    background: rgba(15, 23, 42, 0.8);
+  }
+  
+  .footer {
+    background: linear-gradient(to bottom, #1e293b, #0f172a);
+  }
+}
       .showcase-header {
-        background: linear-gradient(135deg, #ff5c03 0%, #ff8f00 100%);
-        color: #fff;
-        text-align: center;
-        padding: 72px 24px 56px 24px;
+        background: #ff5c03;
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         position: relative;
         overflow: hidden;
       }
@@ -124,10 +261,9 @@
 
       .features-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 28px;
-        max-width: 1100px;
-        margin: 0 auto;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 2rem;
       }
       
       @media (max-width: 768px) {
@@ -143,17 +279,19 @@
       }
 
       .feature-card {
-        background: #fff;
-        border-radius: 18px;
-        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transform-style: preserve-3d;
+        perspective: 1000px;
         padding: 32px 20px 24px 20px;
         text-align: center;
         transition: box-shadow 0.2s, transform 0.2s;
       }
 
       .feature-card:hover {
-        box-shadow: 0 6px 32px rgba(255, 92, 3, 0.1);
-        transform: translateY(-4px) scale(1.02);
+        transform: translateY(-10px) rotateX(5deg);
+        box-shadow: var(--shadow-lg);
       }
 
       .feature-icon {
@@ -197,11 +335,8 @@
       }
 
       .footer {
-        background: #fff;
-        color: #888;
-        font-size: 1rem;
-        border-top: 1px solid #f0f0f0;
-        padding: 32px 0 0 0;
+        background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+        padding-top: 4rem;
       }
 
       .footer-grid {
@@ -951,12 +1086,16 @@
       }
 
       .testimonial-video-card {
-        background: #f8f6f4;
-        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        width: 300px;
-        flex: 1 1 300px;
+        transition: all 0.3s ease;
+      }
+
+      .testimonial-video-card:hover {
+        transform: scale(1.02);
+        box-shadow: var(--shadow-lg);
       }
 
       .testimonial-video-card video {
@@ -1398,11 +1537,10 @@
         background: #fff;
         border-radius: 18px;
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-        padding: 32px 20px 24px 20px;
+        padding: 32px 20px;
         text-align: center;
-        width: 220px;
-        min-width: 180px;
         flex: 1 1 220px;
+        min-width: 180px;
       }
 
       .how-number {
@@ -1419,104 +1557,137 @@
       }
 
       .faq-section {
-        background: #fff;
-        padding: 40px 16px 24px 16px;
-        text-align: center;
+        padding: 40px 20px;
+        background: #f8f8f8;
       }
-
+      
       .faq-title {
-        font-size: 2rem;
-        color: #ff5c03;
+        text-align: center;
         margin-bottom: 32px;
+        color: var(--primary-color, #ff5c03);
       }
-
+      
       .faq-list {
         max-width: 800px;
         margin: 0 auto;
-        text-align: left;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
       }
-
+      
       .faq-item {
-        margin-bottom: 24px;
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       }
-
+      
       .faq-item h4 {
-        margin: 0 0 6px 0;
-        color: #ff5c03;
+        color: var(--primary-color, #ff5c03);
+        margin-bottom: 12px;
         font-size: 1.1rem;
       }
-
-      .faq-item p {
-        margin: 0;
-        color: #444;
-        font-size: 1rem;
+      
+      /* FAQ Section Mobile Styles */
+      .faq-section {
+        padding: 40px 20px;
+        background: #f8f8f8;
       }
-
-      .contact-section {
-        background: #ffe5d1;
-        padding: 40px 16px 24px 16px;
+      
+      .faq-title {
         text-align: center;
-      }
-
-      .contact-title {
-        font-size: 2rem;
-        color: #ff5c03;
-        margin-bottom: 16px;
-      }
-
-      .contact-section a {
-        color: #ff5c03;
-        text-decoration: underline;
-      }
-
-      .testimonial-section {
-        background: #fff;
-        padding: 40px 16px 24px 16px;
-        text-align: center;
-      }
-
-      .testimonial-title {
-        font-size: 2rem;
-        color: #ff5c03;
         margin-bottom: 32px;
+        color: var(--primary-color, #ff5c03);
       }
-
-      .testimonial-videos {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 18px;
-        justify-content: center;
+      
+      .faq-list {
+        max-width: 800px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
       }
-
-      .testimonial-video-card {
-        background: #f8f6f4;
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        width: 300px;
-        flex: 1 1 300px;
+      
+      .faq-item {
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       }
-
-      .testimonial-video-card video {
-        width: 100%;
-        height: auto;
-        display: block;
+      
+      .faq-item h4 {
+        color: var(--primary-color, #ff5c03);
+        margin-bottom: 12px;
+        font-size: 1.1rem;
       }
-
-      .testimonial-caption {
-        padding: 12px 16px;
-        font-size: 0.95rem;
-        color: #444;
-        margin: 0;
-        text-align: left;
-      }
-
-      @media (max-width: 900px) {
-        .testimonial-video-card {
-          width: 100%;
-          flex: 1 1 100%;
+      
+      @media (max-width: 768px) {
+        .faq-list {
+          grid-template-columns: 1fr;
+        }
+        
+        .faq-title {
+          font-size: 1.6rem;
+        }
+        
+        .faq-item {
+          max-width: 100%;
         }
       }
+      /* Add this to your existing <style> tag */
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes floatingCircles {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animated-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    rgba(67, 97, 238, 0.3),
+    rgba(239, 71, 111, 0.3),
+    rgba(17, 138, 178, 0.3)
+  );
+  background-size: 400% 400%;
+  animation: gradientMove 15s ease infinite;
+  z-index: -1;
+}
+
+.floating-circle {
+  animation: floatingCircles 6s ease-in-out infinite;
+}
+
+.floating-circle:nth-child(2n) {
+  animation-delay: 1s;
+}
+
+.floating-circle:nth-child(3n) {
+  animation-delay: 2s;
+}
     </style>
   </head>
 
@@ -1556,53 +1727,71 @@
         Download Android APK
       </a>
     </header>
+    <!-- Replace or update your existing SVG section -->
+<svg width="100%" height="300" viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg" style="display: block; margin: auto; position: relative;">
+  <!-- Animated Background -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4361ee;stop-opacity:0.3" />
+      <stop offset="50%" style="stop-color:#ef476f;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#118ab2;stop-opacity:0.3" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background with animation -->
+  <rect class="animated-bg" width="100%" height="100%" fill="url(#gradient)" />
+  
+  <!-- Floating Circles -->
+  <g class="floating-elements">
+    <circle class="floating-circle" cx="100" cy="150" r="20" fill="#4361ee" opacity="0.2" />
+    <circle class="floating-circle" cx="300" cy="100" r="15" fill="#ef476f" opacity="0.2" />
+    <circle class="floating-circle" cx="500" cy="200" r="25" fill="#118ab2" opacity="0.2" />
+    <circle class="floating-circle" cx="700" cy="150" r="18" fill="#4361ee" opacity="0.2" />
+    <circle class="floating-circle" cx="900" cy="100" r="22" fill="#ef476f" opacity="0.2" />
+    <circle class="floating-circle" cx="1100" cy="180" r="16" fill="#118ab2" opacity="0.2" />
+  </g>
+
+  <!-- Your existing Food Delivery Icon -->
+  <g transform="translate(600, 120) scale(0.8)">
+    <!-- Delivery Box -->
+    <rect x="-40" y="-30" width="80" height="60" rx="10" fill="var(--color-primary, #4361ee)">
+      <animate 
+        attributeName="opacity"
+        values="1;0.8;1"
+        dur="3s"
+        repeatCount="indefinite"
+      />
+    </rect>
     
-  <svg width="100%" height="300" viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg" style="display: block; margin: auto;">
-    <!-- Wave Background -->
-    <path 
-      fill="var(--color-primary-light, #f0f4ff)" 
-      d="M0,192L48,197.3C96,203,192,213,288,229.3C384,245,480,267,576,250.7C672,235,768,181,864,181.3C960,181,1056,235,1152,234.7C1248,235,1344,181,1392,154.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
-    </path>
-    
-    <!-- Decorative Elements -->
-    <g transform="translate(600, 150)" fill="var(--color-primary, #4361ee)" opacity="0.7">
-      <!-- Food delivery themed decorative elements -->
-      <circle cx="-400" cy="-50" r="15" opacity="0.5" />
-      <circle cx="-350" cy="20" r="10" opacity="0.3" />
-      <circle cx="-300" cy="-30" r="12" opacity="0.4" />
-      <circle cx="-250" cy="40" r="8" opacity="0.6" />
-      <circle cx="-200" cy="-20" r="14" opacity="0.5" />
-      <circle cx="-150" cy="30" r="9" opacity="0.3" />
-      <circle cx="-100" cy="-40" r="11" opacity="0.4" />
-      <circle cx="-50" cy="10" r="13" opacity="0.6" />
-      <circle cx="0" cy="-25" r="15" opacity="0.5" />
-      <circle cx="50" cy="35" r="10" opacity="0.3" />
-      <circle cx="100" cy="-15" r="12" opacity="0.4" />
-      <circle cx="150" cy="25" r="8" opacity="0.6" />
-      <circle cx="200" cy="-35" r="14" opacity="0.5" />
-      <circle cx="250" cy="15" r="9" opacity="0.3" />
-      <circle cx="300" cy="-30" r="11" opacity="0.4" />
-      <circle cx="350" cy="20" r="13" opacity="0.6" />
-      <circle cx="400" cy="-10" r="15" opacity="0.5" />
-    </g>
-    
-    <!-- Food Delivery Icon -->
-    <g transform="translate(600, 120) scale(0.8)">
-      <!-- Delivery Box -->
-      <rect x="-40" y="-30" width="80" height="60" rx="10" fill="var(--color-primary, #4361ee)" />
-      
-      <!-- Box Details -->
-      <rect x="-30" y="-20" width="60" height="10" rx="2" fill="white" opacity="0.6" />
-      <rect x="-30" y="-5" width="40" height="10" rx="2" fill="white" opacity="0.6" />
-      <rect x="-30" y="10" width="50" height="10" rx="2" fill="white" opacity="0.6" />
-      
-      <!-- Delivery Scooter -->
-      <circle cx="-60" cy="40" r="15" fill="var(--color-accent, #ef476f)" />
-      <circle cx="0" cy="40" r="15" fill="var(--color-accent, #ef476f)" />
-      <path d="M-60,40 L-20,40 L0,40 L20,20 L-20,20 L-40,0 L-80,0 L-60,40 Z" fill="var(--color-secondary, #118ab2)" />
-      <circle cx="-10" cy="10" r="5" fill="white" opacity="0.8" />
-    </g>
-  </svg>
+    <!-- Box Details with animation -->
+    <rect x="-30" y="-20" width="60" height="10" rx="2" fill="white" opacity="0.6">
+      <animate
+        attributeName="width"
+        values="60;50;60"
+        dur="2s"
+        repeatCount="indefinite"
+      />
+    </rect>
+    <rect x="-30" y="-5" width="40" height="10" rx="2" fill="white" opacity="0.6">
+      <animate
+        attributeName="width"
+        values="40;35;40"
+        dur="2s"
+        repeatCount="indefinite"
+      />
+    </rect>
+    <rect x="-30" y="10" width="50" height="10" rx="2" fill="white" opacity="0.6">
+      <animate
+        attributeName="width"
+        values="50;45;50"
+        dur="2s"
+        repeatCount="indefinite"
+      />
+    </rect>
+  </g>
+</svg>
+
+ 
 
     <section class="features-section" id="features">
       <h2 class="features-title">Why Choose Yawigo?</h2>
@@ -1805,55 +1994,6 @@
       </div>
     </section>
     
-    <style>
-      /* FAQ Section Mobile Styles */
-      .faq-section {
-        padding: 40px 20px;
-        background: #f8f8f8;
-      }
-      
-      .faq-title {
-        text-align: center;
-        margin-bottom: 32px;
-        color: var(--primary-color, #ff5c03);
-      }
-      
-      .faq-list {
-        max-width: 800px;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 24px;
-      }
-      
-      .faq-item {
-        background: white;
-        padding: 24px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      }
-      
-      .faq-item h4 {
-        color: var(--primary-color, #ff5c03);
-        margin-bottom: 12px;
-        font-size: 1.1rem;
-      }
-      
-      @media (max-width: 768px) {
-        .faq-list {
-          grid-template-columns: 1fr;
-        }
-        
-        .faq-title {
-          font-size: 1.6rem;
-        }
-        
-        .faq-item {
-          max-width: 100%;
-        }
-      }
-    </style>
-
     <!-- Contact Section -->
     <section id="contact" class="contact-section">
       <h2 class="contact-title">Contact Us</h2>
@@ -1867,60 +2007,6 @@
     <section id="testimonials" class="testimonial-section">
       <h2 class="testimonial-title">What Our Users Say</h2>
       <div class="testimonial-videos">
-      
-      <style>
-        /* Testimonial Section Mobile Styles */
-        .testimonial-section {
-          padding: 40px 20px;
-          background: #fff;
-        }
-        
-        .testimonial-title {
-          text-align: center;
-          margin-bottom: 32px;
-          color: var(--primary-color, #ff5c03);
-        }
-        
-        .testimonial-videos {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 24px;
-          max-width: 1000px;
-          margin: 0 auto;
-        }
-        
-        .testimonial-video-card {
-          background: #f8f8f8;
-          border-radius: 12px;
-          overflow: hidden;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-        
-        .testimonial-video-card video {
-          width: 100%;
-          display: block;
-        }
-        
-        .testimonial-caption {
-          padding: 16px;
-          text-align: center;
-        }
-        
-        @media (max-width: 768px) {
-          .testimonial-videos {
-            grid-template-columns: 1fr;
-          }
-          
-          .testimonial-title {
-            font-size: 1.6rem;
-          }
-          
-          .testimonial-video-card {
-            max-width: 100%;
-            margin: 0 auto;
-          }
-        }
-      </style>
         <div class="testimonial-video-card">
           <video controls poster="https://placehold.co/300x180?text=User+1">
             <source src="#" type="video/mp4" />
@@ -2485,5 +2571,115 @@
         // Add more selectors for other translatable elements as needed
       }
     </script>
+    <!-- Add this before closing </body> tag -->
+<script>
+// Intersection Observer setup
+const observerOptions = {
+  root: null,
+  rootMargin: '0px',
+  threshold: 0.1
+};
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target); // Only animate once
+    }
+  });
+}, observerOptions);
+
+// Observe elements
+document.querySelectorAll('.feature-card, .how-step, .screenshot-card').forEach(el => {
+  el.classList.add('animate-on-scroll');
+  observer.observe(el);
+});
+
+// Enhanced scroll behavior
+const smoothScroll = (target) => {
+  const element = document.querySelector(target);
+  if (!element) return;
+  
+  window.scrollTo({
+    top: element.offsetTop - 80,
+    behavior: 'smooth'
+  });
+};
+
+// Enhanced navbar interaction
+document.querySelectorAll('.navbar-links a[href^="#"]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = link.getAttribute('href');
+    smoothScroll(target);
+  });
+});
+
+// Add loading states to buttons
+document.querySelectorAll('.download-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    this.classList.add('loading');
+    // Remove loading state after download starts
+    setTimeout(() => this.classList.remove('loading'), 2000);
+  });
+});
+
+// Smooth reveal animations
+const revealElements = document.querySelectorAll('.feature-card, .how-step, .screenshot-card');
+
+const revealOptions = {
+  root: null,
+  rootMargin: '0px',
+  threshold: 0.1
+};
+
+const revealCallback = (entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+};
+
+const revealObserver = new IntersectionObserver(revealCallback, revealOptions);
+
+revealElements.forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(50px)';
+  el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+  revealObserver.observe(el);
+});
+
+// Parallax scroll effect
+window.addEventListener('scroll', () => {
+  const scrolled = window.pageYOffset;
+  document.querySelector('.showcase-header').style.transform = `translateY(${scrolled * 0.5}px)`;
+});
+
+// Enhanced hover effects
+document.querySelectorAll('.feature-card').forEach(card => {
+  card.addEventListener('mousemove', (e) => {
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    card.style.setProperty('--mouse-x', `${x}px`);
+    card.style.setProperty('--mouse-y', `${y}px`);
+  });
+});
+// Additional animation for floating elements
+function animateFloatingElements() {
+  const elements = document.querySelectorAll('.floating-circle');
+  elements.forEach((el, index) => {
+    el.style.animation = `floatingCircles ${6 + index * 0.5}s ease-in-out infinite`;
+  });
+}
+
+// Initialize animations
+document.addEventListener('DOMContentLoaded', () => {
+  animateFloatingElements();
+});
+</script>
   </body>
 </html>
