@@ -219,14 +219,21 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATICFILES_DIRS = [BASE_DIR / "static"]
-
+# Static files configuration
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = '/code/staticfiles'
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# Media files configuration
+MEDIA_URL = '/media/'
+MEDIA_ROOT = '/code/media'
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# Additional static files directories
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
+# Ensure static files are handled properly in production
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 if DEBUG:
     STATICFILES_DIRS = [
