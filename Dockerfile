@@ -23,9 +23,19 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Stage 2: Production stage
 FROM python:3.10-slim
 
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+WORKDIR /code
+
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    netcat-traditional \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install MySQL client (optional if you need it in production)
+RUN apt-get update && apt-get install -y default-mysql-client --no-install-recommends
 
 # Set work directory
 WORKDIR /code
@@ -41,8 +51,8 @@ COPY . /code/
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-# Install MySQL client (optional if you need it in production)
-RUN apt-get update && apt-get install -y default-mysql-client --no-install-recommends
+# Create directories
+RUN mkdir -p /code/staticfiles /code/media
 
 # Expose the port the app runs on
 EXPOSE 8000

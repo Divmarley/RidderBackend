@@ -11,9 +11,10 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - static_volume:/code/staticfiles
       - media_volume:/code/media
-      - ./nginx/logs:/var/log/nginx # Add log volume
+      - ./nginx/logs:/var/log/nginx
     depends_on:
-      - web
+      web:
+        condition: service_healthy
     networks:
       - rider_network
     restart: always
@@ -32,8 +33,15 @@ services:
       - 8000
     env_file:
       - .env
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:8000']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - rider_network
     restart: always
@@ -51,6 +59,11 @@ services:
     restart: always
     networks:
       - rider_network
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
