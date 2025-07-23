@@ -5,7 +5,15 @@ services:
     image: nginx:latest
     ports:
       - '80:80'
+<<<<<<< HEAD
       - '443:443'
+=======
+<<<<<<< HEAD
+      - '443:443' # Add SSL port
+=======
+      #  - "443:443"
+>>>>>>> 7c9d032 (DSf)
+>>>>>>> 53a8d85 (DSf)
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - /etc/letsencrypt:/etc/letsencrypt:ro
@@ -19,20 +27,23 @@ services:
 
   web:
     build: .
-    # command: gunicorn driverapp.wsgi:application --bind 0.0.0.0:8000
+   #  command: gunicorn driverapp.wsgi:application --bind 0.0.0.0:8000
     command: >
       sh -c "python manage.py makemigrations &&
              python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
+            python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
       - static_volume:/code/staticfiles
       - media_volume:/code/media
     ports:
       - '8000:8000'
+<<<<<<< HEAD
     expose:
       - 8000
 
+=======
+>>>>>>> 7c9d032 (DSf)
     env_file:
       - .env
     depends_on:
@@ -41,6 +52,7 @@ services:
       - rider_network
 
   db:
+
     image: mysql:8.0
     container_name: rider_mysql_db
     env_file:
