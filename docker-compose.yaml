@@ -21,17 +21,13 @@ services:
   web:
     build: .
     command: >
-      sh -c "mkdir -p /code/staticfiles &&
-             mkdir -p /code/media &&
-             python manage.py collectstatic --noinput &&
+      sh -c "python manage.py collectstatic --noinput &&
              python manage.py migrate &&
              gunicorn driverapp.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120"
     volumes:
       - .:/code
       - static_volume:/code/staticfiles
       - media_volume:/code/media
-    environment:
-      - DJANGO_SETTINGS_MODULE=driverapp.settings
     expose:
       - 8000
     env_file:
