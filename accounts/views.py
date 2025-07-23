@@ -38,6 +38,8 @@ class RegisterView(APIView):
         if serializer.is_valid():
             try:
                 user = serializer.save()
+
+
                 
                 if not user.email and not user.phone:
                     return Response(
@@ -51,10 +53,54 @@ class RegisterView(APIView):
                 if user.email:
                     email_sent, email_error = send_verification_email(user)
 
+
                 # Generate access token
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
-
+                user = serializer.save() 
+                if user.account_type=='driver': 
+                    DriverOnline.objects.create(
+                        driver=user,
+                        phone=request.data.get('phone'),  # Ensure phone number is part of registration data
+                        location=request.data.get('location'),  # Default location, adjust as needed
+                        latitude=request.data.get('latitude'),     # Default latitude, adjust as needed
+                        longitude=request.data.get('longitude'),   # Default longitude, adjust as needed
+                        push_token=request.data.get('push_token'),
+                        ride_type=request.data.get('ride_type'),
+                        # ride_type='Car'  # Ensure phone number is part of registration data
+                        # rideType='Car'
+                    )
+                    
+                # # Create Restaurant instance if the account type is 'restaurants'
+                # elif user.account_type == 'restaurants':
+                #     # Create associated Image, Rating, Details, and Location instances
+                #     image = Image.objects.create(
+                #         uri=request.data.get('image_uri'),
+                #         border_radius=request.data.get('border_radius', 10)
+                #     )
+                    
+                #     rating = Rating.objects.create(
+                #         value=request.data.get('rating_value', 0.0),
+                #         number_of_ratings=request.data.get('number_of_ratings', 0)
+                #     )
+                    
+                #     # details = Details.objects.create(
+                #     #     name=request.data.get('restaurant_name'),
+                #     #     price_range=request.data.get('price_range', '$0 - $100'),
+                #     #     delivery_time=request.data.get('delivery_time', '20-30 mins')
+                #     # )
+                    
+                #     location = Location.objects.create(
+                #         address=request.data.get('address'),
+                #         city=request.data.get('city'),
+                #         country=request.data.get('country'),
+                #         coordinates={
+                #             'latitude': request.data.get('latitude', '0.0'),
+                #             'longitude': request.data.get('longitude', '0.0')
+                #         }
+                #     )
+    
+               
                 # Create response data
                 response_data = {
                     'detail': 'User created successfully',
@@ -103,15 +149,13 @@ class LoginView(APIView):
     permission_classes = [AllowAny] 
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
+        
         if not serializer.is_valid():
-            print(serializer.errors)
+            print(serializer.errors,"serializer.errors")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        phone = request.data.get('phone')
-        print('Phone' , phone)
-
-        email = request.data.get('email')
-        print('Email',email)
+        phone = request.data.get('phone') 
+        email = request.data.get('email') 
         verification_code = request.data.get('verification_code')
         password = request.data.get('password')
 
@@ -153,7 +197,7 @@ class LoginView(APIView):
                 else:
                     # Generate and send verification code
                     user.generate_verification_code()
-                    print(user.verification_code)
+                   
                     return Response({
                         'detail': 'Verification code sent',
                         'verification_code': user.verification_code,
@@ -208,6 +252,8 @@ class VerifyLoginView(APIView):
         if serializer.is_valid():
             email_or_phone = serializer.validated_data.get('email_or_phone')
             verification_code = serializer.validated_data['verification_code']
+            print("VerifyLoginView email_or_phone",email_or_phone)
+            print("VerifyLoginView verification_code",verification_code)
             
             try:
                 if '@' in email_or_phone:

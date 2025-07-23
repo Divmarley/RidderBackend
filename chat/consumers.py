@@ -473,7 +473,7 @@ class ChatConsumer(WebsocketConsumer):
 
 		# Send accepted request to sender
 		self.send_group(
-			connection.sender.phone, 
+			str(connection.sender.id), 
 			'request.accept', 
 			serialized_data
 		)
@@ -494,7 +494,7 @@ class ChatConsumer(WebsocketConsumer):
 			}
 		)
 		self.send_group(
-			connection.sender.phone, 
+			str(connection.sender.id), 
 			'friend.new', 
 			serialized_friend.data
 		)
@@ -539,7 +539,7 @@ class ChatConsumer(WebsocketConsumer):
 		serialized = RequestSerializer(connection)
 		# Send back to sender
 		self.send_group(
-			connection.sender.phone, 'request.connect', serialized.data
+			str(connection.sender.id), 'request.connect', serialized.data
 		)
 		# Send to receiver
 		self.send_group(
@@ -629,7 +629,7 @@ class ChatConsumer(WebsocketConsumer):
 
 		# Send accepted request to sender
 		self.send_group(
-			connection.sender.phone, 'driver.arrived', serialized.data
+			str(connection.sender.id), 'driver.arrived', serialized.data
 		)
 		# Send accepted request to receiver
 		self.send_group(
@@ -660,7 +660,7 @@ class ChatConsumer(WebsocketConsumer):
 
 		# Send accepted request to sender
 		self.send_group(
-			connection.sender.phone, 'trip.start', serialized.data
+			str(connection.sender.id), 'trip.start', serialized.data
 		)
 		# Send accepted request to receiver
 		self.send_group(
@@ -703,7 +703,7 @@ class ChatConsumer(WebsocketConsumer):
 
 		# Send accepted request to sender
 		self.send_group(
-			connection.sender.phone, 'trip.ended', serialized.data
+			str(connection.sender.id), 'trip.ended', serialized.data
 		)
 		# Send accepted request to receiver
 		self.send_group(
@@ -745,7 +745,7 @@ class ChatConsumer(WebsocketConsumer):
 
 		# Send accepted request to sender
 		self.send_group(
-			connection.sender.phone, 'trip.done', serialized.data
+			str(connection.sender.id), 'trip.done', serialized.data
 		)
 		# Send accepted request to receiver
 		self.send_group(
@@ -786,7 +786,7 @@ class ChatConsumer(WebsocketConsumer):
 
 		# Send accepted request to sender
 		self.send_group(
-			connection.sender.phone, 'trip.rating', serialized.data
+			str(connection.sender.id), 'trip.rating', serialized.data
 		)
 		# Send accepted request to receiver
 		self.send_group(
@@ -830,7 +830,7 @@ class ChatConsumer(WebsocketConsumer):
 		
 		# Send accepted request to sender
 		self.send_group(
-			connection.sender.phone, 'confirm.payment', serialized.data
+			str(connection.sender.id), 'confirm.payment', serialized.data
 		)
 		# Send accepted request to receiver
 		self.send_group(
@@ -1020,7 +1020,7 @@ class ChatConsumer(WebsocketConsumer):
 					# )
 
 					self.send_group(str(connection.receiver.id), 'location.rider.update', location_update)
-					# self.send_group(connection.sender.phone, 'location.rider.update', location_update)
+					# self.send_group(str(connection.sender.id), 'location.rider.update', location_update)
 					
 					# Send confirmation to driver
 					# self.send_group(
@@ -1072,7 +1072,7 @@ class ChatConsumer(WebsocketConsumer):
 				if connection:
 					# Prepare location update data
 					location_update = {
-						'sender': connection.sender.phone, 
+						'sender': str(connection.sender.id), 
 						'receiver': str(connection.receiver.id), 
 						'latitude': latitude,
 						'longitude': longitude,
@@ -1091,7 +1091,7 @@ class ChatConsumer(WebsocketConsumer):
 					# )
 
 					# self.send_group(str(connection.receiver.id), 'location.rider.update', location_update)
-					self.send_group(connection.sender.phone, 'location.driver.update', location_update)
+					self.send_group(str(connection.sender.id), 'location.driver.update', location_update)
 					
 					# Send confirmation to driver
 					# self.send_group(
@@ -1142,7 +1142,7 @@ class ChatConsumer(WebsocketConsumer):
 			connection = Connection.objects.get(id=connection_id)
 			 
 			# Store phones before deletion for notifications
-			sender_phone = connection.sender.phone
+			sender_phone = str(connection.sender.id)
 			receiver_phone = str(connection.receiver.id)
 			
 			# Delete the connection
@@ -1152,7 +1152,7 @@ class ChatConsumer(WebsocketConsumer):
 			cancel_data = {
 				'id': connection_id,
 				'status': 'cancelled',
-				"sender_phone":connection.sender.phone,
+				"sender_phone":str(connection.sender.id),
 				"receiver_phone":str(connection.receiver.id)
 			}
 			
