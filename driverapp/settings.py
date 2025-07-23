@@ -267,12 +267,15 @@ ASGI_APPLICATION = 'driverapp.asgi.application'
 
 # Channels
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('redis', 6379)],
-        },
-    },
+	'default': {
+		'BACKEND': 'channels_redis.core.RedisChannelLayer',
+		'CONFIG': {
+			'hosts': [('redis', 6379)]
+			# 'hosts': [('127.0.0.1', 6379)]
+		},
+       
+ 
+	}
 }
 
 REST_FRAMEWORK = {
