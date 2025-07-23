@@ -6,19 +6,32 @@ services:
     ports:
       - '80:80'
 <<<<<<< HEAD
+<<<<<<< HEAD
       - '443:443'
 =======
 <<<<<<< HEAD
-      - '443:443' # Add SSL port
 =======
+>>>>>>> f8e7ea2 (dsfs)
+      - '443:443' # Add SSL port
+
       #  - "443:443"
+<<<<<<< HEAD
 >>>>>>> 7c9d032 (DSf)
 >>>>>>> 53a8d85 (DSf)
+=======
+>>>>>>> f8e7ea2 (dsfs)
     volumes:
+#      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+
       - ./nginx/conf.d:/etc/nginx/conf.d
+<<<<<<< HEAD
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - static_volume:/code/staticfiles
       - media_volume:/code/media
+=======
+
+      - /etc/letsencrypt:/etc/letsencrypt:ro # Add SSL certificates
+>>>>>>> f8e7ea2 (dsfs)
     depends_on:
       - web
     networks:
@@ -38,12 +51,10 @@ services:
       - media_volume:/code/media
     ports:
       - '8000:8000'
-<<<<<<< HEAD
+
     expose:
       - 8000
 
-=======
->>>>>>> 7c9d032 (DSf)
     env_file:
       - .env
     depends_on:
