@@ -5,14 +5,17 @@ services:
     image: nginx:latest
     ports:
       - '80:80'
-      - '443:443' # Add SSL port
+      - '443:443'
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
-      - /etc/letsencrypt:/etc/letsencrypt:ro # Add SSL certificates
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - static_volume:/code/staticfiles
+      - media_volume:/code/media
     depends_on:
       - web
     networks:
       - rider_network
+    restart: always
 
   web:
     build: .
