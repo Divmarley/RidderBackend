@@ -11,7 +11,7 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - static_volume:/code/staticfiles
       - media_volume:/code/media
-      - ./nginx/logs:/var/log/nginx  # Add log volume
+      - ./nginx/logs:/var/log/nginx # Add log volume
     depends_on:
       - web
     networks:
