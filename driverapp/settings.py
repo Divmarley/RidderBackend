@@ -29,11 +29,11 @@ DEBUG = os.environ.get("DEBUG", "DEBUG")
 
 ALLOWED_HOSTS = ['www.yawigo224.com', 'localhost',"*",'127.0.0.1','localhost','178.128.163.244']
  
-CSRF_TRUSTED_ORIGINS = ['https://yawigo224.com']
-SECURE_SSL_REDIRECT = True
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# CSRF_TRUSTED_ORIGINS = ['https://yawigo224.com']
+# SECURE_SSL_REDIRECT = True
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
 
 CORS_ORIGIN_ALLOW_ALL = True  
 # Allow all origins to access your API
