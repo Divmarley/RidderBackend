@@ -27,11 +27,12 @@ WORKDIR /code
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV DJANGO_SETTINGS_MODULE=driverapp.settings
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    curl \
     netcat-traditional \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Install MySQL client (optional if you need it in production)
@@ -57,7 +58,4 @@ RUN mkdir -p /code/staticfiles /code/media
 # Expose the port the app runs on
 EXPOSE 8000
 
-# ENTRYPOINT ["/entrypoint.sh"]
-
-# Run the application
-# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+ENTRYPOINT ["/code/entrypoint.sh"]
