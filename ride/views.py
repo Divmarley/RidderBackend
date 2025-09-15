@@ -28,9 +28,7 @@ class TripHistoryListView(generics.ListCreateAPIView):
     # queryset = RideHistory.objects.all()
     serializer_class =  TripHistorySerializer
 
-    def get_queryset(self):
-        
-        
+    def get_queryset(self): 
         print("self.request.user.id",self.request.user)
         if (self.request.user.account_type == 'driver'):
             print('driver')

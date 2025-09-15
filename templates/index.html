@@ -3,2683 +3,3510 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta viewport="width=device-width, initial-scale=1.0" />
-    <title>Yawigo Food Delivery</title>
-    <meta name="description" content="Yawigo - Fast & reliable food delivery at your doorstep.">
-    <meta name="keywords" content="Yawigo, food delivery, Ghana, order food online">
-    <meta name="author" content="Yawigo Team">
-    <link rel="stylesheet" href="{% static "web/index.css" %}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-      /** @format */
-      :root {
-        --primary: #ff5c03;
-        --primary-light: #ff5c03; 
-        --primary-dark: #ff5c03;
-        --primary-bg: rgba(37, 99, 235, 0.1);
-        --accent: #f97316;
-        --text-dark: #1f2937;
-        --text-light: #6b7280;
-        --white: #fff;
-        --border-light: rgba(0, 0, 0, 0.1);
-        --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-      }
 
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yawigo - Smart Delivery & Ride Services</title>
+  <meta name="description"
+    content="Professional food delivery and ride-hailing services in Ghana. Fast, reliable, and secure.">
 
-      body {
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        background: var(--white);
-        color: var(--text-dark);
-        line-height: 1.6;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
+  <!-- Enhanced Font Loading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
 
-      /* Section spacing */
-      section {
-        margin: 0 auto 48px auto;
-        max-width: 1200px;
-        padding: 0 16px;
-      }
-/* Add this in your existing <style> tag */
+  <style>
+    :root {
+      --primary: #FF5C03;
+      --primary-light: #FF8F00;
+      --primary-dark: #E65100;
+      --secondary: #1A73E8;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --error: #EF4444;
+      --gray-50: #F9FAFB;
+      --gray-100: #F3F4F6;
+      --gray-200: #E5E7EB;
+      --gray-300: #D1D5DB;
+      --gray-400: #9CA3AF;
+      --gray-500: #6B7280;
+      --gray-600: #4B5563;
+      --gray-700: #374151;
+      --gray-800: #1F2937;
+      --gray-900: #111827;
+      --white: #FFFFFF;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+    }
 
-/* Smooth transitions */
-.feature-card,
-.how-step,
-.screenshot-card,
-.navbar,
-.download-btn,
-.navbar-links li a {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-/* Enhanced animations */
-@keyframes floatUp {
-  0% {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+    body {
+      font-family: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: var(--gray-800);
+      background-color: var(--white);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-feature-settings: 'liga', 'kern';
+      text-rendering: optimizeLegibility;
+    }
 
-@keyframes fadeScale {
-  0% {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
 
-/* Intersection Observer animations */
-.animate-on-scroll {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.animate-on-scroll.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Enhanced card hover effects */
-.feature-card {
-  transform: translateY(0);
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.feature-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(255, 92, 3, 0.15);
-}
-
-/* Modern navbar styling */
-.navbar {
-  backdrop-filter: blur(10px);
-  background: rgba(255, 255, 255, 0.95);
-  border-bottom: 1px solid rgba(255, 92, 3, 0.1);
-}
-
-/* Enhanced button styling */
-.download-btn {
-  background: var(--accent);
-  border: none;
-  padding: 1rem 2rem;
-  color: white;
-  font-weight: 600;
-  border-radius: 50px;
-  transform: translateY(0);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
-}
-
-.download-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(249, 115, 22, 0.5);
-}
-
-/* Responsive improvements */
-@media (max-width: 768px) {
-  .features-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    padding: 0 16px;
-  }
-  
-  .how-steps {
-    grid-template-columns: 1fr;
-    max-width: 400px;
-    margin: 0 auto;
-  }
-  
-  .screenshot-card {
-    max-width: 320px;
-    margin: 0 auto;
-  }
-  
-  .navbar {
-    padding: 12px 16px;
-  }
-  
-  .main-title {
-    font-size: clamp(1.8rem, 5vw, 2.5rem);
-    line-height: 1.2;
-  }
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --primary-bg: rgba(37, 99, 235, 0.2);
-    --text-dark: #f1f5f9;
-    --text-light: #cbd5e1;
-  }
-  
-  body {
-    background: #0f172a;
-  }
-  
-  .feature-card {
-    background: rgba(30, 41, 59, 0.8);
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .navbar {
-    background: rgba(15, 23, 42, 0.8);
-  }
-  
-  .footer {
-    background: linear-gradient(to bottom, #1e293b, #0f172a);
-  }
-}
-      .showcase-header {
-        background: #ff5c03;
-        min-height: 80vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-      }
-
-      .showcase-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='rgba(255,255,255,0.1)' fill-rule='evenodd'/%3E%3C/svg%3E");
-      }
-
-      .logo {
-        width: 80px;
-        margin-bottom: 16px;
-      }
-
-      .main-title {
-        font-size: 2.5rem;
-        font-weight: 800;
-        margin: 0 0 12px 0;
-      }
-
-      .subtitle {
-        font-size: 1.2rem;
-        margin-bottom: 28px;
-        color: #fff;
-      }
-
-      .download-btn {
-        display: inline-block;
-        background: #fff;
-        color: #ff5c03;
-        font-weight: 700;
-        padding: 14px 32px;
-        border-radius: 30px;
-        font-size: 1.1rem;
-        text-decoration: none;
-        box-shadow: 0 2px 8px rgba(255, 92, 3, 0.08);
-        transition: background 0.2s, color 0.2s;
-      }
-
-      .download-btn:hover {
-        background: #ffe5d1;
-        color: #ff5c03;
-      }
-
-      .features-section {
-        padding: 40px 16px 24px 16px;
-        background: #f8f6f4;
-      }
-
-      .features-title {
-        text-align: center;
-        font-size: 2rem;
-        color: #ff5c03;
-        margin-bottom: 32px;
-      }
-
-      .features-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-        padding: 2rem;
-      }
-      
-      @media (max-width: 768px) {
-        .features-grid {
-          grid-template-columns: 1fr;
-          gap: 20px;
-        }
-        
-        .feature-card {
-          max-width: 100%;
-          margin: 0 auto;
-        }
-      }
-
-      .feature-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        transform-style: preserve-3d;
-        perspective: 1000px;
-        padding: 32px 20px 24px 20px;
-        text-align: center;
-        transition: box-shadow 0.2s, transform 0.2s;
-      }
-
-      .feature-card:hover {
-        transform: translateY(-10px) rotateX(5deg);
-        box-shadow: var(--shadow-lg);
-      }
-
-      .feature-icon {
-        width: 64px;
-        height: 64px;
-        margin: 0 auto 24px auto;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255, 92, 3, 0.1);
-        border-radius: 16px;
-        transition: all 0.3s ease;
-      }
-
-      .feature-card:hover .feature-icon {
-        background: #ff5c03;
-        transform: scale(1.1);
-      }
-
-      .feature-icon svg {
-        width: 32px;
-        height: 32px;
-        fill: #ff5c03;
-        transition: all 0.3s ease;
-      }
-
-      .feature-card:hover .feature-icon svg {
-        fill: #fff;
-      }
-
-      .feature-title {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: #ff5c03;
-        margin-bottom: 8px;
-      }
-
-      .feature-desc {
-        font-size: 1rem;
-        color: #444;
-      }
-
-      .footer {
-        background: linear-gradient(to bottom, #f8fafc, #f1f5f9);
-        padding-top: 4rem;
-      }
-
-      .footer-grid {
-        display: flex;
-        flex-wrap: wrap;
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 0 16px;
-        gap: 32px;
-        justify-content: space-between;
-      }
-
-      .footer-col {
-        flex: 1 1 180px;
-        min-width: 180px;
-        margin-bottom: 24px;
-      }
-
-      .footer-title {
-        color: #222;
-        font-size: 1.1rem;
-        font-weight: 700;
-        margin: 18px 0 8px 0;
-      }
-
-      /* How It Works Section Styles */
-      .how-section {
-        position: relative;
-        padding: 80px 0;
-        overflow: hidden;
-        background: #fff;
-      }
-
-      .how-title {
-        text-align: center;
-        font-size: 2.5rem;
-        color: var(--primary, #ff5c03);
-        margin-bottom: 16px;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-      }
-
-      .how-subtitle {
-        text-align: center;
-        font-size: 1.2rem;
-        color: var(--text-light, #666);
-        margin-bottom: 64px;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .how-steps {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 40px;
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-      
-      @media (max-width: 768px) {
-        .how-steps {
-          grid-template-columns: 1fr;
-          gap: 24px;
-        }
-        
-        .how-step {
-          max-width: 100%;
-          margin: 0 auto;
-        }
-      }
-
-      .how-step {
-        text-align: center;
-        padding: 24px;
-        background: #fff;
-        border-radius: 24px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
-        transition: all 0.3s ease;
-      }
-
-      .how-step:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 48px rgba(255, 92, 3, 0.12);
-      }
-
-      .step-icon {
-        width: 80px;
-        height: 80px;
-        margin: 0 auto 24px;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--primary-bg, rgba(255, 92, 3, 0.1));
-        border-radius: 50%;
-        transition: all 0.3s ease;
-      }
-
-      .how-step:hover .step-icon {
-        background: var(--primary, #ff5c03);
-      }
-
-      .step-icon svg {
-        width: 40px;
-        height: 40px;
-        fill: var(--primary, #ff5c03);
-        transition: all 0.3s ease;
-      }
-
-      .how-step:hover .step-icon svg {
-        fill: #fff;
-      }
-
-      .step-icon span {
-        position: absolute;
-        top: -8px;
-        right: -8px;
-        width: 32px;
-        height: 32px;
-        background: var(--primary, #ff5c03);
-        color: #fff;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 1.1rem;
-        border: 3px solid #fff;
-        box-shadow: 0 4px 12px rgba(255, 92, 3, 0.2);
-      }
-
-      .how-step h3 {
-        font-size: 1.4rem;
-        color: var(--text-dark, #222);
-        margin: 0 0 16px;
-        font-weight: 700;
-      }
-
-      .how-step p {
-        font-size: 1.1rem;
-        color: var(--text-light, #666);
-        line-height: 1.6;
-        margin: 0;
-      }
-
-      /* Screenshots Section Styles */
-      .screenshots-section {
-        position: relative;
-        padding: 80px 0;
-        overflow: hidden;
-      }
-
-      .section-background {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: -1;
-      }
-
-      .section-content {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 24px;
-      }
-
-      .screenshots-title {
-        text-align: center;
-        font-size: 2.5rem;
-        color: var(--primary, #ff5c03);
-        margin-bottom: 16px;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-      }
-
-      .screenshots-subtitle {
-        text-align: center;
-        font-size: 1.2rem;
-        color: var(--text-light, #666);
-        margin-bottom: 48px;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      .screenshots-gallery {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 32px;
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-      
-      @media (max-width: 768px) {
-        .screenshots-gallery {
-          grid-template-columns: 1fr;
-          gap: 24px;
-        }
-        
-        .screenshot-card {
-          max-width: 100%;
-          margin: 0 auto;
-        }
-        
-        .screenshot-wrapper {
-          max-width: 320px;
-          margin: 0 auto;
-        }
-      }
-
-      .screenshot-card {
-        text-align: center;
-      }
-
-      .screenshot-wrapper {
-        position: relative;
-        border-radius: 24px;
-        overflow: hidden;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        transition: all 0.3s ease;
-        aspect-ratio: 9/16;
-      }
-
-      .screenshot-wrapper:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 12px 48px rgba(255, 92, 3, 0.2);
-      }
-
-      .screenshot-wrapper img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      .screenshot-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 92, 3, 0.9);
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    /* Enhanced Animations */
+    @keyframes fadeInUp {
+      from {
         opacity: 0;
-        transition: opacity 0.3s ease;
+        transform: translateY(30px);
       }
 
-      .screenshot-wrapper:hover .screenshot-overlay {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes fadeInRight {
+      from {
+        opacity: 0;
+        transform: translateX(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes bounce {
+
+      0%,
+      20%,
+      53%,
+      80%,
+      100% {
+        transform: translate3d(0, 0, 0);
+      }
+
+      40%,
+      43% {
+        transform: translate3d(0, -30px, 0);
+      }
+
+      70% {
+        transform: translate3d(0, -15px, 0);
+      }
+
+      90% {
+        transform: translate3d(0, -4px, 0);
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 92, 3, 0.7);
+      }
+
+      70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(255, 92, 3, 0);
+      }
+
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 92, 3, 0);
+      }
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-20px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes slideInFromBottom {
+      from {
+        opacity: 0;
+        transform: translateY(100px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fade-in {
+      opacity: 0;
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    .animate-fade-left {
+      opacity: 0;
+      animation: fadeInLeft 0.8s ease-out forwards;
+    }
+
+    .animate-fade-right {
+      opacity: 0;
+      animation: fadeInRight 0.8s ease-out forwards;
+    }
+
+    .animate-scale-in {
+      opacity: 0;
+      animation: scaleIn 0.6s ease-out forwards;
+    }
+
+    .animate-bounce {
+      animation: bounce 2s infinite;
+    }
+
+    .animate-pulse {
+      animation: pulse 2s infinite;
+    }
+
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .animate-slide-up {
+      opacity: 0;
+      animation: slideInFromBottom 0.8s ease-out forwards;
+    }
+
+    .animate-delay-1 {
+      animation-delay: 0.1s;
+    }
+
+    .animate-delay-2 {
+      animation-delay: 0.2s;
+    }
+
+    .animate-delay-3 {
+      animation-delay: 0.3s;
+    }
+
+    .animate-delay-4 {
+      animation-delay: 0.4s;
+    }
+
+    .animate-delay-5 {
+      animation-delay: 0.5s;
+    }
+
+    .animate-delay-6 {
+      animation-delay: 0.6s;
+    }
+
+    /* Header & Navigation */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--gray-200);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    .header.scrolled {
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 0;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+      transition: transform 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.05);
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+
+    .logo:hover img {
+      transform: rotate(360deg);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--gray-700);
+      text-decoration: none;
+      font-weight: 500;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -5px;
+      left: 0;
+      background-color: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .nav-cta {
+      background: var(--primary);
+      color: var(--white);
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-cta::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .nav-cta:hover::before {
+      left: 100%;
+    }
+
+    .nav-cta:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .mobile-menu-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .mobile-menu-btn span {
+      width: 24px;
+      height: 2px;
+      background: var(--gray-700);
+      transition: all 0.3s ease;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: var(--white);
+      padding: 8rem 0 6rem;
+      margin-top: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.25rem;
+      opacity: 0.9;
+      margin-bottom: 2.5rem;
+      font-weight: 400;
+      line-height: 1.6;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      border-radius: var(--radius-lg);
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: var(--white);
+      color: var(--primary);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--white);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--white);
+      transform: translateY(-3px);
+    }
+
+    /* Features Section */
+    .features {
+      padding: 6rem 0;
+      background: var(--gray-50);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--gray-900);
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.25rem;
+      color: var(--gray-600);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      transition: all 0.4s ease;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 92, 3, 0.1), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .feature-card:hover::before {
+      left: 100%;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--primary);
+    }
+
+    .feature-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      border-radius: var(--radius-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      transition: all 0.4s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    .feature-card:hover .feature-icon {
+      transform: scale(1.1) rotate(5deg);
+      animation: pulse 1s ease-in-out;
+    }
+
+    .feature-icon svg {
+      width: 32px;
+      height: 32px;
+      fill: var(--white);
+    }
+
+    .feature-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.75rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .feature-description {
+      font-family: 'Inter', sans-serif;
+      color: var(--gray-600);
+      line-height: 1.6;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Reviews Section */
+    .reviews {
+      padding: 6rem 0;
+      background: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .reviews::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(255, 92, 3, 0.05) 0%, rgba(255, 143, 0, 0.05) 100%);
+      z-index: 1;
+    }
+
+    .reviews .container {
+      position: relative;
+      z-index: 2;
+    }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-top: 4rem;
+    }
+
+    .review-card {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--gray-200);
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .review-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-light));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+
+    .review-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .review-card:hover {
+      transform: translateY(-8px);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .review-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .review-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      transition: transform 0.3s ease;
+    }
+
+    .review-card:hover .review-avatar {
+      transform: scale(1.1);
+    }
+
+    .review-info h4 {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 0.25rem;
+    }
+
+    .review-info p {
+      font-family: 'Inter', sans-serif;
+      color: var(--gray-500);
+      font-size: 0.875rem;
+    }
+
+    .review-stars {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .star {
+      width: 20px;
+      height: 20px;
+      fill: #FFD700;
+      transition: transform 0.2s ease;
+    }
+
+    .review-card:hover .star {
+      transform: scale(1.1);
+    }
+
+    .review-text {
+      font-family: 'Inter', sans-serif;
+      color: var(--gray-700);
+      line-height: 1.6;
+      font-style: italic;
+      position: relative;
+    }
+
+    .review-text::before {
+      content: '"';
+      font-size: 3rem;
+      color: var(--primary);
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      font-family: 'Poppins', sans-serif;
+      opacity: 0.3;
+    }
+
+    /* How It Works Section */
+    .how-it-works {
+      padding: 6rem 0;
+      background: var(--gray-50);
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+      margin-top: 4rem;
+    }
+
+    .step {
+      text-align: center;
+      position: relative;
+    }
+
+    .step-number {
+      width: 60px;
+      height: 60px;
+      background: var(--primary);
+      color: var(--white);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 800;
+      font-family: 'Poppins', sans-serif;
+      margin: 0 auto 1.5rem;
+      box-shadow: var(--shadow-lg);
+      transition: all 0.3s ease;
+    }
+
+    .step:hover .step-number {
+      transform: scale(1.1);
+      animation: bounce 1s ease-in-out;
+    }
+
+    .step-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.75rem;
+    }
+
+    .step-description {
+      font-family: 'Inter', sans-serif;
+      color: var(--gray-600);
+      line-height: 1.6;
+    }
+
+    /* Download Section */
+    .download {
+      padding: 6rem 0;
+      background: var(--white);
+    }
+
+    .download-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-top: 4rem;
+    }
+
+    .download-card {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      position: relative;
+      transition: all 0.4s ease;
+      overflow: hidden;
+    }
+
+    .download-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 92, 3, 0.05), rgba(255, 143, 0, 0.05));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .download-card:hover::after {
+      opacity: 1;
+    }
+
+    .download-card.featured {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-lg);
+      transform: scale(1.02);
+    }
+
+    .download-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .version-badge {
+      position: absolute;
+      top: -10px;
+      right: 20px;
+      background: var(--primary);
+      color: var(--white);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-lg);
+      font-size: 0.875rem;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      z-index: 3;
+      animation: pulse 2s infinite;
+    }
+
+    .version-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .version-date {
+      color: var(--gray-500);
+      font-size: 0.875rem;
+      font-family: 'Inter', sans-serif;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .version-features {
+      list-style: none;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .version-features li {
+      color: var(--gray-600);
+      margin-bottom: 0.5rem;
+      padding-left: 1.5rem;
+      position: relative;
+      font-family: 'Inter', sans-serif;
+      transition: color 0.3s ease;
+    }
+
+    .version-features li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--success);
+      font-weight: 600;
+      transition: transform 0.3s ease;
+    }
+
+    .download-card:hover .version-features li::before {
+      transform: scale(1.2);
+    }
+
+    .download-btn {
+      width: 100%;
+      background: var(--primary);
+      color: var(--white);
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: var(--radius-lg);
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    .download-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .download-btn:hover::before {
+      left: 100%;
+    }
+
+    .download-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .download-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+      transition: transform 0.3s ease;
+    }
+
+    .download-btn:hover svg {
+      transform: scale(1.1);
+    }
+
+    /* Contact Section */
+    /* Enhanced Contact Section Styles */
+    .contact {
+      padding: 6rem 0;
+      background: var(--gray-50);
+      text-align: center;
+    }
+
+    .contact-content {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .contact-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin: 4rem 0;
+    }
+
+    .contact-item {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .contact-item:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary);
+    }
+
+    .contact-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .contact-item:hover .contact-icon {
+      transform: scale(1.1);
+      animation: pulse 1s ease-in-out;
+    }
+
+    .contact-icon svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--white);
+    }
+
+    .contact-label {
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .contact-value {
+      color: var(--gray-600);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .contact-value a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    .contact-value a:hover {
+      text-decoration: underline;
+      color: var(--primary-dark);
+    }
+
+    .contact-value small {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--gray-500);
+      margin-top: 0.25rem;
+    }
+
+    /* Contact Form Styles */
+    .contact-form-section {
+      background: var(--white);
+      padding: 3rem;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      margin: 4rem 0;
+      text-align: left;
+    }
+
+    .form-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .contact-form {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 0.5rem;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255, 92, 3, 0.1);
+    }
+
+    .submit-btn {
+      background: var(--primary);
+      color: var(--white);
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: var(--radius-lg);
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .submit-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .submit-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    /* FAQ Styles */
+    .faq-section {
+      margin: 4rem 0;
+    }
+
+    .faq-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 2rem;
+    }
+
+    .faq-grid {
+      display: grid;
+      gap: 1rem;
+      text-align: left;
+    }
+
+    .faq-item {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--gray-200);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .faq-item:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .faq-question {
+      width: 100%;
+      padding: 1.5rem;
+      background: none;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: var(--gray-900);
+      font-family: 'Poppins', sans-serif;
+      transition: background 0.3s ease;
+    }
+
+    .faq-question:hover {
+      background: var(--gray-50);
+    }
+
+    .faq-icon {
+      width: 20px;
+      height: 20px;
+      fill: var(--primary);
+      transition: transform 0.3s ease;
+    }
+
+    .faq-item.active .faq-icon {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      padding: 0 1.5rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .faq-item.active .faq-answer {
+      padding: 0 1.5rem 1.5rem;
+      max-height: 200px;
+    }
+
+    .faq-answer p {
+      color: var(--gray-600);
+      line-height: 1.6;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Social Media Styles */
+    .social-section {
+      margin: 4rem 0;
+    }
+
+    .social-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+    }
+
+    .social-subtitle {
+      color: var(--gray-600);
+      margin-bottom: 2rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .social-link {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .social-link svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--white);
+    }
+
+    .social-link.facebook {
+      background: #1877F2;
+    }
+
+    .social-link.twitter {
+      background: #1DA1F2;
+    }
+
+    .social-link.instagram {
+      background: linear-gradient(45deg, #F56040, #E91E63, #8E2DE2);
+    }
+
+    .social-link.linkedin {
+      background: #0A66C2;
+    }
+
+    .social-link.whatsapp {
+      background: #25D366;
+    }
+
+    .social-link:hover {
+      transform: translateY(-3px) scale(1.1);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Operating Hours */
+    .hours-section {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      margin: 4rem 0;
+    }
+
+    .hours-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 1.5rem;
+    }
+
+    .hours-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .hours-item {
+      text-align: center;
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      background: var(--gray-50);
+    }
+
+    .hours-item strong {
+      display: block;
+      color: var(--gray-900);
+      font-family: 'Poppins', sans-serif;
+      margin-bottom: 0.25rem;
+    }
+
+    .hours-item span {
+      color: var(--gray-600);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .social-links {
+        gap: 0.75rem;
+      }
+
+      .social-link {
+        width: 44px;
+        height: 44px;
+      }
+
+      .social-link svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .contact-form-section {
+        padding: 2rem 1.5rem;
+      }
+
+      .hours-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--gray-900);
+      color: var(--gray-300);
+      padding: 3rem 0 1rem;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-section h3 {
+      color: var(--white);
+      font-weight: 700;
+      font-family: 'Poppins', sans-serif;
+      margin-bottom: 1rem;
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-links a {
+      color: var(--gray-400);
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--primary);
+      transform: translateX(5px);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--gray-800);
+      padding-top: 2rem;
+      text-align: center;
+      color: var(--gray-500);
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Chat Widget */
+    .chat-widget {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 1000;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .chat-btn {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chat-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+
+    .chat-btn:hover::before {
+      transform: translateX(100%);
+    }
+
+    .chat-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 25px rgba(255, 92, 3, 0.4);
+    }
+
+    .chat-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--white);
+      transition: transform 0.3s ease;
+    }
+
+    .chat-btn:hover svg {
+      transform: scale(1.1);
+    }
+
+    /* Chat Window */
+    .chat-window {
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      width: 350px;
+      height: 500px;
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--gray-200);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      transform: scale(0.8) translateY(20px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .chat-window.show {
+      display: flex;
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+
+    /* Chat Header */
+    .chat-header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: var(--white);
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chat-header-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .chat-avatar {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+    }
+
+    .chat-avatar svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .chat-header h4 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .chat-status {
+      font-size: 0.75rem;
+      opacity: 0.9;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: #10B981;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    .chat-minimize {
+      background: none;
+      border: none;
+      color: var(--white);
+      cursor: pointer;
+      padding: 0.25rem;
+      border-radius: var(--radius-sm);
+      transition: background 0.2s ease;
+    }
+
+    .chat-minimize:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .chat-minimize svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    /* Chat Messages */
+    .chat-messages {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: var(--gray-50);
+    }
+
+    .chat-messages::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .chat-messages::-webkit-scrollbar-track {
+      background: var(--gray-100);
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: var(--gray-300);
+      border-radius: 2px;
+    }
+
+    .message {
+      display: flex;
+      gap: 0.5rem;
+      animation: messageSlideIn 0.3s ease-out;
+    }
+
+    .message.user-message {
+      flex-direction: row-reverse;
+      align-self: flex-end;
+    }
+
+    .message-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .bot-message .message-avatar {
+      background: var(--primary);
+    }
+
+    .user-message .message-avatar {
+      background: var(--gray-400);
+    }
+
+    .message-avatar svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--white);
+    }
+
+    .message-content {
+      max-width: 250px;
+      position: relative;
+    }
+
+    .message-content p {
+      background: var(--white);
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-lg);
+      margin: 0;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      line-height: 1.4;
+    }
+
+    .user-message .message-content p {
+      background: var(--primary);
+      color: var(--white);
+      border-color: var(--primary);
+    }
+
+    .message-time {
+      font-size: 0.65rem;
+      color: var(--gray-400);
+      margin-top: 0.25rem;
+      display: block;
+    }
+
+    .user-message .message-time {
+      text-align: right;
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .quick-action {
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-lg);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+
+    .quick-action:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    /* Chat Input */
+    .chat-input-container {
+      border-top: 1px solid var(--gray-200);
+      background: var(--white);
+    }
+
+    .chat-typing {
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gray-500);
+      font-size: 0.875rem;
+      border-bottom: 1px solid var(--gray-100);
+    }
+
+    .typing-indicator {
+      display: flex;
+      gap: 2px;
+    }
+
+    .typing-indicator span {
+      width: 4px;
+      height: 4px;
+      background: var(--gray-400);
+      border-radius: 50%;
+      animation: typingDot 1.4s infinite;
+    }
+
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 1rem;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .chat-input input {
+      flex: 1;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius-lg);
+      padding: 0.75rem 1rem;
+      outline: none;
+      font-size: 0.875rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .chat-input input:focus {
+      border-color: var(--primary);
+    }
+
+    .chat-input button {
+      background: var(--primary);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chat-input button:hover {
+      background: var(--primary-dark);
+      transform: scale(1.05);
+    }
+
+    .chat-input button svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--white);
+    }
+
+    /* Animations */
+    @keyframes messageSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes typingDot {
+
+      0%,
+      60%,
+      100% {
+        transform: translateY(0);
+      }
+
+      30% {
+        transform: translateY(-10px);
+      }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .chat-widget {
+        bottom: 1rem;
+        right: 1rem;
+      }
+
+      .chat-window {
+        width: 300px;
+        height: 450px;
+        bottom: 70px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .chat-window {
+        width: calc(100vw - 2rem);
+        right: -1rem;
+      }
+    }
+
+    /* Route Background Animation - Fixed Direction */
+    .route-background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.15;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .route-svg {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+    }
+
+    /* Enhanced Route Paths with Better Direction */
+    .route-path {
+      fill: none;
+      stroke: var(--white);
+      stroke-width: 3;
+      stroke-dasharray: 15, 10;
+      stroke-linecap: round;
+      animation: routeFlow 25s linear infinite;
+      filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.3));
+    }
+
+    .route-path.secondary {
+      stroke-width: 2;
+      stroke-dasharray: 10, 8;
+      animation: routeFlowReverse 20s linear infinite;
+      opacity: 0.7;
+    }
+
+    .route-path.tertiary {
+      stroke-width: 1.5;
+      stroke-dasharray: 8, 6;
+      animation: routeFlow 30s linear infinite;
+      opacity: 0.5;
+    }
+
+    /* Location Pins with Better Animation */
+    .location-pin {
+      fill: var(--white);
+      animation: pinPulse 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+    }
+
+    .location-pin.start {
+      fill: #10B981;
+      animation: pinPulse 2s ease-in-out infinite;
+    }
+
+    .location-pin.destination {
+      fill: #EF4444;
+      animation: pinPulse 2.5s ease-in-out infinite;
+    }
+
+    .location-pin.waypoint {
+      fill: #F59E0B;
+      animation: pinPulse 3s ease-in-out infinite;
+    }
+
+    /* Enhanced Delivery Vehicles with Path Following */
+    .delivery-vehicle {
+      fill: var(--white);
+      filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.4));
+    }
+
+    .delivery-car {
+      animation: vehicleFollowPath 20s ease-in-out infinite;
+    }
+
+    .delivery-bike {
+      animation: bikeFollowPath 16s linear infinite;
+    }
+
+    .delivery-truck {
+      animation: truckFollowPath 24s ease-in-out infinite;
+    }
+
+    /* Realistic Path Following Animations */
+    @keyframes vehicleFollowPath {
+      0% {
+        transform: translateX(50px) translateY(300px) rotate(15deg);
+        opacity: 0;
+      }
+
+      5% {
         opacity: 1;
       }
 
-      .screenshot-overlay svg {
-        width: 48px;
-        height: 48px;
+      12% {
+        transform: translateX(120px) translateY(285px) rotate(10deg);
       }
 
-      .screenshot-card h3 {
-        margin-top: 16px;
-        font-size: 1.2rem;
-        color: var(--text-dark, #222);
-        font-weight: 600;
+      20% {
+        transform: translateX(200px) translateY(260px) rotate(-5deg);
       }
 
-      .footer-col ul {
-        list-style: none;
-        padding: 0;
-        margin: 0 0 12px 0;
+      30% {
+        transform: translateX(300px) translateY(240px) rotate(-15deg);
       }
 
-      .footer-col ul li {
-        margin-bottom: 6px;
+      40% {
+        transform: translateX(420px) translateY(255px) rotate(5deg);
       }
 
-      .footer-col ul li a {
-        color: #888;
-        text-decoration: none;
-        font-size: 1rem;
-        transition: color 0.2s;
+      50% {
+        transform: translateX(540px) translateY(280px) rotate(15deg);
       }
 
-      .footer-col ul li a:hover {
-        color: #ff5c03;
+      60% {
+        transform: translateX(660px) translateY(250px) rotate(-10deg);
       }
 
-      .footer-select {
-        width: 100%;
-        padding: 8px 6px;
-        border-radius: 6px;
-        border: 1px solid #eee;
-        font-size: 1rem;
-        margin-bottom: 8px;
-        background: #f8f6f4;
-        color: #222;
+      70% {
+        transform: translateX(780px) translateY(210px) rotate(-20deg);
       }
 
-      .footer-bottom {
-        text-align: center;
-        padding: 18px 0 12px 0;
-        color: #888;
-        font-size: 1rem;
-        border-top: 1px solid #f0f0f0;
-        margin-top: 12px;
+      80% {
+        transform: translateX(900px) translateY(175px) rotate(-15deg);
       }
 
-      @media (max-width: 900px) {
-        .footer-grid {
-          flex-direction: column;
-          gap: 0;
-          padding: 0 8vw;
-        }
-
-        .footer-col {
-          margin-bottom: 0;
-          padding-bottom: 18px;
-          border-bottom: 1px solid #f0f0f0;
-        }
-
-        .footer-col:last-child {
-          border-bottom: none;
-        }
+      90% {
+        transform: translateX(1020px) translateY(140px) rotate(-5deg);
+        opacity: 1;
       }
 
-      @media (max-width: 600px) {
-        .main-title {
-          font-size: 2rem;
-        }
-
-        .features-title {
-          font-size: 1.3rem;
-        }
-
-        .feature-card {
-          padding: 20px 10px 16px 10px;
-        }
-
-        .footer-grid {
-          grid-template-columns: 1fr;
-        }
-
-        .footer-col {
-          text-align: center;
-        }
-      }
-
-      /* Animations */
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(40px);
-        }
-
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-
-        to {
-          opacity: 1;
-        }
-      }
-
-      .feature-card,
-      .how-step,
-      .screenshots-gallery img {
+      100% {
+        transform: translateX(1120px) translateY(110px) rotate(0deg);
         opacity: 0;
-        transform: translateY(40px);
-        animation: fadeInUp 0.8s forwards;
       }
+    }
 
-      .feature-card {
-        animation-delay: 0.2s;
+    @keyframes bikeFollowPath {
+      0% {
+        transform: translateX(100px) translateY(500px) rotate(20deg) scale(0.9);
+        opacity: 0;
       }
 
-      .feature-card:nth-child(2) {
-        animation-delay: 0.4s;
+      8% {
+        opacity: 1;
       }
 
-      .feature-card:nth-child(3) {
-        animation-delay: 0.6s;
+      15% {
+        transform: translateX(180px) translateY(480px) rotate(15deg) scale(0.95);
       }
 
-      .feature-card:nth-child(4) {
-        animation-delay: 0.8s;
+      25% {
+        transform: translateX(280px) translateY(450px) rotate(-5deg) scale(1);
       }
 
-      .feature-card:nth-child(5) {
-        animation-delay: 1s;
+      35% {
+        transform: translateX(400px) translateY(430px) rotate(-15deg) scale(1.05);
       }
 
-      .how-step {
-        animation-delay: 0.2s;
+      45% {
+        transform: translateX(520px) translateY(450px) rotate(10deg) scale(1);
       }
 
-      .how-step:nth-child(2) {
-        animation-delay: 0.4s;
+      55% {
+        transform: translateX(640px) translateY(480px) rotate(20deg) scale(0.95);
       }
 
-      .how-step:nth-child(3) {
-        animation-delay: 0.6s;
+      65% {
+        transform: translateX(760px) translateY(440px) rotate(-10deg) scale(0.9);
       }
 
-      .how-step:nth-child(4) {
-        animation-delay: 0.8s;
+      75% {
+        transform: translateX(880px) translateY(400px) rotate(-20deg) scale(0.85);
       }
 
-      .screenshots-gallery img {
-        animation: fadeIn 1s forwards;
+      85% {
+        transform: translateX(1000px) translateY(360px) rotate(-15deg) scale(0.8);
       }
 
-      .screenshots-gallery img:nth-child(1) {
-        animation-delay: 0.2s;
+      95% {
+        opacity: 1;
       }
 
-      .screenshots-gallery img:nth-child(2) {
-        animation-delay: 0.4s;
+      100% {
+        transform: translateX(1120px) translateY(320px) rotate(0deg) scale(0.8);
+        opacity: 0;
       }
+    }
 
-      .screenshots-gallery img:nth-child(3) {
-        animation-delay: 0.6s;
+    @keyframes truckFollowPath {
+      0% {
+        transform: translateX(0px) translateY(380px) rotate(10deg) scale(1.1);
+        opacity: 0;
       }
 
-      .screenshots-gallery img:nth-child(4) {
-        animation-delay: 0.8s;
+      6% {
+        opacity: 1;
       }
 
-      /* Ensure animation only runs once when visible */
-      .features-grid,
-      .how-steps,
-      .screenshots-gallery {
-        will-change: opacity, transform;
+      14% {
+        transform: translateX(100px) translateY(370px) rotate(5deg) scale(1.1);
       }
 
-      /* Navbar styles */
-      .navbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: #fff;
-        box-shadow: 0 2px 8px rgba(255, 92, 3, 0.06);
-        padding: 0 24px;
-        height: 64px;
-        position: sticky;
-        top: 0;
-        z-index: 100;
+      22% {
+        transform: translateX(200px) translateY(355px) rotate(-8deg) scale(1.1);
       }
 
-      .navbar-logo {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-weight: 800;
-        font-size: 1.3rem;
-        color: #ff5c03;
+      32% {
+        transform: translateX(320px) translateY(340px) rotate(-12deg) scale(1.1);
       }
 
-      .navbar-logo img {
-        width: 36px;
-        height: 36px;
+      42% {
+        transform: translateX(450px) translateY(350px) rotate(2deg) scale(1.1);
       }
 
-      .navbar-links {
-        display: flex;
-        gap: 24px;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-
-      .navbar-links li a {
-        color: #222;
-        text-decoration: none;
-        font-weight: 600;
-        transition: color 0.2s;
-      }
-
-      .navbar-links li a:hover,
-      .navbar-links .navbar-download {
-        color: #ff5c03;
-      }
-
-      .navbar-download {
-        background: #ff5c03;
-        color: #fff !important;
-        padding: 8px 18px;
-        border-radius: 20px;
-        font-weight: 700;
-        margin-left: 8px;
-        transition: background 0.2s;
-      }
-
-      .navbar-download:hover {
-        background: #ff7d36;
-      }
-
-      /* Responsive navbar */
-      @media (max-width: 700px) {
-        .navbar-links {
-          flex-direction: column;
-          background: #fff;
-          position: absolute;
-          top: 64px;
-          left: 0;
-          right: 0;
-          display: none;
-          z-index: 101;
-        }
-
-        .navbar-links.open {
-          display: flex;
-        }
-
-        .navbar {
-          flex-direction: column;
-          align-items: flex-start;
-          height: auto;
-        }
-
-        .navbar-logo {
-          margin: 10px 0;
-        }
-
-        .navbar-toggle {
-          display: block;
-          background: none;
-          border: none;
-          font-size: 2rem;
-          color: #ff5c03;
-          position: absolute;
-          right: 16px;
-          top: 16px;
-          z-index: 102;
-        }
-      }
-
-      @media (max-width: 900px) {
-        .how-steps {
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .screenshots-gallery {
-          flex-direction: column;
-          align-items: center;
-        }
-
-        .testimonial-video-card {
-          width: 100%;
-          flex: 1 1 100%;
-        }
-      }
-
-      @media (max-width: 600px) {
-        .main-title {
-          font-size: 1.3rem;
-        }
-
-        .features-title,
-        .screenshots-title,
-        .how-title,
-        .faq-title,
-        .contact-title {
-          font-size: 1.1rem;
-        }
-
-        .feature-card,
-        .how-step {
-          padding: 16px 6px 12px 6px;
-          font-size: 0.95rem;
-        }
-
-        .screenshots-gallery img {
-          width: 90vw;
-          height: 160px;
-        }
-      }
-
-      /* Vehicle animation styles */
-      .vehicle-animation {
-        position: relative;
-        width: 100%;
-        height: 60px;
-        margin: 30px 0 10px 0;
-        overflow: hidden;
-        background: transparent;
-      }
-
-      .vehicle-animation .car,
-      .vehicle-animation .moto {
-        position: absolute;
-        top: 10px;
-        left: -70px;
-      }
-
-      .vehicle-animation .car {
-        animation: car-move 6s linear infinite;
-      }
-
-      .vehicle-animation .moto {
-        top: 30px;
-        animation: moto-move 5s linear 1s infinite;
-      }
-
-      @keyframes car-move {
-        0% {
-          left: -70px;
-        }
-
-        90% {
-          left: calc(100% + 70px);
-        }
-
-        100% {
-          left: calc(100% + 70px);
-        }
-      }
-
-      @keyframes moto-move {
-        0% {
-          left: -70px;
-        }
-
-        90% {
-          left: calc(100% + 70px);
-        }
-
-        100% {
-          left: calc(100% + 70px);
-        }
-      }
-
-      /* Chat box styles */
-      .chatbox-fab {
-        position: fixed;
-        right: 24px;
-        bottom: 24px;
-        z-index: 999;
-        background: #ff5c03;
-        color: #fff;
-        border: none;
-        border-radius: 50%;
-        width: 56px;
-        height: 56px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
-        font-size: 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-
-      .chatbox-fab:hover {
-        background: #ff7d36;
-      }
-
-      .chatbox-window {
-        position: fixed;
-        right: 24px;
-        bottom: 90px;
-        width: 320px;
-        max-width: 95vw;
-        height: 400px;
-        background: #fff;
-        border-radius: 18px;
-        box-shadow: 0 4px 32px rgba(0, 0, 0, 0.18);
-        z-index: 1000;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-        animation: fadeIn 0.3s;
-      }
-
-      .chatbox-header {
-        background: #ff5c03;
-        color: #fff;
-        padding: 14px 18px;
-        font-weight: bold;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .chatbox-messages {
-        flex: 1;
-        padding: 12px;
-        overflow-y: auto;
-        background: #f8f6f4;
-        font-size: 0.98rem;
-      }
-
-      .chatbox-input-row {
-        display: flex;
-        border-top: 1px solid #eee;
-        background: #fff;
-      }
-
-      .chatbox-input-row input {
-        flex: 1;
-        border: none;
-        padding: 12px;
-        font-size: 1rem;
-        outline: none;
-        background: #fff;
-      }
-
-      .chatbox-input-row button {
-        background: #ff5c03;
-        color: #fff;
-        border: none;
-        padding: 0 18px;
-        font-size: 1.2rem;
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-
-      .chatbox-input-row button:hover {
-        background: #ff7d36;
-      }
-
-      /* Video Testimonial Section */
-      .testimonial-section {
-        background: #fff;
-        padding: 40px 16px 24px 16px;
-        text-align: center;
-      }
-
-      .testimonial-title {
-        font-size: 2rem;
-        color: #ff5c03;
-        margin-bottom: 32px;
-      }
-
-      .testimonial-videos {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 18px;
-        justify-content: center;
-      }
-
-      .testimonial-video-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-      }
-
-      .testimonial-video-card:hover {
-        transform: scale(1.02);
-        box-shadow: var(--shadow-lg);
-      }
-
-      .testimonial-video-card video {
-        width: 100%;
-        height: auto;
-        display: block;
-      }
-
-      .testimonial-caption {
-        padding: 12px 16px;
-        font-size: 0.95rem;
-        color: #444;
-        margin: 0;
-        text-align: left;
-      }
-
-      @media (max-width: 900px) {
-        .testimonial-videos {
-          flex-direction: column;
-          gap: 24px;
-          align-items: center;
-        }
-
-        .testimonial-video-card {
-          width: 98vw;
-          max-width: 400px;
-        }
-      }
-
-      /* Responsive for screenshots gallery */
-      .screenshots-gallery {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 18px;
-        justify-content: center;
-      }
-
-      .screenshots-gallery img {
-        width: 180px;
-        height: 380px;
-        object-fit: cover;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        background: #f8f6f4;
-      }
-
-      @media (max-width: 900px) {
-        .screenshots-gallery img {
-          width: 120px;
-          height: 240px;
-        }
-      }
-
-      @media (max-width: 600px) {
-        .screenshots-gallery img {
-          width: 90vw;
-          height: 160px;
-        }
-      }
-
-      /* Responsive for how-steps */
-      @media (max-width: 900px) {
-        .how-steps {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 24px;
-        }
-
-        .how-step {
-          width: 100%;
-          max-width: 400px;
-          margin: 0 auto 18px auto;
-          padding: 24px;
-        }
-      }
-      
-      @media (max-width: 768px) {
-        .how-steps {
-          grid-template-columns: 1fr;
-          gap: 20px;
-        }
-        
-        .how-step {
-          max-width: 100%;
-          margin: 0 auto;
-        }
-        
-        .how-title {
-          font-size: 1.6rem;
-        }
-        
-        .how-subtitle {
-          font-size: 1rem;
-        }
-      }
-
-      /* Responsive for navbar */
-      @media (max-width: 700px) {
-        .navbar-links {
-          flex-direction: column;
-          background: #fff;
-          position: absolute;
-          top: 64px;
-          left: 0;
-          right: 0;
-          display: none;
-          z-index: 101;
-        }
-
-        .navbar-links.open {
-          display: flex;
-        }
-
-        .navbar {
-          flex-direction: column;
-          align-items: flex-start;
-          height: auto;
-        }
-
-        .navbar-logo {
-          margin: 10px 0;
-        }
-
-        .navbar-toggle {
-          display: block;
-          background: none;
-          border: none;
-          font-size: 2rem;
-          color: #ff5c03;
-          position: absolute;
-          right: 16px;
-          top: 16px;
-          z-index: 102;
-        }
-      }
-
-      .yango-hero {
-        background: linear-gradient(90deg, #ffe5d1 0%, #fff 100%);
-        padding: 48px 16px 32px 16px;
-        text-align: center;
-      }
-
-      .yango-hero-content h1 {
-        font-size: 2.2rem;
-        color: #ff5c03;
-        margin-bottom: 12px;
-      }
-
-      .yango-lead {
-        font-size: 1.2rem;
-        margin-bottom: 24px;
-      }
-
-      .yango-app-btn,
-      .yango-order-btn,
-      .yango-learn-btn {
-        display: inline-block;
-        background: #ff5c03;
-        color: #fff;
-        font-weight: 700;
-        padding: 12px 28px;
-        border-radius: 24px;
-        font-size: 1rem;
-        text-decoration: none;
-        margin: 8px 0;
-        transition: background 0.2s;
-      }
-
-      .yango-app-btn:hover,
-      .yango-order-btn:hover,
-      .yango-learn-btn:hover {
-        background: #ff7d36;
-      }
-
-      .yango-why {
-        background: #fff;
-        padding: 40px 16px 24px 16px;
-        text-align: center;
-      }
-
-      .yango-why-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 32px;
-        justify-content: center;
-        margin-top: 24px;
-      }
-
-      .yango-why-grid > div {
-        background: #f8f6f4;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-        padding: 24px 18px;
-        width: 260px;
-        min-width: 180px;
-        flex: 1 1 220px;
-        text-align: left;
-      }
-
-      .yango-why-grid ul {
-        padding-left: 18px;
-      }
-
-      .yango-service-classes {
-        background: #f8f6f4;
-        padding: 40px 16px 24px 16px;
-        text-align: center;
-      }
-
-      .yango-service-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 32px;
-        justify-content: center;
-        margin-bottom: 16px;
-      }
-
-      .yango-service-card {
-        background: #fff;
-        border-radius: 18px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-        padding: 32px 20px;
-        text-align: center;
-        flex: 1 1 220px;
-        min-width: 180px;
-      }
-
-      .yango-order-btn {
-        display: inline-block;
-        background: #ff5c03;
-        color: #fff;
-        padding: 10px 20px;
-        border-radius: 20px;
-        font-weight: 700;
-        text-decoration: none;
-        transition: background 0.2s;
-        margin-top: 12px;
-      }
-
-      .yango-order-btn:hover {
-        background: #ff7d36;
-      }
-
-      .yango-driver {
-        padding: 40px 16px;
-        text-align: center;
-        background: #fff;
-      }
-
-      .yango-learn-btn {
-        display: inline-block;
-        background: transparent;
-        color: #ff5c03;
-        padding: 10px 20px;
-        border: 2px solid #ff5c03;
-        border-radius: 20px;
-        font-weight: 700;
-        text-decoration: none;
-        transition: background 0.2s, color 0.2s;
-        margin-top: 12px;
-      }
-
-      .yango-learn-btn:hover {
-        background: #ff5c03;
-        color: #fff;
-      }
-
-      .yango-testimonials {
-        padding: 40px 16px;
-        text-align: center;
-        background: #f8f6f4;
-      }
-
-      .yango-testimonial-list {
-        max-width: 800px;
-        margin: 0 auto;
-        text-align: left;
-      }
-
-      .yango-testimonial-list blockquote {
-        border-left: 4px solid #ff5c03;
-        background: #fff;
-        padding: 20px 28px;
-        border-radius: 10px;
-        margin-bottom: 24px;
-        font-style: italic;
-        color: #333;
-      }
-
-      .yango-award {
-        padding: 40px 16px;
-        text-align: center;
-      }
-
-      .yango-ratings {
-        display: flex;
-        justify-content: center;
-        gap: 24px;
-        margin: 24px 0;
-      }
-
-      .yango-rating-score {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #ff5c03;
-      }
-
-      .yango-countries {
-        padding: 40px 16px;
-        text-align: center;
-        background: #f8f6f4;
-      }
-
-      .yango-country-list {
-        display: inline-block;
-        text-align: left;
-        max-width: 600px;
-        margin: 0 auto;
-        font-size: 1rem;
-        color: #444;
-      }
-
-      @media (max-width: 900px) {
-        section {
-          padding: 0 4vw;
-        }
-
-        .features-grid,
-        .how-steps,
-        .screenshots-gallery,
-        .testimonial-videos {
-          flex-direction: column;
-          gap: 24px;
-          align-items: center;
-        }
-
-        .feature-card,
-        .how-step,
-        .testimonial-video-card {
-          width: 98vw;
-          max-width: 400px;
-        }
-      }
-
-      @media (max-width: 600px) {
-        .yango-hero {
-          padding: 60px 16px;
-        }
-
-        .yango-lead {
-          font-size: 1rem;
-          margin-bottom: 16px;
-        }
-
-        .yango-app-btn {
-          padding: 10px 20px;
-          font-size: 1rem;
-        }
-
-        .yango-service-card {
-          padding: 24px 16px;
-        }
-
-        .yango-order-btn {
-          padding: 8px 16px;
-          font-size: 0.9rem;
-        }
-
-        .yango-driver {
-          padding: 24px 16px;
-        }
-
-        .yango-testimonial-list blockquote {
-          padding: 12px 16px;
-        }
-
-        .yango-award {
-          padding: 24px 16px;
-        }
-      }
-
-      .screenshots-section {
-        background: #fff;
-        padding: 40px 16px 24px 16px;
-        text-align: center;
-      }
-
-      .screenshots-title {
-        font-size: 2rem;
-        color: #ff5c03;
-        margin-bottom: 32px;
-      }
-
-      .screenshots-gallery {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 18px;
-        justify-content: center;
-      }
-
-      .screenshots-gallery img {
-        width: 180px;
-        height: 380px;
-        object-fit: cover;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        background: #f8f6f4;
-      }
-
-      @media (max-width: 900px) {
-        .screenshots-gallery img {
-          width: 120px;
-          height: 240px;
-        }
-      }
-
-      .how-section {
-        background: #f8f6f4;
-        padding: 40px 16px 24px 16px;
-        text-align: center;
-      }
-
-      .how-title {
-        font-size: 2rem;
-        color: #ff5c03;
-        margin-bottom: 32px;
-      }
-
-      .how-steps {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 28px;
-        justify-content: center;
-        max-width: 1100px;
-        margin: 0 auto;
-      }
-
-      .how-step {
-        background: #fff;
-        border-radius: 18px;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-        padding: 32px 20px;
-        text-align: center;
-        flex: 1 1 220px;
-        min-width: 180px;
-      }
-
-      .how-number {
-        display: inline-block;
-        background: #ff5c03;
-        color: #fff;
-        font-weight: bold;
-        border-radius: 50%;
-        width: 36px;
-        height: 36px;
-        line-height: 36px;
-        font-size: 1.2rem;
-        margin-bottom: 12px;
-      }
-
-      .faq-section {
-        padding: 40px 20px;
-        background: #f8f8f8;
-      }
-      
-      .faq-title {
-        text-align: center;
-        margin-bottom: 32px;
-        color: var(--primary-color, #ff5c03);
-      }
-      
-      .faq-list {
-        max-width: 800px;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 24px;
-      }
-      
-      .faq-item {
-        background: white;
-        padding: 24px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      }
-      
-      .faq-item h4 {
-        color: var(--primary-color, #ff5c03);
-        margin-bottom: 12px;
-        font-size: 1.1rem;
-      }
-      
-      /* FAQ Section Mobile Styles */
-      .faq-section {
-        padding: 40px 20px;
-        background: #f8f8f8;
-      }
-      
-      .faq-title {
-        text-align: center;
-        margin-bottom: 32px;
-        color: var(--primary-color, #ff5c03);
-      }
-      
-      .faq-list {
-        max-width: 800px;
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 24px;
-      }
-      
-      .faq-item {
-        background: white;
-        padding: 24px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      }
-      
-      .faq-item h4 {
-        color: var(--primary-color, #ff5c03);
-        margin-bottom: 12px;
-        font-size: 1.1rem;
-      }
-      
-      @media (max-width: 768px) {
-        .faq-list {
-          grid-template-columns: 1fr;
-        }
-        
-        .faq-title {
-          font-size: 1.6rem;
-        }
-        
-        .faq-item {
-          max-width: 100%;
-        }
-      }
-      /* Add this to your existing <style> tag */
-
-@keyframes gradientMove {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-@keyframes floatingCircles {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-  100% {
-    transform: translateY(0px);
-  }
-}
-
-.animated-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    45deg,
-    rgba(67, 97, 238, 0.3),
-    rgba(239, 71, 111, 0.3),
-    rgba(17, 138, 178, 0.3)
-  );
-  background-size: 400% 400%;
-  animation: gradientMove 15s ease infinite;
-  z-index: -1;
-}
-
-.floating-circle {
-  animation: floatingCircles 6s ease-in-out infinite;
-}
-
-.floating-circle:nth-child(2n) {
-  animation-delay: 1s;
-}
-
-.floating-circle:nth-child(3n) {
-  animation-delay: 2s;
-}
-    </style>
-  </head>
-
-  <body>
-    <!-- Navbar -->
-    <nav class="navbar">
-      <div class="navbar-logo">
-        <img src="{% static 'logolightnobg.png' %}" alt="Yawigo Logo" />
+      52% {
+        transform: translateX(580px) translateY(365px) rotate(8deg) scale(1.1);
+      }
+
+      62% {
+        transform: translateX(710px) translateY(340px) rotate(-6deg) scale(1.1);
+      }
+
+      72% {
+        transform: translateX(840px) translateY(315px) rotate(-10deg) scale(1.1);
+      }
+
+      82% {
+        transform: translateX(970px) translateY(285px) rotate(-8deg) scale(1.1);
+      }
+
+      92% {
+        transform: translateX(1100px) translateY(255px) rotate(-3deg) scale(1.1);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateX(1200px) translateY(230px) rotate(0deg) scale(1.1);
+        opacity: 0;
+      }
+    }
+
+    /* Reverse Direction Vehicles */
+    @keyframes vehicleReverseDirection {
+      0% {
+        transform: translateX(1150px) translateY(150px) rotate(195deg);
+        opacity: 0;
+      }
+
+      5% {
+        opacity: 1;
+      }
+
+      12% {
+        transform: translateX(1050px) translateY(170px) rotate(200deg);
+      }
+
+      20% {
+        transform: translateX(950px) translateY(195px) rotate(185deg);
+      }
+
+      30% {
+        transform: translateX(830px) translateY(215px) rotate(175deg);
+      }
+
+      40% {
+        transform: translateX(710px) translateY(240px) rotate(195deg);
+      }
+
+      50% {
+        transform: translateX(590px) translateY(265px) rotate(205deg);
+      }
+
+      60% {
+        transform: translateX(470px) translateY(285px) rotate(190deg);
+      }
+
+      70% {
+        transform: translateX(350px) translateY(310px) rotate(185deg);
+      }
+
+      80% {
+        transform: translateX(230px) translateY(335px) rotate(195deg);
+      }
+
+      90% {
+        transform: translateX(110px) translateY(360px) rotate(185deg);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateX(20px) translateY(380px) rotate(180deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes bikeReverseDirection {
+      0% {
+        transform: translateX(1200px) translateY(300px) rotate(200deg) scale(0.8);
+        opacity: 0;
+      }
+
+      8% {
+        opacity: 1;
+      }
+
+      18% {
+        transform: translateX(1080px) translateY(330px) rotate(205deg) scale(0.85);
+      }
+
+      28% {
+        transform: translateX(960px) translateY(365px) rotate(188deg) scale(0.9);
+      }
+
+      38% {
+        transform: translateX(840px) translateY(395px) rotate(175deg) scale(0.95);
+      }
+
+      48% {
+        transform: translateX(720px) translateY(425px) rotate(195deg) scale(1);
+      }
+
+      58% {
+        transform: translateX(600px) translateY(455px) rotate(205deg) scale(0.95);
+      }
+
+      68% {
+        transform: translateX(480px) translateY(485px) rotate(186deg) scale(0.9);
+      }
+
+      78% {
+        transform: translateX(360px) translateY(515px) rotate(190deg) scale(0.85);
+      }
+
+      88% {
+        transform: translateX(240px) translateY(540px) rotate(195deg) scale(0.8);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateX(120px) translateY(565px) rotate(180deg) scale(0.8);
+        opacity: 0;
+      }
+    }
+
+    /* GPS Grid Background - Enhanced */
+    .gps-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.08;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+        radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+        radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.1) 2px, transparent 2px);
+      background-size: 60px 60px, 60px 60px, 120px 120px, 120px 120px;
+      animation: gridMove 40s linear infinite;
+      z-index: 1;
+    }
+
+    @keyframes gridMove {
+      0% {
+        transform: translate(0, 0);
+      }
+
+      100% {
+        transform: translate(60px, 60px);
+      }
+    }
+
+    /* Route Dots - Enhanced */
+    .route-dots {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: var(--white);
+      border-radius: 50%;
+      opacity: 0.7;
+      animation: dotFloat 4s ease-in-out infinite;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .route-dots:nth-child(1) {
+      top: 15%;
+      left: 8%;
+      animation-delay: 0s;
+      background: #10B981;
+    }
+
+    .route-dots:nth-child(2) {
+      top: 35%;
+      left: 25%;
+      animation-delay: 0.8s;
+      background: #F59E0B;
+    }
+
+    .route-dots:nth-child(3) {
+      top: 55%;
+      left: 45%;
+      animation-delay: 1.6s;
+      background: #EF4444;
+    }
+
+    .route-dots:nth-child(4) {
+      top: 25%;
+      left: 65%;
+      animation-delay: 2.4s;
+      background: #8B5CF6;
+    }
+
+    .route-dots:nth-child(5) {
+      top: 75%;
+      left: 15%;
+      animation-delay: 3.2s;
+      background: #06B6D4;
+    }
+
+    @keyframes dotFloat {
+
+      0%,
+      100% {
+        transform: translateY(0) scale(1);
+        opacity: 0.7;
+      }
+
+      25% {
+        transform: translateY(-15px) scale(1.2);
+        opacity: 1;
+      }
+
+      50% {
+        transform: translateY(-25px) scale(1.1);
+        opacity: 0.9;
+      }
+
+      75% {
+        transform: translateY(-10px) scale(1.3);
+        opacity: 1;
+      }
+    }
+
+    /* Traffic Flow Indicators */
+    .traffic-flow {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--primary);
+      border-radius: 50%;
+      animation: trafficFlow 6s linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes trafficFlow {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+
+      10% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      90% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header" id="header">
+    <nav class="nav container">
+      <a href="#" class="logo animate-scale-in">
+        <img src="{% static 'logolightnobg.png' %}" alt="Yawigo Logo">
         <span>Yawigo</span>
-      </div>
-      <ul class="navbar-links">
-        <li><a href="#features">Features</a></li>
-        <li><a href="#screenshots">Screenshots</a></li>
-        <li><a href="#how">How It Works</a></li>
-        <li><a href="#faq">FAQ</a></li>
-        <li><a href="#contact">Contact</a></li>
-        <li>
-          <a href="/yawigo-latest.apk" class="navbar-download" download
-            >Download APK</a
-          >
-        </li>
-      </ul>
-    </nav>
-
-    <header class="showcase-header">
-      <img
-        src="{% static 'logolightnobg.png' %}"
-        alt="Yawigo Logo"
-        class="logo" />
-      <h1 class="main-title">Yawigo Ride & Food Delivery</h1>
-      <p class="subtitle">
-        Fast, reliable, and easy ride hailing & food delivery.<br />
-        Book a ride or order from your favorite restaurants and track everything
-        in real time!
-      </p>
-      <a href="/yawigo-latest.apk" class="download-btn" download>
-        Download Android APK
       </a>
-    </header>
-    <!-- Replace or update your existing SVG section -->
-<svg width="100%" height="300" viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg" style="display: block; margin: auto; position: relative;">
-  <!-- Animated Background -->
-  <defs>
-    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#4361ee;stop-opacity:0.3" />
-      <stop offset="50%" style="stop-color:#ef476f;stop-opacity:0.3" />
-      <stop offset="100%" style="stop-color:#118ab2;stop-opacity:0.3" />
-    </linearGradient>
-  </defs>
-  
-  <!-- Background with animation -->
-  <rect class="animated-bg" width="100%" height="100%" fill="url(#gradient)" />
-  
-  <!-- Floating Circles -->
-  <g class="floating-elements">
-    <circle class="floating-circle" cx="100" cy="150" r="20" fill="#4361ee" opacity="0.2" />
-    <circle class="floating-circle" cx="300" cy="100" r="15" fill="#ef476f" opacity="0.2" />
-    <circle class="floating-circle" cx="500" cy="200" r="25" fill="#118ab2" opacity="0.2" />
-    <circle class="floating-circle" cx="700" cy="150" r="18" fill="#4361ee" opacity="0.2" />
-    <circle class="floating-circle" cx="900" cy="100" r="22" fill="#ef476f" opacity="0.2" />
-    <circle class="floating-circle" cx="1100" cy="180" r="16" fill="#118ab2" opacity="0.2" />
-  </g>
 
-  <!-- Your existing Food Delivery Icon -->
-  <g transform="translate(600, 120) scale(0.8)">
-    <!-- Delivery Box -->
-    <rect x="-40" y="-30" width="80" height="60" rx="10" fill="var(--color-primary, #4361ee)">
-      <animate 
-        attributeName="opacity"
-        values="1;0.8;1"
-        dur="3s"
-        repeatCount="indefinite"
-      />
-    </rect>
-    
-    <!-- Box Details with animation -->
-    <rect x="-30" y="-20" width="60" height="10" rx="2" fill="white" opacity="0.6">
-      <animate
-        attributeName="width"
-        values="60;50;60"
-        dur="2s"
-        repeatCount="indefinite"
-      />
-    </rect>
-    <rect x="-30" y="-5" width="40" height="10" rx="2" fill="white" opacity="0.6">
-      <animate
-        attributeName="width"
-        values="40;35;40"
-        dur="2s"
-        repeatCount="indefinite"
-      />
-    </rect>
-    <rect x="-30" y="10" width="50" height="10" rx="2" fill="white" opacity="0.6">
-      <animate
-        attributeName="width"
-        values="50;45;50"
-        dur="2s"
-        repeatCount="indefinite"
-      />
-    </rect>
-  </g>
-</svg>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#how-it-works">How it Works</a></li>
+        <li><a href="#download">Download</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
 
- 
+      <a href="#download" class="nav-cta animate-scale-in animate-delay-1">Get App</a>
 
-    <section class="features-section" id="features">
-      <h2 class="features-title">Why Choose Yawigo?</h2>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.88 9.54-4.25 4.25c-.39.39-1.02.39-1.41 0L8.12 12.7a.996.996 0 1 1 1.41-1.41l2.29 2.29 3.65-3.65a.996.996 0 1 1 1.41 1.41z"/></svg>
-          </div>
-          <h3 class="feature-title">Fast Delivery</h3>
-          <p class="feature-desc">Get your food delivered in minutes with our efficient delivery network</p>
-        </div>
+      <button class="mobile-menu-btn" id="mobile-menu-btn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+  </header>
 
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-          </div>
-          <h3 class="feature-title">Secure Payments</h3>
-          <p class="feature-desc">Your transactions are protected with state-of-the-art security</p>
-        </div>
+  <!-- Hero Section -->
+  <!-- Enhanced Hero Section with Fixed Route Direction -->
+  <section class="hero hero-with-route">
+    <!-- GPS Grid Background -->
+    <div class="gps-grid"></div>
 
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-          </div>
-          <h3 class="feature-title">Best Restaurants</h3>
-          <p class="feature-desc">Choose from a curated selection of top-rated restaurants</p>
-        </div>
+    <!-- Enhanced Route Background -->
+    <div class="route-background">
+      <svg class="route-svg" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+        <!-- Main Route Paths with Better Direction -->
+        <path class="route-path" d="M50,300 Q200,200 400,250 Q600,300 800,200 Q1000,150 1150,100" />
+        <path class="route-path secondary" d="M100,500 Q300,400 500,450 Q700,500 900,400 Q1100,350 1200,300"
+          style="animation-delay: -8s;" />
+        <path class="route-path tertiary" d="M0,400 Q150,350 350,380 Q550,410 750,350 Q950,300 1100,250"
+          style="animation-delay: -15s;" />
 
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
-          </div>
-          <h3 class="feature-title">24/7 Support</h3>
-          <p class="feature-desc">Our customer service team is always here to help you</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24"><path d="M21 9h-3.56c.35-.59.56-1.27.56-2 0-2.21-1.79-4-4-4-1.46 0-2.73.78-3.44 1.94C9.85 3.78 8.58 3 7.12 3 4.91 3 3.12 4.79 3.12 7c0 .73.21 1.41.56 2H2c-.55 0-1 .45-1 1v2c0 .55.45 1 1 1h1v6c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-6h1c.55 0 1-.45 1-1v-2c0-.55-.45-1-1-1z"/></svg>
-          </div>
-          <h3 class="feature-title">Wide Variety</h3>
-          <p class="feature-desc">Choose from hundreds of restaurants and dishes</p>
-        </div>
+        <!-- Additional connecting routes -->
+        <path class="route-path secondary" d="M200,150 Q400,120 600,180 Q800,240 1000,200"
+          style="animation-delay: -12s;" />
+        <path class="route-path tertiary" d="M150,550 Q350,520 550,560 Q750,600 950,550"
+          style="animation-delay: -20s;" />
 
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg>
-          </div>
-          <h3 class="feature-title">Real-time Tracking</h3>
-          <p class="feature-desc">Track your order from kitchen to doorstep</p>
-        </div>
+        <!-- Location Pins with Different Types -->
+        <g class="location-pin start" transform="translate(80,280)">
+          <circle cx="12" cy="12" r="8" fill="currentColor" />
+          <path
+            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+          <text x="12" y="35" text-anchor="middle" fill="currentColor" font-size="8" font-weight="bold">START</text>
+        </g>
 
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24"><path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>
-          </div>
-          <h3 class="feature-title">Multi-language</h3>
-          <p class="feature-desc">Available in English and Français</p>
-        </div>
+        <g class="location-pin waypoint" transform="translate(400,230)" style="animation-delay: 1s;">
+          <circle cx="12" cy="12" r="6" fill="currentColor" />
+          <path
+            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+        </g>
 
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z"/></svg>
-          </div>
-          <h3 class="feature-title">Loyalty Rewards</h3>
-          <p class="feature-desc">Earn points and get exclusive rewards</p>
-        </div>
-      </div>
-    </section>
+        <g class="location-pin destination" transform="translate(800,180)" style="animation-delay: 2s;">
+          <circle cx="12" cy="12" r="8" fill="currentColor" />
+          <path
+            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+          <text x="12" y="35" text-anchor="middle" fill="currentColor" font-size="8" font-weight="bold">END</text>
+        </g>
 
-    <!-- Screenshots Section -->
-    <section class="screenshots-section" id="screenshots">
-      <div class="section-background">
-        <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <path d="M0,0 L100,0 L100,100 L0,85 Z" fill="#f8f6f4"/>
-        </svg>
-      </div>
-      <div class="section-content">
-        <h2 class="screenshots-title">Experience Our App</h2>
-        <p class="screenshots-subtitle">Beautiful, intuitive, and designed for you</p>
-        <div class="screenshots-gallery">
-          <div class="screenshot-card">
-            <div class="screenshot-wrapper">
-              <img src="{% static "2337676667666.jpg" %}" alt="Order Food Screenshot" loading="lazy" />
-              <div class="screenshot-overlay">
-                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#fff"/></svg>
-              </div>
-            </div>
-            <h3>Easy Ordering</h3>
-          </div>
-          <div class="screenshot-card">
-            <div class="screenshot-wrapper">
-              <img src="{% static "2337676667666.jpg" %}" alt="Track Order Screenshot" loading="lazy" />
-              <div class="screenshot-overlay">
-                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#fff"/></svg>
-              </div>
-            </div>
-            <h3>Real-time Tracking</h3>
-          </div>
-          <div class="screenshot-card">
-            <div class="screenshot-wrapper">
-              <img src="{% static "2337676667666.jpg" %}" alt="Payment Screenshot" loading="lazy" />
-              <div class="screenshot-overlay">
-                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#fff"/></svg>
-              </div>
-            </div>
-            <h3>Secure Payments</h3>
-          </div>
-          <div class="screenshot-card">
-            <div class="screenshot-wrapper">
-              <img src="{% static "2337676667666.jpg" %}" alt="Reviews Screenshot" loading="lazy" />
-              <div class="screenshot-overlay">
-                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" fill="#fff"/></svg>
-              </div>
-            </div>
-            <h3>Customer Reviews</h3>
-          </div>
-        </div>
-      </div>
-    </section>
+        <!-- Enhanced Delivery Vehicles -->
+        <g class="delivery-vehicle delivery-car" transform="translate(0,0)">
+          <!-- Car shape pointing forward -->
+          <rect x="2" y="8" width="20" height="8" rx="2" fill="currentColor" />
+          <circle cx="6" cy="18" r="3" fill="currentColor" />
+          <circle cx="18" cy="18" r="3" fill="currentColor" />
+          <rect x="4" y="4" width="16" height="4" rx="1" fill="currentColor" opacity="0.8" />
+          <!-- Car front indicators -->
+          <rect x="22" y="10" width="2" height="4" rx="1" fill="currentColor" opacity="0.6" />
+        </g>
 
-    <!-- How It Works Section -->
-    <section class="how-section" id="how">
-      <div class="section-background">
-        <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <path d="M0,0 L100,0 L100,85 L0,100 Z" fill="#f8f6f4"/>
-        </svg>
-      </div>
-      <div class="section-content">
-        <h2 class="how-title">How Yawigo Works</h2>
-        <p class="how-subtitle">Simple steps to get your favorite food delivered</p>
-        <div class="how-steps">
-          <div class="how-step">
-            <div class="step-icon">
-              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
-              <span>1</span>
-            </div>
-            <h3>Choose Your Food</h3>
-            <p>Browse through our extensive menu and select your favorite dishes from top-rated restaurants</p>
-          </div>
+        <g class="delivery-vehicle delivery-bike" transform="translate(0,0)" style="animation-delay: -10s;">
+          <!-- Motorcycle shape -->
+          <circle cx="6" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.5" />
+          <circle cx="18" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.5" />
+          <path d="M6,12 L12,8 L18,12 M10,8 L10,4 M8,4 L12,4" stroke="currentColor" stroke-width="1.5" fill="none" />
+          <rect x="10" y="6" width="4" height="3" rx="1" fill="currentColor" opacity="0.8" />
+          <!-- Motorcycle direction indicator -->
+          <path d="M20,10 L22,12 L20,14" stroke="currentColor" stroke-width="1" fill="none" />
+        </g>
 
-          <div class="how-step">
-            <div class="step-icon">
-              <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
-              <span>2</span>
-            </div>
-            <h3>Place Your Order</h3>
-            <p>Enter your delivery details and choose from our secure payment options for a seamless checkout</p>
-          </div>
+        <g class="delivery-vehicle delivery-truck" transform="translate(0,0)" style="animation-delay: -5s;">
+          <!-- Delivery truck shape -->
+          <rect x="2" y="8" width="24" height="10" rx="2" fill="currentColor" />
+          <rect x="4" y="4" width="8" height="4" rx="1" fill="currentColor" opacity="0.9" />
+          <circle cx="8" cy="20" r="3" fill="currentColor" />
+          <circle cx="20" cy="20" r="3" fill="currentColor" />
+          <!-- Truck cargo area -->
+          <rect x="14" y="10" width="10" height="6" rx="1" fill="currentColor" opacity="0.7" />
+          <!-- Truck direction indicator -->
+          <rect x="26" y="12" width="2" height="4" rx="1" fill="currentColor" opacity="0.6" />
+        </g>
 
-          <div class="how-step">
-            <div class="step-icon">
-              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-              <span>3</span>
-            </div>
-            <h3>Track Real-time</h3>
-            <p>Watch your order's journey from the kitchen to your doorstep with our live tracking system</p>
-          </div>
+        <!-- Reverse direction vehicles -->
+        <g class="delivery-vehicle"
+          style="animation: vehicleReverseRoute 22s ease-in-out infinite; animation-delay: -7s;"
+          transform="translate(0,0)">
+          <!-- Car going opposite direction -->
+          <rect x="2" y="8" width="20" height="8" rx="2" fill="currentColor" />
+          <circle cx="6" cy="18" r="3" fill="currentColor" />
+          <circle cx="18" cy="18" r="3" fill="currentColor" />
+          <rect x="4" y="4" width="16" height="4" rx="1" fill="currentColor" opacity="0.8" />
+          <!-- Reverse direction indicator -->
+          <rect x="0" y="10" width="2" height="4" rx="1" fill="currentColor" opacity="0.6" />
+        </g>
 
-          <div class="how-step">
-            <div class="step-icon">
-              <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-              <span>4</span>
-            </div>
-            <h3>Enjoy & Rate</h3>
-            <p>Receive your food fresh and hot, enjoy your meal, and share your valuable feedback</p>
-          </div>
-        </div>
-      </div>
-      </div>
-    </section>
+        <g class="delivery-vehicle" style="animation: bikeReverseRoute 18s linear infinite; animation-delay: -12s;"
+          transform="translate(0,0)">
+          <!-- Bike going opposite direction -->
+          <circle cx="6" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.5" />
+          <circle cx="18" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.5" />
+          <path d="M6,12 L12,8 L18,12 M10,8 L10,4 M8,4 L12,4" stroke="currentColor" stroke-width="1.5" fill="none" />
+          <rect x="10" y="6" width="4" height="3" rx="1" fill="currentColor" opacity="0.8" />
+          <!-- Reverse direction indicator -->
+          <path d="M4,10 L2,12 L4,14" stroke="currentColor" stroke-width="1" fill="none" />
+        </g>
+      </svg>
 
-    <!-- FAQ Section -->
-    <section id="faq" class="faq-section">
-      <h2 class="faq-title">Frequently Asked Questions</h2>
-      <div class="faq-list">
-        <div class="faq-item">
-          <h4>How do I download the app?</h4>
-          <p>
-            Click the "Download Android APK" button above to get the latest
-            version for Android devices.
-          </p>
-        </div>
-        <div class="faq-item">
-          <h4>Is Yawigo available on iOS?</h4>
-          <p>iOS support is coming soon! Stay tuned for updates.</p>
-        </div>
-        <div class="faq-item">
-          <h4>How can I pay for my order?</h4>
-          <p>
-            We support cash on delivery and mobile money payments. More options
-            coming soon.
-          </p>
-        </div>
-        <div class="faq-item">
-          <h4>Can I track my order?</h4>
-          <p>
-            Yes! You can track your order and driver in real time from the app.
-          </p>
-        </div>
-      </div>
-    </section>
-    
-    <!-- Contact Section -->
-    <section id="contact" class="contact-section">
-      <h2 class="contact-title">Contact Us</h2>
-      <p>
-        Have questions or need help? Email us at
-        <a href="mailto:support@yawigo.com">support@yawigo.com</a>
-      </p>
-    </section>
-
-    <!-- Video Testimonial Section -->
-    <section id="testimonials" class="testimonial-section">
-      <h2 class="testimonial-title">What Our Users Say</h2>
-      <div class="testimonial-videos">
-        <div class="testimonial-video-card">
-          <video controls poster="https://placehold.co/300x180?text=User+1">
-            <source src="#" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          <p class="testimonial-caption">
-            <b>Ama, Accra:</b> “Yawigo makes ordering food so easy and fast!”
-          </p>
-        </div>
-        <div class="testimonial-video-card">
-          <video controls poster="https://placehold.co/300x180?text=User+2">
-            <source src="#" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          <p class="testimonial-caption">
-            <b>Kofi, Kumasi:</b> “I love the real-time tracking and friendly
-            support.”
-          </p>
-        </div>
-        <div class="testimonial-video-card">
-          <video controls poster="https://placehold.co/300x180?text=User+3">
-            <source src="#" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-          <p class="testimonial-caption">
-            <b>Fatou, Abidjan:</b> “Multi-language support is a big plus for
-            me!”
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- yawigo Content Section -->
-    <section class="yango-hero">
-      <div class="yango-hero-content">
-        <h1>Ride with comfort in Ghana</h1>
-        <p class="yango-lead">
-          yawigo, more than just a taxi in Ghana. Forget about regular taxis,
-          book rides, become a driver, or be a partner.
-        </p>
-        <a href="#" class="yango-app-btn">Get the App</a>
-      </div>
-    </section>
-
-    <section class="yango-why">
-      <h2>Why is yawigo better than a taxi?</h2>
-      <div class="yango-why-grid">
-        <div>
-          <h3>Book your rides online</h3>
-          <p>No more calls to taxi services or street hailing in Ghana.</p>
-        </div>
-        <div>
-          <h3>See the price right from the beginning</h3>
-          <p>
-            You don’t need to negotiate — you already know the price when
-            requesting a ride.
-          </p>
-        </div>
-        <div>
-          <h3>See your driver’s location</h3>
-          <p>Track your car before arrival or during the ride.</p>
-        </div>
-        <div>
-          <h3>Ride safe</h3>
-          <ul>
-            <li>Route sharing</li>
-            <li>SOS-button</li>
-            <li>24/7 support</li>
-            <li>Verified drivers</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="yango-service-classes">
-      <h2>Service classes</h2>
-      <div class="yango-service-grid">
-        <div class="yango-service-card">
-          <h3>Economy</h3>
-          <p>Nothing fancy, just a good old ride</p>
-          <small>Kia Rio, Volkswagen Polo, Hyundai Solaris</small>
-          <a href="#" class="yango-order-btn">Order now</a>
-        </div>
-        <div class="yango-service-card">
-          <h3>Comfort</h3>
-          <p>Get around the city with comfort</p>
-          <small>Kia Rio, Mitsubishi Mirage, Suzuki Dzire</small>
-          <a href="#" class="yango-order-btn">Order now</a>
-        </div>
-      </div>
-      <p class="yango-cities">You can find us in Accra and Kumasi</p>
-    </section>
-    
-    <style>
-      /* Yawigo sections mobile styles */
-      .yango-hero {
-        padding: 40px 20px;
-        text-align: center;
-        background: linear-gradient(135deg, #ff5c03 0%, #ff8f00 100%);
-        color: white;
-      }
-      
-      .yango-hero h1 {
-        font-size: 2rem;
-        margin-bottom: 16px;
-      }
-      
-      .yango-lead {
-        margin-bottom: 24px;
-        font-size: 1.1rem;
-      }
-      
-      .yango-app-btn {
-        display: inline-block;
-        background: white;
-        color: #ff5c03;
-        padding: 12px 24px;
-        border-radius: 30px;
-        text-decoration: none;
-        font-weight: bold;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      }
-      
-      .yango-why {
-        padding: 40px 20px;
-        background: #f8f6f4;
-      }
-      
-      .yango-why h2 {
-        text-align: center;
-        margin-bottom: 32px;
-        color: #ff5c03;
-      }
-      
-      .yango-why-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 24px;
-      }
-      
-      .yango-why-grid > div {
-        background: white;
-        padding: 24px;
-        border-radius: 16px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-      }
-      
-      .yango-why-grid h3 {
-        color: #ff5c03;
-        margin-bottom: 12px;
-      }
-      
-      .yango-service-classes {
-        padding: 40px 20px;
-        text-align: center;
-      }
-      
-      .yango-service-classes h2 {
-        color: #ff5c03;
-        margin-bottom: 32px;
-      }
-      
-      .yango-service-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 24px;
-        max-width: 900px;
-        margin: 0 auto 24px auto;
-      }
-      
-      .yango-service-card {
-        background: white;
-        padding: 24px;
-        border-radius: 16px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-        text-align: center;
-      }
-      
-      .yango-service-card h3 {
-        color: #ff5c03;
-        margin-bottom: 12px;
-      }
-      
-      .yango-order-btn {
-        display: inline-block;
-        background: #ff5c03;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 30px;
-        text-decoration: none;
-        font-weight: bold;
-        margin-top: 16px;
-      }
-      
-      .yango-cities {
-        margin-top: 16px;
-        font-style: italic;
-        color: #666;
-      }
-      
-      @media (max-width: 768px) {
-        .yango-why-grid,
-        .yango-service-grid {
-          grid-template-columns: 1fr;
-        }
-        
-        .yango-hero h1 {
-          font-size: 1.6rem;
-        }
-        
-        .yango-lead {
-          font-size: 1rem;
-        }
-        
-        .yango-service-card {
-          max-width: 100%;
-          margin: 0 auto;
-        }
-      }
-    </style>
-
-    <section class="yango-driver">
-      <h2>Drive with yawigo Pro</h2>
-      <p>Become our partner and earn up to 7000 GHC a month</p>
-      <a href="#" class="yango-app-btn">Download the yawigo Pro App</a>
-      <p>
-        Team up with yawigo and embark on an exciting journey with your
-        transportation venture. Discover endless possibilities, from attracting
-        drivers to unlocking exclusive vehicle deals. With our unwavering
-        support, navigating the road to success has never been easier.
-      </p>
-      <a href="#" class="yango-learn-btn">Learn more</a>
-    </section>
-
-    <section class="yango-testimonials">
-      <h2>What people think about us</h2>
-      <div class="yango-testimonial-list">
-        <blockquote>
-          <p>
-            This app is a life saver :)) I stopped being always late because of
-            no taxis in the streets. Now, with online request, it’s much easier
-          </p>
-          <footer>— Enam, 1 w ago</footer>
-        </blockquote>
-        <blockquote>
-          <p>
-            Booking a ride with this service is a breeze. I like the simplicity,
-            especially during busy days
-          </p>
-          <footer>— Oko, 2 w ago</footer>
-        </blockquote>
-        <blockquote>
-          <p>hassle-free rides with great cars</p>
-          <footer>— Sabir, 2 w ago</footer>
-        </blockquote>
-        <blockquote>
-          <p>
-            I appreciate good driving. It’s not a common thing to catch a ride
-            with a decent driver, but with yawigo, every ride is a pleasure
-          </p>
-          <footer>— Jojo, 1 mo ago</footer>
-        </blockquote>
-        <blockquote>
-          <p>
-            Comfort class makes me feel like a celebrity haha :) cars are cool
-            and drivers are really courteous
-          </p>
-          <footer>— Amma, 2 mo ago</footer>
-        </blockquote>
-      </div>
-    </section>
-
-    <section class="yango-award">
-      <h2>Ghana’s #1 transport app</h2>
-      <p>
-        yawigo is the proud recipient of the Transportation App of the Year 2023
-        from Ghana’s National Customers' Choice Awards.
-      </p>
-      <a href="#" class="yango-learn-btn">Learn more</a>
-      <div class="yango-ratings">
-        <div>
-          <span class="yango-rating-score">4.9</span>
-          <span>58.3K Ratings</span>
-        </div>
-        <div>
-          <span class="yango-rating-score">4.8</span>
-          <span>1.19M reviews</span>
-        </div>
-      </div>
-      <a href="#" class="yango-app-btn">Download now</a>
-    </section>
-
-    <section class="yango-countries">
-      <h2>Here for you, wherever you are</h2>
-      <div class="yango-country-list">
-        <span>🇦🇪 United Arab Emirates</span>
-        <span>🇿🇲 Zambia</span>
-        <span>🇴🇲 Oman</span>
-        <span>🇬🇭 Ghana</span>
-        <span>🇨🇲 Cameroon</span>
-        <span>🇸🇳 Senegal</span>
-        <span>🇨🇬 R. D. Congo</span>
-        <span>🇳🇦 Namibia</span>
-        <span>🇵🇰 Pakistan</span>
-        <span>🇲🇿 Mozambique</span>
-        <span>🇨🇮 Côte d’Ivoire</span>
-        <span>🇧🇴 Bolivia</span>
-        <span>🇬🇹 Guatemala</span>
-        <span>🇵🇪 Peru</span>
-        <span>🇫🇮 Finland</span>
-        <span>🇳🇴 Norway</span>
-        <span>🇦🇿 Azerbaijan</span>
-        <span>🇦🇴 Angola</span>
-        <span>🇪🇹 Ethiopia</span>
-        <span>🇨🇴 Colombia</span>
-        <span>🇲🇦 Morocco</span>
-        <span>🇳🇵 Nepal</span>
-        <span>🇪🇬 Egypt</span>
-      </div>
-    </section>
-
-    <footer class="footer">
-      <div class="footer-grid">
-        <div class="footer-col">
-          <h4 class="footer-title">Yawigo</h4>
-          <ul>
-            <li><a href="#">Visit Help Center</a></li>
-          </ul>
-          <h4 class="footer-title">Company</h4>
-          <ul>
-            <li><a href="#">About us</a></li>
-            <li><a href="#">Our offerings</a></li>
-            <li><a href="#">Newsroom</a></li>
-            <li><a href="#">Investors</a></li>
-            <li><a href="#">Blog</a></li>
-            <li><a href="#">Careers</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4 class="footer-title">Products</h4>
-          <ul>
-            <li><a href="#">Ride</a></li>
-            <li><a href="#">Drive</a></li>
-            <li><a href="#">Eat</a></li>
-            <li><a href="#">Yawigo for Business</a></li>
-            <li><a href="#">Yawigo Freight</a></li>
-            <li><a href="#">Gift cards</a></li>
-            <li><a href="#">Yawigo Health</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4 class="footer-title">Global citizenship</h4>
-          <ul>
-            <li><a href="#">Safety</a></li>
-            <li><a href="#">Sustainability</a></li>
-          </ul>
-          <h4 class="footer-title">Travel</h4>
-          <ul>
-            <li><a href="#">Reserve</a></li>
-            <li><a href="#">Airports</a></li>
-            <li><a href="#">Cities</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4 class="footer-title">Language</h4>
-          <div style="display: flex; align-items: center; gap: 10px">
-            <button
-              id="langToggle"
-              style="
-                background: none;
-                border: none;
-                cursor: pointer;
-                font-size: 1.2rem;
-              ">
-              <span id="langIcon" role="img" aria-label="Language">🇬🇧</span>
-              <span id="langLabel">English</span>
-            </button>
-          </div>
-          <h4 class="footer-title" style="margin-top: 18px">Location</h4>
-          <select class="footer-select">
-            <option>Accra</option>
-            <option>Kumasi</option>
-            <option>Abidjan</option>
-          </select>
-        </div>
-      </div>
-      <div class="footer-bottom">&copy; 2025 Yawigo. All rights reserved.</div>
-    </footer>
-
-    <!-- Chat Box Floating Button and Window -->
-    <button class="chatbox-fab" id="chatboxFab" aria-label="Open chat">
-      💬
-    </button>
-    <div class="chatbox-window" id="chatboxWindow" style="display: none">
-      <div class="chatbox-header">
-        Chat with us
-        <span style="cursor: pointer" id="chatboxClose">&times;</span>
-      </div>
-      <div class="chatbox-messages" id="chatboxMessages">
-        <div><b>Support:</b> Hi! How can we help you?</div>
-      </div>
-      <form class="chatbox-input-row" id="chatboxForm" autocomplete="off">
-        <input
-          type="text"
-          id="chatboxInput"
-          placeholder="Type your message..." />
-        <button type="submit">➤</button>
-      </form>
+      <!-- Enhanced Floating Route Dots -->
+      <div class="route-dots"></div>
+      <div class="route-dots"></div>
+      <div class="route-dots"></div>
+      <div class="route-dots"></div>
+      <div class="route-dots"></div>
     </div>
 
-    <script>
-      // Smooth scroll for navbar links
-      document
-        .querySelectorAll('.navbar-links a[href^="#"]')
-        .forEach((link) => {
-          link.addEventListener('click', function (e) {
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-              e.preventDefault();
-              window.scrollTo({
-                top: target.offsetTop - 70, // adjust for navbar height
-                behavior: 'smooth',
-              });
-            }
-          });
-        });
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title animate-fade-in">Smart Delivery & Ride Services in Ghana</h1>
+        <p class="hero-subtitle animate-fade-in animate-delay-1">
+          Experience seamless food delivery and ride-hailing with our professional,
+          reliable, and secure platform designed for modern Ghana.
+        </p>
+        <div class="hero-buttons animate-fade-in animate-delay-2">
+          <a href="#download" class="btn btn-primary animate-bounce">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M12 16l-5-5h3V3h4v8h3l-5 5zm9-13h-6v1.99h6V19H3V4.99h6V3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
+            </svg>
+            Download App
+          </a>
+          <a href="#features" class="btn btn-secondary">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      // Navbar background on scroll
-      const navbar = document.querySelector('.navbar');
-      window.addEventListener('scroll', function () {
-        if (window.scrollY > 30) {
-          navbar.style.boxShadow = '0 2px 12px rgba(255,92,3,0.12)';
-          navbar.style.background = '#fff';
-        } else {
-          navbar.style.boxShadow = '0 2px 8px rgba(255,92,3,0.06)';
-          navbar.style.background = '#fff';
-        }
-      });
+  <!-- Features Section -->
+  <section id="features" class="features">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title animate-fade-in">Why Choose Yawigo?</h2>
+        <p class="section-subtitle animate-fade-in animate-delay-1">
+          Built with cutting-edge technology to serve you better
+        </p>
+      </div>
 
-      // FAQ accordion (optional)
-      document.querySelectorAll('.faq-item h4').forEach((h4) => {
-        h4.style.cursor = 'pointer';
-        h4.addEventListener('click', function () {
-          const p = this.nextElementSibling;
-          if (!p) return;
-          if (p.style.maxHeight) {
-            p.style.maxHeight = null;
-            p.style.marginTop = null;
-          } else {
-            p.style.maxHeight = p.scrollHeight + 'px';
-            p.style.marginTop = '8px';
-          }
-        });
-        // Start collapsed
-        const p = h4.nextElementSibling;
-        if (p) {
-          p.style.overflow = 'hidden';
-          p.style.transition = 'max-height 0.3s, margin-top 0.3s';
-          p.style.maxHeight = '0';
-          p.style.marginTop = '0';
-        }
-      });
+      <div class="features-grid">
+        <div class="feature-card animate-slide-up animate-delay-1">
+          <div class="feature-icon animate-float">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+          </div>
+          <h3 class="feature-title">Premium Quality</h3>
+          <p class="feature-description">
+            Verified restaurants and professional drivers ensure top-quality service every time.
+          </p>
+        </div>
 
-      // Chatbox toggle
-      const chatboxFab = document.getElementById('chatboxFab');
-      const chatboxWindow = document.getElementById('chatboxWindow');
-      const chatboxClose = document.getElementById('chatboxClose');
+        <div class="feature-card animate-slide-up animate-delay-2">
+          <div class="feature-icon animate-float animate-delay-1">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+            </svg>
+          </div>
+          <h3 class="feature-title">Real-Time Tracking</h3>
+          <p class="feature-description">
+            Track your order or ride in real-time with precise GPS technology and live updates.
+          </p>
+        </div>
 
-      chatboxFab.addEventListener('click', () => {
-        chatboxWindow.style.display = 'flex';
-        chatboxFab.style.display = 'none';
-      });
+        <div class="feature-card animate-slide-up animate-delay-3">
+          <div class="feature-icon animate-float animate-delay-2">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
+            </svg>
+          </div>
+          <h3 class="feature-title">Secure Payments</h3>
+          <p class="feature-description">
+            Multiple payment options with bank-grade security and fraud protection.
+          </p>
+        </div>
 
-      chatboxClose.addEventListener('click', () => {
-        chatboxWindow.style.display = 'none';
-        chatboxFab.style.display = 'flex';
-      });
+        <div class="feature-card animate-slide-up animate-delay-4">
+          <div class="feature-icon animate-float animate-delay-3">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+            </svg>
+          </div>
+          <h3 class="feature-title">24/7 Support</h3>
+          <p class="feature-description">
+            Round-the-clock customer support to assist you whenever you need help.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-      // Chatbox form submit (mock)
-      const chatboxForm = document.getElementById('chatboxForm');
-      const chatboxMessages = document.getElementById('chatboxMessages');
+  <!-- Reviews Section -->
+  <section id="reviews" class="reviews">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title animate-fade-in">What Our Customers Say</h2>
+        <p class="section-subtitle animate-fade-in animate-delay-1">
+          Real experiences from real customers across Ghana
+        </p>
+      </div>
 
-      chatboxForm.addEventListener('submit', (e) => {
+      <div class="reviews-grid">
+        <div class="review-card animate-fade-left animate-delay-1">
+          <div class="review-header">
+            <div class="review-avatar">KA</div>
+            <div class="review-info">
+              <h4>Kwame Asante</h4>
+              <p>Accra, Ghana</p>
+            </div>
+          </div>
+          <div class="review-stars">
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+          </div>
+          <p class="review-text">
+            Yawigo has revolutionized how I order food in Accra. The app is so easy to use, delivery is always on time,
+            and the food arrives hot. Best delivery service I've used!
+          </p>
+        </div>
+
+        <div class="review-card animate-fade-in animate-delay-2">
+          <div class="review-header">
+            <div class="review-avatar">AM</div>
+            <div class="review-info">
+              <h4>Ama Mensah</h4>
+              <p>Kumasi, Ghana</p>
+            </div>
+          </div>
+          <div class="review-stars">
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+          </div>
+          <p class="review-text">
+            I love the ride service! Professional drivers, clean cars, and fair prices. The real-time tracking gives me
+            peace of mind. Highly recommend Yawigo.
+          </p>
+        </div>
+
+        <div class="review-card animate-fade-right animate-delay-3">
+          <div class="review-header">
+            <div class="review-avatar">JO</div>
+            <div class="review-info">
+              <h4>John Osei</h4>
+              <p>Takoradi, Ghana</p>
+            </div>
+          </div>
+          <div class="review-stars">
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+          </div>
+          <p class="review-text">
+            Customer service is excellent! Had an issue with my order and they resolved it immediately. The app
+            interface is intuitive and payments are secure. 5 stars!
+          </p>
+        </div>
+
+        <div class="review-card animate-fade-left animate-delay-4">
+          <div class="review-header">
+            <div class="review-avatar">EA</div>
+            <div class="review-info">
+              <h4>Efua Adjei</h4>
+              <p>Tema, Ghana</p>
+            </div>
+          </div>
+          <div class="review-stars">
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+          </div>
+          <p class="review-text">
+            Been using Yawigo for 6 months now. Consistent quality, reliable service, and great variety of restaurants.
+            It's my go-to app for food delivery.
+          </p>
+        </div>
+
+        <div class="review-card animate-fade-in animate-delay-5">
+          <div class="review-header">
+            <div class="review-avatar">KD</div>
+            <div class="review-info">
+              <h4>Kofi Danso</h4>
+              <p>Cape Coast, Ghana</p>
+            </div>
+          </div>
+          <div class="review-stars">
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+          </div>
+          <p class="review-text">
+            Fast delivery, affordable prices, and excellent customer support. Yawigo has made my life so much easier. I
+            recommend it to everyone!
+          </p>
+        </div>
+
+        <div class="review-card animate-fade-right animate-delay-6">
+          <div class="review-header">
+            <div class="review-avatar">SA</div>
+            <div class="review-info">
+              <h4>Sarah Ampong</h4>
+              <p>Ho, Ghana</p>
+            </div>
+          </div>
+          <div class="review-stars">
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+            <svg class="star" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+            </svg>
+          </div>
+          <p class="review-text">
+            The safety features and driver verification give me confidence. Clean vehicles, professional drivers, and
+            reasonable prices. Yawigo is the best!
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section id="how-it-works" class="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title animate-fade-in">How It Works</h2>
+        <p class="section-subtitle animate-fade-in animate-delay-1">
+          Simple steps to get started with Yawigo
+        </p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step animate-slide-up animate-delay-1">
+          <div class="step-number">1</div>
+          <h3 class="step-title">Download & Register</h3>
+          <p class="step-description">
+            Download the Yawigo app and create your account in minutes with just your phone number.
+          </p>
+        </div>
+
+        <div class="step animate-slide-up animate-delay-2">
+          <div class="step-number">2</div>
+          <h3 class="step-title">Choose Service</h3>
+          <p class="step-description">
+            Select food delivery or ride service, browse options, and place your order.
+          </p>
+        </div>
+
+        <div class="step animate-slide-up animate-delay-3">
+          <div class="step-number">3</div>
+          <h3 class="step-title">Track & Enjoy</h3>
+          <p class="step-description">
+            Track your order in real-time and enjoy fast, reliable service delivered to your door.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Download Section -->
+  <section id="download" class="download">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title animate-fade-in">Download Yawigo</h2>
+        <p class="section-subtitle animate-fade-in animate-delay-1">
+          Get the latest version for Android devices
+        </p>
+      </div>
+
+      <div class="download-grid">
+        <div class="download-card featured animate-scale-in animate-delay-1">
+          <div class="version-badge">Latest</div>
+          <h3 class="version-title">Yawigo v3.1.0</h3>
+          <p class="version-date">Released: January 20, 2025</p>
+          <ul class="version-features">
+            <li>Enhanced GPS tracking</li>
+            <li>New payment methods</li>
+            <li>Improved user interface</li>
+            <li>Bug fixes and performance improvements</li>
+            <li>Multi-language support</li>
+          </ul>
+          <a href="#" class="download-btn">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 16l-5-5h3V3h4v8h3l-5 5zm9-13h-6v1.99h6V19H3V4.99h6V3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
+            </svg>
+            Download APK (28 MB)
+          </a>
+        </div>
+
+        <div class="download-card animate-scale-in animate-delay-2">
+          <h3 class="version-title">Yawigo v3.0.5</h3>
+          <p class="version-date">Released: December 15, 2024</p>
+          <ul class="version-features">
+            <li>Core delivery features</li>
+            <li>Basic ride services</li>
+            <li>Standard payment options</li>
+            <li>Compatible with older devices</li>
+          </ul>
+          <a href="#" class="download-btn">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 16l-5-5h3V3h4v8h3l-5 5zm9-13h-6v1.99h6V19H3V4.99h6V3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
+            </svg>
+            Download APK (25 MB)
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="contact">
+    <div class="container">
+      <div class="contact-content">
+        <h2 class="section-title animate-fade-in">Get in Touch</h2>
+        <p class="section-subtitle animate-fade-in animate-delay-1">
+          We're here to help! Reach out to us anytime for support, partnerships, or questions about Yawigo services.
+        </p>
+
+        <!-- Contact Methods Grid -->
+        <div class="contact-info">
+          <div class="contact-item animate-fade-in animate-delay-2">
+            <div class="contact-icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+              </svg>
+            </div>
+            <div class="contact-label">Email Support</div>
+            <div class="contact-value">
+              <a href="mailto:support@yawigo.com">support@yawigo.com</a>
+              <small>Response within 2 hours</small>
+            </div>
+          </div>
+
+          <div class="contact-item animate-fade-in animate-delay-3">
+            <div class="contact-icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+              </svg>
+            </div>
+            <div class="contact-label">24/7 Hotline</div>
+            <div class="contact-value">
+              <a href="tel:+233551234567">+233 55 123 4567</a>
+              <small>Available 24/7</small>
+            </div>
+          </div>
+
+          <div class="contact-item animate-fade-in animate-delay-4">
+            <div class="contact-icon">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
+              </svg>
+            </div>
+            <div class="contact-label">Live Chat</div>
+            <div class="contact-value">
+              <a href="#" onclick="window.yawigoChat.toggleChat()">Chat with us now</a>
+              <small>Instant response</small>
+            </div>
+          </div>
+
+          <div class="contact-item animate-fade-in animate-delay-5">
+            <div class="contact-icon">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+              </svg>
+            </div>
+            <div class="contact-label">Head Office</div>
+            <div class="contact-value">
+              123 Independence Avenue<br>
+              Accra, Ghana
+              <small>Mon-Fri: 9AM-6PM</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Contact Form -->
+        <div class="contact-form-section animate-fade-in animate-delay-3">
+          <h3 class="form-title">Send us a Message</h3>
+          <form class="contact-form" id="contactForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" required>
+              </div>
+              <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+              </div>
+              <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <select id="subject" name="subject" required>
+                <option value="">Select a topic</option>
+                <option value="general">General Inquiry</option>
+                <option value="support">Customer Support</option>
+                <option value="partnership">Partnership</option>
+                <option value="driver">Become a Driver</option>
+                <option value="restaurant">Restaurant Partnership</option>
+                <option value="feedback">Feedback & Suggestions</option>
+                <option value="technical">Technical Issue</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="5" placeholder="Tell us how we can help you..."
+                required></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">
+              <svg viewBox="0 0 24 24">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+              </svg>
+              Send Message
+            </button>
+          </form>
+        </div>
+
+        <!-- FAQ Section -->
+        <div class="faq-section animate-fade-in animate-delay-4">
+          <h3 class="faq-title">Frequently Asked Questions</h3>
+          <div class="faq-grid">
+            <div class="faq-item">
+              <button class="faq-question" onclick="toggleFAQ(this)">
+                <span>How do I track my order?</span>
+                <svg class="faq-icon" viewBox="0 0 24 24">
+                  <path d="M7 10l5 5 5-5z" />
+                </svg>
+              </button>
+              <div class="faq-answer">
+                <p>You can track your order in real-time through the Yawigo app. Once your order is confirmed, you'll
+                  see live updates including restaurant preparation time and delivery progress on the map.</p>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question" onclick="toggleFAQ(this)">
+                <span>What payment methods do you accept?</span>
+                <svg class="faq-icon" viewBox="0 0 24 24">
+                  <path d="M7 10l5 5 5-5z" />
+                </svg>
+              </button>
+              <div class="faq-answer">
+                <p>We accept Mobile Money (MTN, AirtelTigo, Vodafone), credit/debit cards, cash on delivery, and bank
+                  transfers. All payments are processed securely with encryption.</p>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question" onclick="toggleFAQ(this)">
+                <span>How can I become a Yawigo driver?</span>
+                <svg class="faq-icon" viewBox="0 0 24 24">
+                  <path d="M7 10l5 5 5-5z" />
+                </svg>
+              </button>
+              <div class="faq-answer">
+                <p>To become a driver, you need a valid driver's license, vehicle registration, insurance, and
+                  smartphone. Apply through our website or visit our office for registration and vehicle inspection.</p>
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question" onclick="toggleFAQ(this)">
+                <span>Which areas do you serve?</span>
+                <svg class="faq-icon" viewBox="0 0 24 24">
+                  <path d="M7 10l5 5 5-5z" />
+                </svg>
+              </button>
+              <div class="faq-answer">
+                <p>We currently serve Accra, Kumasi, Takoradi, Cape Coast, Tema, and Ho. We're rapidly expanding to more
+                  cities across Ghana. Check the app for service availability in your area.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Media Links -->
+        <div class="social-section animate-fade-in animate-delay-5">
+          <h3 class="social-title">Follow Us</h3>
+          <p class="social-subtitle">Stay connected for updates, promotions, and news</p>
+          <div class="social-links">
+            <a href="#" class="social-link facebook" aria-label="Facebook">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+              </svg>
+            </a>
+            <a href="#" class="social-link twitter" aria-label="Twitter">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
+              </svg>
+            </a>
+            <a href="#" class="social-link instagram" aria-label="Instagram">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+              </svg>
+            </a>
+            <a href="#" class="social-link linkedin" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+            </a>
+            <a href="#" class="social-link whatsapp" aria-label="WhatsApp">
+              <svg viewBox="0 0 24 24">
+                <path
+                  d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.864 3.488" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Operating Hours -->
+        <div class="hours-section animate-fade-in animate-delay-6">
+          <h3 class="hours-title">Support Hours</h3>
+          <div class="hours-grid">
+            <div class="hours-item">
+              <strong>Customer Support</strong>
+              <span>24/7 Available</span>
+            </div>
+            <div class="hours-item">
+              <strong>Office Hours</strong>
+              <span>Mon-Fri: 9:00 AM - 6:00 PM</span>
+            </div>
+            <div class="hours-item">
+              <strong>Live Chat</strong>
+              <span>24/7 Available</span>
+            </div>
+            <div class="hours-item">
+              <strong>Phone Support</strong>
+              <span>24/7 Available</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>About Yawigo</h3>
+          <p>
+            Ghana's leading food delivery and ride-hailing platform,
+            connecting people with reliable services across major cities.
+          </p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Services</h3>
+          <ul class="footer-links">
+            <li><a href="#">Food Delivery</a></li>
+            <li><a href="#">Ride Services</a></li>
+            <li><a href="#">Business Solutions</a></li>
+            <li><a href="#">Partner with Us</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Support</h3>
+          <ul class="footer-links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">Safety</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Company</h3>
+          <ul class="footer-links">
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Blog</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2025 Yawigo. All rights reserved. Made with ❤️ in Ghana.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Chat Widget -->
+  <div class="chat-widget" id="chat-widget">
+    <button class="chat-btn" id="chat-toggle">
+      <svg viewBox="0 0 24 24" fill="var(--white)">
+        <path
+          d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+      </svg>
+      <!-- <svg viewBox="0 0 24 24" id="chat-icon" width="100%" height="100%"> -->
+      <path
+        d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+      </svg>
+
+      <!-- Close Icon -->
+      <svg viewBox="0 0 24 24" id="close-icon" width="100%" height="100%" style="display: none;">
+        <path
+          d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+      </svg>
+    </button>
+
+    <!-- Chat Window -->
+    <div class="chat-window" id="chat-window">
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <div class="chat-avatar">
+            <svg viewBox="0 0 24 24" fill="var(--white)">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+            </svg>
+          </div>
+          <div>
+            <h4>Yawigo Assistant</h4>
+            <span class="chat-status">
+              <span class="status-dot"></span>
+              Online
+            </span>
+          </div>
+        </div>
+        <button class="chat-minimize" id="chat-minimize">
+          <svg viewBox="0 0 24 24">
+            <path d="M19 13H5v-2h14v2z" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="chat-messages" id="chat-messages">
+        <div class="message bot-message">
+          <div class="message-avatar">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+          </div>
+          <div class="message-content">
+            <p>Hello! 👋 I'm your Yawigo assistant. How can I help you today?</p>
+            <div class="quick-actions">
+              <button class="quick-action" onclick="sendQuickMessage('How do I order food?')">Order Food</button>
+              <button class="quick-action" onclick="sendQuickMessage('How do I book a ride?')">Book Ride</button>
+              <button class="quick-action" onclick="sendQuickMessage('Payment methods')">Payments</button>
+            </div>
+          </div>
+          <span class="message-time">Just now</span>
+        </div>
+      </div>
+
+      <div class="chat-input-container">
+        <div class="chat-typing" id="chat-typing" style="display: none;">
+          <div class="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span>Assistant is typing...</span>
+        </div>
+        <div class="chat-input">
+          <input type="text" id="chat-input" placeholder="Type your message..." autocomplete="off">
+          <button id="chat-send" type="button">
+            <svg viewBox="0 0 24 24">
+              <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mobile menu toggle
+    document.querySelector('.mobile-menu-btn').addEventListener('click', function () {
+      const navLinks = document.querySelector('.nav-links');
+      navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+    });
+
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
         e.preventDefault();
-        const input = document.getElementById('chatboxInput');
-        const message = input.value.trim();
-        if (message) {
-          // Add user message
-          const userMessage = document.createElement('div');
-          userMessage.textContent = `You: ${message}`;
-          chatboxMessages.appendChild(userMessage);
-
-          // Mock bot response
-          setTimeout(() => {
-            const botMessage = document.createElement('div');
-            botMessage.innerHTML = `<b>Support:</b> We have received your message: "${message}".`;
-            chatboxMessages.appendChild(botMessage);
-            chatboxMessages.scrollTop = chatboxMessages.scrollHeight; // Scroll to bottom
-          }, 1000);
-
-          input.value = '';
-          chatboxMessages.scrollTop = chatboxMessages.scrollHeight; // Scroll to bottom
-        }
-      });
-
-      // Language toggle logic
-      function setLangUI(lang) {
-        const langIcon = document.getElementById('langIcon');
-        const langLabel = document.getElementById('langLabel');
-        if (lang === 'fr') {
-          langIcon.textContent = '🇫🇷';
-          langLabel.textContent = 'Français';
-        } else {
-          langIcon.textContent = '🇬🇧';
-          langLabel.textContent = 'English';
-        }
-      }
-
-      document.addEventListener('DOMContentLoaded', function () {
-        let lang =
-          localStorage.getItem('yawigo_lang') ||
-          (navigator.language.startsWith('fr') ? 'fr' : 'en');
-        setLangUI(lang);
-        applyTranslations(lang);
-
-        document
-          .querySelector('#langToggle')
-          .addEventListener('click', function () {
-            lang = lang === 'en' ? 'fr' : 'en';
-            localStorage.setItem('yawigo_lang', lang);
-            setLangUI(lang);
-            applyTranslations(lang);
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
           });
+        }
       });
-    </script>
-    <!-- Add this before your document.addEventListener('DOMContentLoaded', ...) -->
-    <script>
-      // Minimal translation dictionary
-      const translations = {
-        en: {
-          mainTitle: 'Yawigo Ride & Food Delivery',
-          subtitle:
-            'Fast, reliable, and easy ride hailing & food delivery.<br>Book a ride or order from your favorite restaurants and track everything in real time!',
-          downloadBtn: 'Download Android APK',
-          // ...add other keys as needed...
-        },
-        fr: {
-          mainTitle: 'Yawigo Livraison & Transport',
-          subtitle:
-            'Commandez un trajet ou un repas rapidement et facilement.<br>Réservez un trajet ou commandez dans vos restaurants préférés et suivez tout en temps réel !',
-          downloadBtn: "Télécharger l'APK Android",
-          // ...add other keys as needed...
-        },
-      };
+    });
 
-      function applyTranslations(lang) {
-        const t = translations[lang] || translations.en;
-        // Example for main header
-        document.querySelector('.main-title').innerHTML = t.mainTitle;
-        document.querySelector('.subtitle').innerHTML = t.subtitle;
-        document.querySelector('.download-btn').textContent = t.downloadBtn;
-        // Add more selectors for other translatable elements as needed
+    // Chat function
+    function openChat() {
+      alert('Chat feature coming soon! 💬\n\nFor now, please contact us at:\n📧 support@yawigo.com\n📞 +233 55 123 4567');
+    }
+
+    // Download tracking
+    document.querySelectorAll('.download-btn').forEach(btn => {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // Add loading state
+        const originalText = this.innerHTML;
+        this.innerHTML = '<svg viewBox="0 0 24 24" style="animation: spin 1s linear infinite;"><path d="M12 2V6L8 10L12 14L16 10L12 6V2Z"/></svg> Downloading...';
+
+        // Simulate download
+        setTimeout(() => {
+          this.innerHTML = originalText;
+          alert('Download started! 🚀\n\nThe APK file will be saved to your Downloads folder.');
+        }, 2000);
+      });
+    });
+
+    // Add scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animationPlayState = 'running';
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.animate-fade-in').forEach(el => {
+      el.style.animationPlayState = 'paused';
+      observer.observe(el);
+    });
+
+    // Chat functionality
+    class YawigoChat {
+      constructor() {
+        this.isOpen = false;
+        this.messages = [];
+        this.apiKey = ''; // Add your OpenAI API key here
+        this.init();
       }
-    </script>
-    <!-- Add this before closing </body> tag -->
-<script>
-// Intersection Observer setup
-const observerOptions = {
-  root: null,
-  rootMargin: '0px',
-  threshold: 0.1
-};
 
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      observer.unobserve(entry.target); // Only animate once
+      init() {
+        this.chatToggle = document.getElementById('chat-toggle');
+        this.chatWindow = document.getElementById('chat-window');
+        this.chatInput = document.getElementById('chat-input');
+        this.chatSend = document.getElementById('chat-send');
+        this.chatMessages = document.getElementById('chat-messages');
+        this.chatTyping = document.getElementById('chat-typing');
+        this.chatMinimize = document.getElementById('chat-minimize');
+        this.chatIcon = document.getElementById('chat-icon');
+        this.closeIcon = document.getElementById('close-icon');
+
+        this.bindEvents();
+        this.loadPredefinedResponses();
+      }
+
+      bindEvents() {
+        this.chatToggle.addEventListener('click', () => this.toggleChat());
+        this.chatMinimize.addEventListener('click', () => this.toggleChat());
+        this.chatSend.addEventListener('click', () => this.sendMessage());
+        this.chatInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') this.sendMessage();
+        });
+      }
+
+      toggleChat() {
+        this.isOpen = !this.isOpen;
+
+        if (this.isOpen) {
+          this.chatWindow.classList.add('show');
+          this.chatIcon.style.display = 'none';
+          this.closeIcon.style.display = 'block';
+          this.chatInput.focus();
+        } else {
+          this.chatWindow.classList.remove('show');
+          this.chatIcon.style.display = 'block';
+          this.closeIcon.style.display = 'none';
+        }
+      }
+
+      async sendMessage() {
+        const message = this.chatInput.value.trim();
+        if (!message) return;
+
+        // Add user message
+        this.addMessage(message, 'user');
+        this.chatInput.value = '';
+
+        // Show typing indicator
+        this.showTyping();
+
+        // Get response
+        const response = await this.getResponse(message);
+
+        // Hide typing indicator and show response
+        this.hideTyping();
+        this.addMessage(response, 'bot');
+      }
+
+      addMessage(text, sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}-message`;
+
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        messageDiv.innerHTML = `
+          <div class="message-avatar">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+            </svg>
+          </div>
+          <div class="message-content">
+            <p>${text}</p>
+            <span class="message-time">${time}</span>
+          </div>
+        `;
+
+        this.chatMessages.appendChild(messageDiv);
+        this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+      }
+
+      showTyping() {
+        this.chatTyping.style.display = 'flex';
+      }
+
+      hideTyping() {
+        this.chatTyping.style.display = 'none';
+      }
+
+      async getResponse(message) {
+        // First check for predefined responses
+        const predefinedResponse = this.getPredefinedResponse(message.toLowerCase());
+        if (predefinedResponse) {
+          await this.delay(1000); // Simulate thinking time
+          return predefinedResponse;
+        }
+
+        // If no API key, use fallback responses
+        if (!this.apiKey) {
+          await this.delay(1500);
+          return this.getFallbackResponse(message);
+        }
+
+        // Use ChatGPT API
+        try {
+          const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${this.apiKey}`
+            },
+            body: JSON.stringify({
+              model: 'gpt-3.5-turbo',
+              messages: [
+                {
+                  role: 'system',
+                  content: `You are a helpful customer service assistant for Yawigo, a food delivery and ride-hailing app in Ghana. 
+                           Keep responses concise, friendly, and helpful. Focus on Yawigo services, ordering food, booking rides, 
+                           payments, and general app support. Always be professional and courteous.`
+                },
+                {
+                  role: 'user',
+                  content: message
+                }
+              ],
+              max_tokens: 150,
+              temperature: 0.7
+            })
+          });
+
+          const data = await response.json();
+          return data.choices[0].message.content;
+        } catch (error) {
+          console.error('ChatGPT API Error:', error);
+          return this.getFallbackResponse(message);
+        }
+      }
+
+      loadPredefinedResponses() {
+        this.predefinedResponses = {
+          'hello': 'Hello! Welcome to Yawigo! 👋 How can I assist you today?',
+          'hi': 'Hi there! How can I help you with your Yawigo experience?',
+          'help': 'I\'m here to help! You can ask me about:\n• Ordering food 🍕\n• Booking rides 🚗\n• Payment methods 💳\n• Account issues 👤\n• App features ⚙️',
+          'how do i order food': 'To order food:\n1. Open the Yawigo app\n2. Browse restaurants near you\n3. Select items and add to cart\n4. Choose payment method\n5. Confirm your order\n\nYour food will be delivered to your location! 🍕',
+          'how do i book a ride': 'To book a ride:\n1. Open the Yawigo app\n2. Enter your destination\n3. Choose vehicle type\n4. Confirm pickup location\n5. Book your ride\n\nA driver will be assigned to you! 🚗',
+          'payment methods': 'We accept:\n• Mobile Money (MTN, AirtelTigo, Vodafone) 📱\n• Credit/Debit Cards 💳\n• Cash on Delivery 💵\n• Bank Transfer 🏦\n\nAll payments are secure and encrypted! 🔒',
+          'download': 'You can download the Yawigo app:\n• From our website (APK file)\n• Direct download links on this page\n• Latest version: v3.1.0\n\nScroll up to find download buttons! 📱',
+          'support': 'Need more help? Contact us:\n📧 support@yawigo.com\n📞 +233 55 123 4567\n\nWe\'re available 24/7 to assist you! 💬',
+          'delivery time': 'Delivery times:\n🍕 Food: 20-45 minutes\n🚗 Rides: 3-10 minutes\n📦 Packages: 30-60 minutes\n\nActual times may vary based on location and traffic.',
+          'areas': 'We currently serve:\n• Accra & Greater Accra\n• Kumasi\n• Takoradi\n• Cape Coast\n• Tema\n• Ho\n\nExpanding to more cities soon! 🌍'
+        };
+      }
+
+      getPredefinedResponse(message) {
+        for (const [key, response] of Object.entries(this.predefinedResponses)) {
+          if (message.includes(key)) {
+            return response;
+          }
+        }
+        return null;
+      }
+
+      getFallbackResponse(message) {
+        const fallbacks = [
+          "I understand you're asking about that. For detailed assistance, please contact our support team at support@yawigo.com or call +233 55 123 4567. We're here to help! 💬",
+          "Thanks for your question! Our customer service team can provide you with specific details. Reach out to us at support@yawigo.com and we'll get back to you quickly! 📧",
+          "That's a great question! For the most accurate information, please contact our support team. You can email support@yawigo.com or call +233 55 123 4567. 📞",
+          "I'd be happy to help with that! For detailed assistance, our support team is available 24/7 at support@yawigo.com or +233 55 123 4567. 🙋‍♀️"
+        ];
+
+        return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+      }
+
+      delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
     }
-  });
-}, observerOptions);
 
-// Observe elements
-document.querySelectorAll('.feature-card, .how-step, .screenshot-card').forEach(el => {
-  el.classList.add('animate-on-scroll');
-  observer.observe(el);
-});
-
-// Enhanced scroll behavior
-const smoothScroll = (target) => {
-  const element = document.querySelector(target);
-  if (!element) return;
-  
-  window.scrollTo({
-    top: element.offsetTop - 80,
-    behavior: 'smooth'
-  });
-};
-
-// Enhanced navbar interaction
-document.querySelectorAll('.navbar-links a[href^="#"]').forEach(link => {
-  link.addEventListener('click', (e) => {
-    e.preventDefault();
-    const target = link.getAttribute('href');
-    smoothScroll(target);
-  });
-});
-
-// Add loading states to buttons
-document.querySelectorAll('.download-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    this.classList.add('loading');
-    // Remove loading state after download starts
-    setTimeout(() => this.classList.remove('loading'), 2000);
-  });
-});
-
-// Smooth reveal animations
-const revealElements = document.querySelectorAll('.feature-card, .how-step, .screenshot-card');
-
-const revealOptions = {
-  root: null,
-  rootMargin: '0px',
-  threshold: 0.1
-};
-
-const revealCallback = (entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = 'translateY(0)';
+    // Quick message function
+    function sendQuickMessage(message) {
+      const chat = window.yawigoChat;
+      if (chat) {
+        chat.chatInput.value = message;
+        chat.sendMessage();
+      }
     }
-  });
-};
 
-const revealObserver = new IntersectionObserver(revealCallback, revealOptions);
+    // Initialize chat when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      window.yawigoChat = new YawigoChat();
+    });
 
-revealElements.forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(50px)';
-  el.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-  revealObserver.observe(el);
-});
+    // Update the openChat function (remove the old one)
+    function openChat() {
+      if (window.yawigoChat) {
+        window.yawigoChat.toggleChat();
+      }
+    }
+    // Add this to your existing JavaScript
 
-// Parallax scroll effect
-window.addEventListener('scroll', () => {
-  const scrolled = window.pageYOffset;
-  document.querySelector('.showcase-header').style.transform = `translateY(${scrolled * 0.5}px)`;
-});
+    // Contact Form Submission
+    document.getElementById('contactForm').addEventListener('submit', function (e) {
+      e.preventDefault();
 
-// Enhanced hover effects
-document.querySelectorAll('.feature-card').forEach(card => {
-  card.addEventListener('mousemove', (e) => {
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    card.style.setProperty('--mouse-x', `${x}px`);
-    card.style.setProperty('--mouse-y', `${y}px`);
-  });
-});
-// Additional animation for floating elements
-function animateFloatingElements() {
-  const elements = document.querySelectorAll('.floating-circle');
-  elements.forEach((el, index) => {
-    el.style.animation = `floatingCircles ${6 + index * 0.5}s ease-in-out infinite`;
-  });
-}
+      // Get form data
+      const formData = new FormData(this);
+      const submitBtn = this.querySelector('.submit-btn');
+      const originalText = submitBtn.innerHTML;
 
-// Initialize animations
-document.addEventListener('DOMContentLoaded', () => {
-  animateFloatingElements();
-});
-</script>
-  </body>
+      // Show loading state
+      submitBtn.innerHTML = '<svg style="animation: spin 1s linear infinite;" viewBox="0 0 24 24"><path d="M12 2V6L8 10L12 14L16 10L12 6V2Z"/></svg> Sending...';
+      submitBtn.disabled = true;
+
+      // Simulate form submission (replace with actual form handler)
+      setTimeout(() => {
+        submitBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg> Message Sent!';
+
+        // Reset form after 3 seconds
+        setTimeout(() => {
+          this.reset();
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+          alert('Thank you for your message! We\'ll get back to you within 24 hours. 📧');
+        }, 2000);
+      }, 2000);
+    });
+
+    // FAQ Toggle Function
+    function toggleFAQ(button) {
+      const faqItem = button.parentElement;
+      const isActive = faqItem.classList.contains('active');
+
+      // Close all FAQ items
+      document.querySelectorAll('.faq-item').forEach(item => {
+        item.classList.remove('active');
+      });
+
+      // Toggle current item
+      if (!isActive) {
+        faqItem.classList.add('active');
+      }
+    }
+
+    // Enhanced smooth scrolling for contact links
+    document.querySelectorAll('a[href^="#contact"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector('#contact');
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+
 </html>

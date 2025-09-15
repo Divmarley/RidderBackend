@@ -672,8 +672,8 @@ from .serializers import RestaurantNewSerializer
 class RestaurantAPIView(APIView):
  
     def get(self, request):
-        restaurants = Restaurant.objects.all()
-        # print("Getting",restaurants )
+        restaurants = Restaurant.objects.filter(user__is_aproved=True)
+        print("Getting",restaurants )
     
         serializer = RestaurantNewSerializer(restaurants, many=True)
         # print("Serializing",serializer)

@@ -13,8 +13,8 @@ from django.shortcuts import render
 from accounts import send_verification_code
 from chat.models import DriverOnline
 from food.models import Image, Location, Rating, Restaurant
-from .models import CustomUser, DriverProfile, PersonalInfo, RepairProfile, RiderProfile, Upload, VehicleInfo,Document
-from .serializers import CreateAllDataSerializer, DocumentSerializer, DriverProfileSerializer, DriverSerializer, EditProfileSerializer, LoginSerializer, PersonalInfoSerializer, RegisterSerializer, RiderProfileSerializer, UploadSerializer, UserProfileSerializer, UserSerializer, VehicleInfoSerializer, VerifyLoginSerializer, ProfileSerializer
+from .models import APKUpload, CustomUser, DriverProfile, PersonalInfo, RepairProfile, RiderProfile, Upload, VehicleInfo,Document
+from .serializers import APKUploadSerializer, CreateAllDataSerializer, DocumentSerializer, DriverProfileSerializer, DriverSerializer, EditProfileSerializer, LoginSerializer, PersonalInfoSerializer, RegisterSerializer, RiderProfileSerializer, UploadSerializer, UserProfileSerializer, UserSerializer, VehicleInfoSerializer, VerifyLoginSerializer, ProfileSerializer
 from .utils import send_verification_email
 
 
@@ -50,7 +50,8 @@ class RegisterView(APIView):
                 # Send verification email if email is provided
                 email_sent = False
                 email_error = None
-                if user.email:
+                if user.email :
+                    print(" user.email--->>d", user.email)
                     email_sent, email_error = send_verification_email(user)
 
 
@@ -535,4 +536,13 @@ class DriverDocumentsView(APIView):
         user = request.user
         documents = Document.objects.filter(driver=user)
         serializer = DocumentSerializer(documents, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+class APKUploadView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, *args, **kwargs):
+   
+        apk = APKUpload.objects.all()
+        serializer = APKUploadSerializer(apk, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

@@ -256,3 +256,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
         if CustomUser.objects.filter(phone=value).exclude(id=self.instance.id).exists():
             raise serializers.ValidationError("This phone number is already in use.")
         return value
+    
+
+
+class APKUploadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = APKUpload
+        fields = ['id', 'apk_file', 'version', ]

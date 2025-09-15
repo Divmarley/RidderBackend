@@ -48,7 +48,6 @@ class FoodConsumer(WebsocketConsumer):
         data = json.loads(text_data)
         data_source = data.get('source') 
  
-
         if data_source == 'request.connect.food':
             self.receive_food_request_connect(data)
         elif data_source == 'foodOrder.list':
@@ -307,7 +306,7 @@ class FoodConsumer(WebsocketConsumer):
         user = self.scope['user']
  
         try:
-            restaurant = CustomUser.objects.get(id=restaurant_id[0].get('restaurantId'))
+            restaurant = CustomUser.objects.get(id=restaurant_id)
         except CustomUser.DoesNotExist:
             self.send(text_data=json.dumps({
                 'error': 'Restaurant not found'
@@ -405,6 +404,7 @@ class FoodConsumer(WebsocketConsumer):
         #     return
 
         # Fetch orders where the user is the sender or receiver
+        print('OrderXXX',Order.objects.all())
         orders = Order.objects.filter(
             sender__id=user.id
         ) | Order.objects.filter(receiver__id=user.id)
@@ -470,7 +470,7 @@ class FoodConsumer(WebsocketConsumer):
         #         'error': 'User is not authenticated'
         #     }))
         #     return
-        # print("receive_food_list", data)
+        print("receive_food_list", data)
         # print("receive_request_connect data",data)
 		# Attempt to fetch the receiving user
         # try:

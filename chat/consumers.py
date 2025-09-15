@@ -1,6 +1,7 @@
 import base64
 import json
 import logging
+from turtle import st
 
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
@@ -9,7 +10,7 @@ from django.db.models import Q, Exists, OuterRef
 from django.db.models.functions import Coalesce
 
 from accounts.models import CustomUser, VehicleInfo
-from food.models import FoodMenu, Order, OrderItem, Restaurant
+from food.models import FoodConnection, FoodMenu, Order, OrderItem, Restaurant
 from food.serializers import FoodMenuSerializer, OrderSerializer
 from ride.models import DriverHistory, RideHistory, TripHistory
 
@@ -73,8 +74,8 @@ class ChatConsumer(WebsocketConsumer):
 		user = self.scope['user']
 		print(user, user.is_authenticated)
 
-		if not user.is_authenticated:
-			return
+		# if not user.is_authenticated:
+		# 	return
 		# Save phone to use as a group name for this user
 		self.id = str(user.id)
 		# Join this user to a group with their phone
@@ -169,6 +170,9 @@ class ChatConsumer(WebsocketConsumer):
 			self.receive_online_drivers(data)
 		elif data_source == 'driver.online':
 			self.receive_online_driver_data(data)
+		elif data_source == 'request.connect.food':
+ 
+			self.receive_food_request_connect(data)
 
 		# except Exception as e:
 		# 	logger.error(f"Error processing message: {str(e)}")
@@ -390,15 +394,15 @@ class ChatConsumer(WebsocketConsumer):
 			'message': serialized_message.data,
 			'friend': serialized_friend.data
 		}
-		self.send_group(recipient.phone, 'message.send', data)
+		self.send_group(str(recipient.phone), 'message.send', data)
 
 	def receive_message_type(self, data):
 		user = self.scope['user']
 		recipient_phone = data.get('phone')
 		data = {
-			'phone': user.id
+			'phone': user.phone
 		}
-		self.send_group(recipient_phone, 'message.type', data)
+		self.send_group(str(recipient_phone), 'message.type', data)
 
 	def receive_request_accept(self, data):
 		phone = data.get('phone')
@@ -667,9 +671,12 @@ class ChatConsumer(WebsocketConsumer):
 			str(connection.receiver.id), 'trip.start', serialized.data
 		)
 
-	def receive_trip_ended(self, data): 
+	def receive_trip_ended(self, data):
+		# print('data',data)
+
 		phone = data.get('phone')
 		connectionId = data.get('connectionId')
+ 
 		# Fetch connection object
 		try:
 			connection = Connection.objects.get(
@@ -692,7 +699,7 @@ class ChatConsumer(WebsocketConsumer):
 			status=1,
 			destination=connection.location,
 			paymentStatus=connection.paymentStatus,
-			paymentType='CASH',
+			paymentType='paymentType',
 			paymentAmount=connection.location['estimatedPrice'],
 			paidAmount=connection.location['estimatedPrice']
 			)
@@ -794,6 +801,7 @@ class ChatConsumer(WebsocketConsumer):
 		)
 
 	def receive_trip_confirm_payment(self, data): 
+		# print('receive_trip_confirm_payment data',data)
 		phone = data.get('phone')
 		connectionId = data.get('connectionId')
 		# Fetch connection object
@@ -810,6 +818,8 @@ class ChatConsumer(WebsocketConsumer):
 		# Update the connection
 		connection.status = 'PAYMENT CONFIRM'
 		connection.paymentStatus = 1
+		 
+
 		 
 		connection.save()
 		# TripHistory.objects.create(
@@ -969,7 +979,7 @@ class ChatConsumer(WebsocketConsumer):
 		try:
 			# Get the user and location data
 			user = self.scope['user']
-			# print('user.id',user.id)
+			print('user.id',user.id)
 			location_data = data.get('data')
 			
 			if not location_data:
@@ -985,18 +995,18 @@ class ChatConsumer(WebsocketConsumer):
 			
 			# Find active connection for the driver
 			try:
-				connection = Connection.objects.filter(
-				 
-					accepted=True,
-					sender__phone=user.id,
-					# status__in=['DRIVER ACCEPTED', 'TRIP STARTED']
-				).first()
-
 				# connection = Connection.objects.filter(
-				# 	sender__phone=user.id,  
+				 
+				 
+				# 	sender__id=user.id,
+				# 	# status__in=['DRIVER ACCEPTED', 'TRIP STARTED']
 				# ).first()
 
-				# print('connection Received location--->>>>>>',connection) 
+				connection = Connection.objects.filter(
+					sender__phone=user.phone,  
+				).first()
+
+				print('connection Received riders location--->>>>>>',connection) 
 				
 				if connection:
 					# print('Received location updateddd', connection)
@@ -1064,7 +1074,7 @@ class ChatConsumer(WebsocketConsumer):
 				# ).first()
 
 				connection = Connection.objects.filter(
-					receiver__phone=user.id
+					receiver__id=user.id
 				).first()
 				# print('connection --location.driver.update ===',connection)
 			 
@@ -1082,6 +1092,7 @@ class ChatConsumer(WebsocketConsumer):
 						'from':'driver'
 					}
 					
+					# print('connection-->> to sender??',connection)
 
 					# Send to rider
 					# self.send_group(
@@ -1105,6 +1116,122 @@ class ChatConsumer(WebsocketConsumer):
 				
 		except Exception as e:
 			print(f'Error in location update: {str(e)}')
+	
+	def receive_food_request_connect(self, data):
+ 
+		print("receive_food_request_connect data",data)
+		
+		daseData = data.get('data')
+		print("daseData",daseData)
+		location = daseData['location']
+		# print("location",location)
+		phone = daseData['phone']
+		restaurant_id = daseData['receiver']
+		pushToken = daseData['pushToken']
+		items = daseData['items']
+		total_price = daseData['total_price']
+		status = daseData['status']
+		user = self.scope['user']
+		order_info=  daseData['order_info']
+		
+		
+
+
+		# if not user:
+		#     self.send(text_data=json.dumps({
+		#         'error': 'User is not authenticated'
+		#     }))
+		#     return
+
+		user = self.scope['user']
+
+		try:
+			restaurant = CustomUser.objects.get(id=restaurant_id[0].get('restaurantId'))
+		except CustomUser.DoesNotExist:
+			self.send(text_data=json.dumps({
+				'error': 'Restaurant not found'
+			}))
+			return
+
+		# Create or retrieve FoodConnection instance
+		connection, _ = FoodConnection.objects.get_or_create(
+			buyer=user,
+			restaurant=restaurant,
+			location=location,
+			pushToken=pushToken,
+			defaults={'items': items},
+			status=status,
+			order_info=order_info
+		) 
+		# print('connection',connection)
+
+
+		# Create Order instance
+		order_id = generate_order_id()
+		order = Order.objects.create(
+			sender=connection.buyer,
+			receiver=connection.restaurant,
+			status=status,
+			location=connection.location,
+			total_price=total_price,
+			food_connection_id=connection.id
+		)
+
+		# Create OrderItem instances for each item and prepare enriched data
+		enriched_items = []
+		for item_data in items:
+			item_id = item_data.get('item_id')
+			quantity = item_data.get('quantity')
+
+			try:
+				food_item = FoodMenu.objects.get(id=item_id)
+				OrderItem.objects.create(
+					order=order,
+					food_menu=food_item,
+					quantity=quantity
+				)
+				enriched_items.append({
+					"item_id": food_item.id,
+					"quantity": quantity,
+					"name": food_item.name,
+					"description": food_item.description,
+					"price": float(food_item.price)
+				})
+			except FoodMenu.DoesNotExist:
+				print(f"Food item with id {item_id} not found")
+
+		# Prepare response object
+		response_data = {
+			"id": order.id,
+			"status": order.status,
+			"location": order.location,
+			"total_price": float(order.total_price),
+			"items": enriched_items,
+			"order_id": order_id,
+			"connection_id": connection.id,
+			"buyer": {
+				"id": connection.buyer.id,
+				"phone": connection.buyer.phone,
+			},
+			"restaurant": {
+				"id": connection.restaurant.id, 
+				"phone": connection.restaurant.phone,
+			} 
+			
+		}
+
+
+		# Send response
+		print('Response buyer from restaurant:',response_data )
+		self.send_group(
+			connection.buyer.phone, 'request.connect.food', response_data
+		)
+
+		print('Response restaurant from restaurant:', response_data)
+		self.send_group(
+			connection.restaurant.phone, 'request.connect.food', response_data
+		)
+
 
 	#--------------------------------------------
 	#   Catch/all broadcast to client helpers
