@@ -39,6 +39,8 @@ urlpatterns = [
     path('rider-profile/<int:id>/', RiderProfileByIdView.as_view(), name='rider-profile-by-id'),
     path('update-profile/', UpdateUserProfileView.as_view(), name='update-profile'),
     path('driver/documents/', DriverDocumentsView.as_view(), name='driver-documents'),
-    path('apk-upload/', APKUploadView.as_view(), name='apk-upload'),
+    path('apk-upload/', APKUploadView.as_view(), name='apk-upload'),# Add these to your URL patterns
+    path('delete-account/', DeleteUserView.as_view(), name='delete-account'),
+    path('delete-account/<int:user_id>/', DeleteAccountByIdView.as_view(), name='delete-account-by-id'),
 
 ]

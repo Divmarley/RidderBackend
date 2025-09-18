@@ -132,26 +132,26 @@ ASGI_APPLICATION = 'driverapp.asgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 
  
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'django--db',              # your actual DB name
-#         'USER': 'root',            # your DB user
-#         'PASSWORD': 'yawigo',             # your DB password
-#         'HOST': '34.10.38.34',            # Cloud SQL public IP
-#         'PORT': '3306',                   # ✅ MySQL default port
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'django--db',              # your actual DB name
+        'USER': 'root',            # your DB user
+        'PASSWORD': 'yawigo',             # your DB password
+        'HOST': '34.10.38.34',            # Cloud SQL public IP
+        'PORT': '3306',                   # ✅ MySQL default port
+    }
+}
 
 # DATABASES = {
 #     'default': {

@@ -425,10 +425,65 @@ class DeleteUserView(APIView):
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, format=None):
-        user = get_object_or_404(CustomUser, id=request.user.id)
-        user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    
+        user = request.user
+        try:
+            # Delete related data first (optional - Django will cascade delete)
+            if hasattr(user, 'driverprofile'):
+                user.driverprofile.delete()
+            if hasattr(user, 'riderprofile'):
+                user.riderprofile.delete()
+            
+            # Delete PersonalInfo, VehicleInfo, Documents if they exist
+            PersonalInfo.objects.filter(driver=user).delete()
+            VehicleInfo.objects.filter(driver=user).delete()
+            Document.objects.filter(driver=user).delete()
+            
+            # Delete DriverOnline record if exists
+            DriverOnline.objects.filter(driver=user).delete()
+            
+            # Delete the user account
+            user.delete()
+            
+            return Response(
+                {'detail': 'Account deleted successfully'}, 
+                status=status.HTTP_204_NO_CONTENT
+            )
+        except Exception as e:
+            return Response(
+                {'detail': f'Error deleting account: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+class DeleteAccountByIdView(APIView):
+    """Admin view to delete any user account by ID"""
+    permission_classes = [IsAuthenticated]  # Add admin permission if needed
+
+    def delete(self, request, user_id, format=None):
+        user = get_object_or_404(CustomUser, id=user_id)
+        try:
+            # Delete related data
+            if hasattr(user, 'driverprofile'):
+                user.driverprofile.delete()
+            if hasattr(user, 'riderprofile'):
+                user.riderprofile.delete()
+            
+            PersonalInfo.objects.filter(driver=user).delete()
+            VehicleInfo.objects.filter(driver=user).delete()
+            Document.objects.filter(driver=user).delete()
+            DriverOnline.objects.filter(driver=user).delete()
+            
+            user.delete()
+            
+            return Response(
+                {'detail': 'User account deleted successfully'}, 
+                status=status.HTTP_204_NO_CONTENT
+            )
+        except Exception as e:
+            return Response(
+                {'detail': f'Error deleting user account: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 # class CreateAllDataView(APIView):
 #     permission_classes = [AllowAny]
 
