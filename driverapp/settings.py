@@ -144,7 +144,7 @@ ASGI_APPLICATION = 'driverapp.asgi.application'
  
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.mysql', 
         'NAME': 'django--db',              # your actual DB name
         'USER': 'root',            # your DB user
         'PASSWORD': 'yawigo',             # your DB password
