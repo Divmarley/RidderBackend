@@ -39,6 +39,8 @@ class RegisterView(APIView):
             try:
                 user = serializer.save()
 
+                print('user',user)
+
 
                 
                 if not user.email and not user.phone:
@@ -51,7 +53,7 @@ class RegisterView(APIView):
                 email_sent = False
                 email_error = None
                 if user.email :
-                    print(" user.email--->>d", user.email)
+                    # print(" user.email--->>d", user.email)
                     email_sent, email_error = send_verification_email(user)
 
 
@@ -128,6 +130,7 @@ class RegisterView(APIView):
                 return Response(response_data, status=status.HTTP_201_CREATED)
 
             except Exception as e:
+                print('eee',e)
                 return Response({
                     'detail': 'Registration failed',
                     'error': str(e)

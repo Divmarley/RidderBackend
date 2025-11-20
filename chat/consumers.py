@@ -504,7 +504,7 @@ class ChatConsumer(WebsocketConsumer):
 		)
 
 		# Send new friend object to receiver
-		serialized_friend = FriendSerializer(
+		serialized_friend = FriendSerializer(  
 			connection,
 			context={
 				'user': connection.receiver,

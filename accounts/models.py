@@ -60,7 +60,7 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
     email = models.EmailField(unique=True, null=True, blank=True)
     phone = models.CharField(max_length=15,  null=True, blank=True)
     name = models.CharField(max_length=255)
-    email_phone = models.CharField(max_length=255, null=True, blank=True)  # Optional field for email or phone  
+    email_phone = models.CharField(max_length=255, null=False, blank=False,unique=True, )  # Optional field for email or phone  
     account_type = models.CharField(max_length=20, choices=ACCOUNT_TYPE_CHOICES, default='rider')
     is_active = models.BooleanField(default=True)
     is_aproved = models.BooleanField(default=False)
@@ -76,7 +76,7 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
 
     objects = CustomUserManager()
 
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'email_phone'
     REQUIRED_FIELDS = ['name', 'account_type','is_aproved']
 
     def save(self, *args, **kwargs):

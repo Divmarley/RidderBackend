@@ -1,11 +1,10 @@
 # @format
-
 services:
   nginx:
     image: nginx:latest
     ports:
-      - '80:80'
-      - '443:443'
+      - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - /etc/letsencrypt:/etc/letsencrypt:ro
@@ -13,8 +12,7 @@ services:
       - media_volume:/code/media
       - ./nginx/logs:/var/log/nginx
     depends_on:
-      web:
-        condition: service_healthy
+      - web
     networks:
       - rider_network
     restart: always
@@ -22,10 +20,12 @@ services:
   web:
     build: .
     command: >
-      sh -c "export DJANGO_SETTINGS_MODULE=driverapp.settings &&
-             python manage.py collectstatic --noinput &&
-             python manage.py migrate &&
-             daphne -b 0.0.0.0 -p 8000 driverapp.asgi:application"
+      sh -c "
+        export DJANGO_SETTINGS_MODULE=driverapp.settings &&
+        python manage.py collectstatic --noinput &&
+        python manage.py migrate &&
+        daphne -b 0.0.0.0 -p 8000 driverapp.asgi:application
+      "
     environment:
       - DJANGO_SETTINGS_MODULE=driverapp.settings
     volumes:
@@ -33,11 +33,11 @@ services:
       - static_volume:/code/staticfiles
       - media_volume:/code/media
     expose:
-      - 8000
+      - "8000"
     env_file:
       - .env
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:8000']
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -56,16 +56,21 @@ services:
     container_name: rider_mysql_db
     env_file:
       - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
     ports:
-      - '3306:3306'
+      - "3306:3306"
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     networks:
       - rider_network
     healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -75,14 +80,13 @@ services:
     container_name: rider_phpmyadmin
     environment:
       PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      PMA_USER: ${MYSQL_USER}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
       UPLOAD_LIMIT: 400M
       MAX_EXECUTION_TIME: 2000
       MEMORY_LIMIT: 800MB
     ports:
-      - '8080:80'
+      - "8080:80"
     depends_on:
       - db
     restart: always
@@ -91,10 +95,11 @@ services:
 
   redis:
     image: redis:7-alpine
+    container_name: redis_server
     ports:
-      - '6379:6379'
+      - "6379:6379"
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
       retries: 5
@@ -108,62 +113,7 @@ volumes:
   mysql_data:
   static_volume:
   media_volume:
-  redis_data: # Add Redis volume
+  redis_data:
 
 networks:
   rider_network:
-# services:
-#   nginx:
-#     image: nginx:latest
-#     ports:
-#       - "80:80"
-#       - "443:443"
-#     volumes:
-#       - ./nginx:/etc/nginx/conf.d
-#       - /etc/letsencrypt:/etc/letsencrypt
-#     depends_on:
-#       - web
-
-#   web:
-#     build: .
-#     command: python manage.py runserver 0.0.0.0:8000
-#     volumes:
-#       - .:/app
-#     ports:
-#       - "8000:8000"
-#     env_file:
-#       - .env
-#     depends_on:
-#       - db
-
-#   db:
-#     image: mysql:8.0
-#     container_name: ridder_mysql_db
-#     env_file:
-#       - .env
-#     volumes:
-#       - mysql_data:/var/lib/mysql
-#     ports:
-#       - "3306:3306"
-#     command: --default-authentication-plugin=mysql_native_password
-#     restart: always
-
-#   phpmyadmin:
-#     image: phpmyadmin/phpmyadmin:latest
-#     container_name: ridder_phpmyadmin
-#     environment:
-#       PMA_HOST: db
-#       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-#       MYSQL_USER: ${MYSQL_USER}
-#       MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-#       UPLOAD_LIMIT: 400M
-#       MAX_EXECUTION_TIME : 2000
-#       MEMORY_LIMIT: 800MB
-#     ports:
-#       - "8080:80"
-#     depends_on:
-#       - db
-#     restart: always
-
-# volumes:
-#   mysql_data:
