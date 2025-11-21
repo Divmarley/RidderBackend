@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY",'SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "DEBUG")
 
-ALLOWED_HOSTS = ['www.yawigo224.com', 'localhost',"*",'127.0.0.1','localhost','178.128.163.244']
+ALLOWED_HOSTS = ['www.yawigo224.com', 'localhost',"*",'127.0.0.1','localhost','178.128.163.244','167.99.85.186']
  
 # CSRF_TRUSTED_ORIGINS = ['https://yawigo224.com']
 # SECURE_SSL_REDIRECT = True
@@ -45,6 +45,7 @@ CORS_ALLOWED_ORIGINS = [
     # Add your production URLs here
     'http://localhost',
     # 'http://172.20.10.3:8000',
+    'http://167.99.85.186:8000',
     # 'https://4cb6-154-161-162-196.ngrok-free.app',
 
 ]
@@ -271,8 +272,8 @@ CHANNEL_LAYERS = {
 	'default': {
 		'BACKEND': 'channels_redis.core.RedisChannelLayer',
 		'CONFIG': {
-			# 'hosts': [('redis', 6379)]
-			'hosts': [('127.0.0.1', 6379)]
+			'hosts': [('redis', 6379)]
+			# 'hosts': [('127.0.0.1', 6379)]
 		},
        
  

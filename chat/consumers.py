@@ -552,14 +552,17 @@ class ChatConsumer(WebsocketConsumer):
 
 	def receive_request_list(self, data):
 		user = self.scope['user']
+ 
 		# Get connection made to this  user
 		connections = Connection.objects.filter(
 			receiver=user,
 			accepted=False
 		)
+
+		print('connections',connections)
 		serialized = RequestSerializer(connections, many=True)
 		# Send requests lit back to this userr
-		self.send_group(str(user.id), 'request.list', serialized.data)
+		self.send_group(user.phone, 'request.list', serialized.data)
 	
 	def receive_search(self, data):
 		query = data.get('query')
@@ -596,7 +599,7 @@ class ChatConsumer(WebsocketConsumer):
 		# serialize results
 		serialized = SearchSerializer(users, many=True)
 		# Send search results back to this user
-		self.send_group(self.id, 'search', serialized.data)
+		self.send_group(self.scope['user'].phone, 'search', serialized.data)
   
 	def receive_thumbnail(self, data):
 		user = self.scope['user']
@@ -605,11 +608,12 @@ class ChatConsumer(WebsocketConsumer):
 		image = ContentFile(base64.b64decode(image_str))
 		# Update thumbnail field
 		filename = data.get('filename')
+		print('filename',filename)
 		user.thumbnail.save(filename, image, save=True)
 		# Serialize user
 		serialized = UserSerializer(user)
 		# Send updated user data including new thumbnail 
-		self.send_group(self.id, 'thumbnail', serialized.data)
+		self.send_group(self.scope['user'].phone, 'thumbnail', serialized.data)
 
 	def receive_driver_arrived(self, data):
 		phone = data.get('phone') 

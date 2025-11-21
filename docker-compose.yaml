@@ -1,28 +1,30 @@
 # @format
+version: "3.9"
+
 services:
-  nginx:
-    image: nginx:latest
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-      - static_volume:/code/staticfiles
-      - media_volume:/code/media
-      - ./nginx/logs:/var/log/nginx
-    depends_on:
-      - web
-    networks:
-      - rider_network
-    restart: always
+  # nginx:
+  #   image: nginx:latest
+  #   ports:
+  #     - '80:80'
+  #     - '443:443'
+  #   volumes:
+  #     - ./nginx/conf.d:/etc/nginx/conf.d
+  #     - ./certs:/etc/nginx/certs:ro      # mount SSL certificates
+  #     - static_volume:/code/staticfiles
+  #     - media_volume:/code/media
+  #     - ./nginx/logs:/var/log/nginx
+  #     - ./nginx/certs:/etc/nginx/certs:ro 
+      
+  #   depends_on:
+  #     - web
+  #   networks:
+  #     - rider_network
+  #   restart: always
 
   web:
     build: .
     command: >
       sh -c "
-        export DJANGO_SETTINGS_MODULE=driverapp.settings &&
-        python manage.py collectstatic --noinput &&
         python manage.py migrate &&
         daphne -b 0.0.0.0 -p 8000 driverapp.asgi:application
       "
@@ -33,7 +35,7 @@ services:
       - static_volume:/code/staticfiles
       - media_volume:/code/media
     expose:
-      - "8000"
+      - '8000'
     env_file:
       - .env
     healthcheck:
@@ -54,8 +56,6 @@ services:
   db:
     image: mysql:8.0
     container_name: rider_mysql_db
-    env_file:
-      - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -64,7 +64,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - '3306:3306'
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     networks:
@@ -86,7 +86,7 @@ services:
       MAX_EXECUTION_TIME: 2000
       MEMORY_LIMIT: 800MB
     ports:
-      - "8080:80"
+      - '8080:80'
     depends_on:
       - db
     restart: always
@@ -96,8 +96,8 @@ services:
   redis:
     image: redis:7-alpine
     container_name: redis_server
-    ports:
-      - "6379:6379"
+    # Remove host port mapping to avoid conflicts
+    # - '6379:6379'
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
