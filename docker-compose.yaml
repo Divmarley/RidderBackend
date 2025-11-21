@@ -1,5 +1,5 @@
 # @format
-version: '3.9'
+version: "3.9"
 
 services:
   # nginx:
@@ -13,8 +13,8 @@ services:
   #     - static_volume:/code/staticfiles
   #     - media_volume:/code/media
   #     - ./nginx/logs:/var/log/nginx
-  #     - ./nginx/certs:/etc/nginx/certs:ro
-
+  #     - ./nginx/certs:/etc/nginx/certs:ro 
+      
   #   depends_on:
   #     - web
   #   networks:
@@ -41,75 +41,75 @@ services:
     ports:
       - '8080:8000'
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:8000']
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
-    # depends_on:
-      # db:
-      #   condition: service_healthy
-      # redis:
-      #   condition: service_healthy
-    # networks:
-    #   - rider_network
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - rider_network
     restart: always
 
-  # db:
-  #   image: mysql:8.0
-  #   container_name: rider_mysql_db
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-  #     MYSQL_DATABASE: ${MYSQL_DATABASE}
-  #     MYSQL_USER: ${MYSQL_USER}
-  #     MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-  #   volumes:
-  #     - mysql_data:/var/lib/mysql
-  #   ports:
-  #     - '3306:3306'
-  #   command: --default-authentication-plugin=mysql_native_password
-  #   restart: always
-  #   networks:
-  #     - rider_network
-  #   healthcheck:
-  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
+  db:
+    image: mysql:8.0
+    container_name: rider_mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    networks:
+      - rider_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # phpmyadmin:
-  #   image: phpmyadmin/phpmyadmin:latest
-  #   container_name: rider_phpmyadmin
-  #   environment:
-  #     PMA_HOST: db
-  #     PMA_USER: ${MYSQL_USER}
-  #     PMA_PASSWORD: ${MYSQL_PASSWORD}
-  #     UPLOAD_LIMIT: 400M
-  #     MAX_EXECUTION_TIME: 2000
-  #     MEMORY_LIMIT: 800MB
-  #   ports:
-  #     - '8080:80'
-  #   depends_on:
-  #     - db
-  #   restart: always
-  #   networks:
-  #     - rider_network
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: rider_phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_USER: ${MYSQL_USER}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
+      UPLOAD_LIMIT: 400M
+      MAX_EXECUTION_TIME: 2000
+      MEMORY_LIMIT: 800MB
+    ports:
+      - '8080:80'
+    depends_on:
+      - db
+    restart: always
+    networks:
+      - rider_network
 
-  # redis:
-  #   image: redis:7-alpine
-  #   container_name: redis_server
-  #   # Remove host port mapping to avoid conflicts
-  #   # - '6379:6379'
-  #   healthcheck:
-  #     test: ['CMD', 'redis-cli', 'ping']
-  #     interval: 5s
-  #     timeout: 3s
-  #     retries: 5
-  #   volumes:
-  #     - redis_data:/data
-  #   networks:
-  #     - rider_network
-  #   restart: always
+  redis:
+    image: redis:7-alpine
+    container_name: redis_server
+    # Remove host port mapping to avoid conflicts
+    # - '6379:6379'
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - redis_data:/data
+    networks:
+      - rider_network
+    restart: always
 
 volumes:
   mysql_data:
@@ -117,5 +117,5 @@ volumes:
   media_volume:
   redis_data:
 
-# networks:
-  # rider_network:
+networks:
+  rider_network:
