@@ -117,5 +117,5 @@ volumes:
   media_volume:
   redis_data:
 
-networks:
-  rider_network:
+# networks:
+  # rider_network:
