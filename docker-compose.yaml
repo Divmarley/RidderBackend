@@ -51,8 +51,8 @@ services:
       #   condition: service_healthy
       # redis:
       #   condition: service_healthy
-    networks:
-      - rider_network
+    # networks:
+    #   - rider_network
     restart: always
 
   # db:
