@@ -5,15 +5,14 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      # - '8081:80'
+      - '80:80'
       - '443:443'
-    # volumes:
-    #   - ./nginx/conf.d:/etc/nginx/conf.d
-    #   - ./certs:/etc/nginx/certs:ro      # mount SSL certificates
-    #   - static_volume:/code/staticfiles
-    #   - media_volume:/code/media
-    #   - ./nginx/logs:/var/log/nginx
-    #   - ./nginx/certs:/etc/nginx/certs:ro 
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./certs:/etc/nginx/certs:ro
+      - static_volume:/code/staticfiles
+      - media_volume:/code/media
+      - ./nginx/logs:/var/log/nginx
       
     depends_on:
       - web
