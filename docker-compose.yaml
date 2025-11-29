@@ -8,12 +8,11 @@ services:
       - '443:443'
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./certs:/etc/nginx/certs:ro          # SSL certificates
+      - ./certs/yawigo224.com.pem:/etc/nginx/certs/fullchain.pem:ro
+      - ./certs/yawigo224.com-key.pem:/etc/nginx/certs/privkey.pem:ro
       - static_volume:/code/staticfiles
       - media_volume:/code/media
       - ./nginx/logs:/var/log/nginx
-      - ./certs/yawigo224.com.pem:/etc/nginx/certs/fullchain.pem:ro
-      - ./certs/yawigo224.com-key.pem:/etc/nginx/certs/privkey.pem:ro
     depends_on:
       web:
         condition: service_healthy
@@ -25,11 +24,17 @@ services:
     build: .
     command: >
       sh -c "
+        ./wait-for-db.sh &&
         python manage.py migrate &&
         daphne -b 0.0.0.0 -p 8000 driverapp.asgi:application
       "
     environment:
       - DJANGO_SETTINGS_MODULE=driverapp.settings
+      - DB_HOST=db
+      - DB_PORT=3306
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
     volumes:
       - .:/code
       - static_volume:/code/staticfiles
@@ -71,6 +76,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
+    platform: linux/amd64  # Fix for Apple M1/M2 or ARM hosts
     environment:
       PMA_HOST: db
       PMA_USER: ${MYSQL_USER}
@@ -107,3 +113,4 @@ volumes:
 
 networks:
   rider_network:
+    driver: bridge
