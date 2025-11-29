@@ -127,9 +127,7 @@ DATABASES = {
         'PASSWORD': os.environ.get("MYSQL_PASSWORD", "securepassword"),
         'HOST': os.environ.get("MYSQL_HOST", "db"),  # 'db' is the Docker service name
         'PORT': os.environ.get("MYSQL_PORT", "3306"),
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-        }
+         
     }
 }
 
@@ -142,50 +140,6 @@ DATABASES = {
 
 
 
- 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'django--db',              # your actual DB name
-#         'USER': 'root',            # your DB user
-#         'PASSWORD': 'yawigo',             # your DB password
-#         'HOST': '34.10.38.34',            # Cloud SQL public IP
-#         'PORT': '3306',                   # ✅ MySQL default port
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'django--db',              # your actual DB name
-#         'USER': 'root',            # your DB user
-#         'PASSWORD': '',             # your DB password
-#         'HOST': '127.0.0.1',            # Cloud SQL public IP
-#         'PORT': '3306',                   # ✅ MySQL default port
-#     }
-# }
-# 
-
-# if os.getenv("GAE_ENV", "").startswith("standard"):
-    # Production (App Engine uses socket)
-# DATABASES = {
-#     "default": {
-#     "ENGINE": "django.db.backends.postgresql_psycopg2",
-#     "HOST": "/cloudsql/circular-music-463403-p3:us-central:django-db",
-#     "NAME": "django-db",
-#     "USER": "django_user",
-#     "PASSWORD": "yawigo",
-#     "PORT": "5432",
-# }
-# }
-# else:
-#     # Local (via TCP using proxy)
-#      DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.sqlite3',
-#             'NAME': BASE_DIR / 'db.sqlite3',
-#         }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -328,3 +282,7 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
