@@ -12,6 +12,8 @@ services:
       - static_volume:/code/staticfiles
       - media_volume:/code/media
       - ./nginx/logs:/var/log/nginx
+      - ./certs/yawigo224.com.pem:/etc/nginx/certs/fullchain.pem:ro
+      - ./certs/yawigo224.com-key.pem:/etc/nginx/certs/privkey.pem:ro
     depends_on:
       web:
         condition: service_healthy
