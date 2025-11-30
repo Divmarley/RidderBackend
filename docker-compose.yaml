@@ -9,45 +9,36 @@ services:
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./certs:/etc/nginx/certs:ro
-      - static_volume:/code/staticfiles
+      - static_volume:/code/static
       - media_volume:/code/media
       - ./nginx/logs:/var/log/nginx
+      
     depends_on:
-      web:
-        condition: service_healthy
+      - web
     networks:
       - rider_network
     restart: always
 
   web:
     build: .
-    command: >
-      sh -c "
-        ./wait-for-db.sh &&
-        python manage.py migrate &&
-        daphne -b 0.0.0.0 -p 8000 driverapp.asgi:application
-      "
     environment:
       - DJANGO_SETTINGS_MODULE=driverapp.settings
-      - DB_HOST=db
-      - DB_PORT=3306
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_HOST=db
+      - REDIS_URL=redis://redis:6379/0
     volumes:
       - .:/code
-      - static_volume:/code/staticfiles
+      - static_volume:/code/static
       - media_volume:/code/media
     expose:
       - "8000"
     env_file:
       - .env
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
+    depends_on:
+      - db
+      - redis
     networks:
       - rider_network
     restart: always
@@ -61,52 +52,39 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
-    command: --default-authentication-plugin=mysql_native_password
-    networks:
-      - rider_network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: always
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    environment:
-      PMA_HOST: db
-      PMA_USER: ${MYSQL_USER}
-      PMA_PASSWORD: ${MYSQL_PASSWORD}
-      UPLOAD_LIMIT: 400M
-      MAX_EXECUTION_TIME: 2000
-    ports:
-      - "8080:80"
-    depends_on:
-      - db
     networks:
       - rider_network
     restart: always
 
   redis:
     image: redis:7-alpine
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
     volumes:
       - redis_data:/data
     networks:
       - rider_network
     restart: always
 
+  certbot:
+    image: certbot/certbot
+    volumes:
+      - ./certs:/etc/letsencrypt
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    entrypoint: >
+      sh -c "
+      certbot certonly --webroot --webroot-path=/code \
+      --email your-email@example.com \
+      --agree-tos --no-eff-email \
+      -d www.yawigo224.com -d yawigo224.com"
+    depends_on:
+      - nginx
+    networks:
+      - rider_network
+
 volumes:
   mysql_data:
+  redis_data:
   static_volume:
   media_volume:
-  redis_data:
 
 networks:
   rider_network:
