@@ -7,8 +7,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./certs:/etc/nginx/certs:ro
+      - ./nginx/conf.d:/nginx/conf.d
+      - ./certs:/nginx/certs:ro
       - static_volume:/code/staticfiles
       - media_volume:/code/media
       - ./nginx/logs:/var/log/nginx
