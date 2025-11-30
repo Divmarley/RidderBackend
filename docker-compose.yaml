@@ -1,4 +1,4 @@
-version: "3.9"
+
 
 services:
   nginx:
@@ -11,6 +11,7 @@ services:
       - ./certs/yawigo224.com.pem:/etc/nginx/certs/fullchain.pem:ro
       - ./certs/yawigo224.com-key.pem:/etc/nginx/certs/privkey.pem:ro
       - static_volume:/code/staticfiles
+      - ./certs:/etc/nginx/certs:ro
       - media_volume:/code/media
       - ./nginx/logs:/var/log/nginx
     depends_on:
@@ -85,7 +86,7 @@ services:
       MAX_EXECUTION_TIME: 2000
       MEMORY_LIMIT: 800MB
     ports:
-      - '8080:80'
+      - '8080:8080'
     depends_on:
       - db
     networks:
