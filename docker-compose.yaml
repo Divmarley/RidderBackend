@@ -4,10 +4,10 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - '80:80'
-      - '443:443'
+      - "80:80"
+      - "443:443"
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d       # SSL certificates
+      - ./nginx/conf.d:/etc/nginx/conf.d
       - ./certs:/etc/nginx/certs:ro
       - static_volume:/code/staticfiles
       - media_volume:/code/media
@@ -23,17 +23,23 @@ services:
     build: .
     command: >
       sh -c "
+        ./wait-for-db.sh &&
         python manage.py migrate &&
         daphne -b 0.0.0.0 -p 8000 driverapp.asgi:application
       "
     environment:
       - DJANGO_SETTINGS_MODULE=driverapp.settings
+      - DB_HOST=db
+      - DB_PORT=3306
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
     volumes:
       - .:/code
       - static_volume:/code/staticfiles
       - media_volume:/code/media
     expose:
-      - '8000'
+      - "8000"
     env_file:
       - .env
     healthcheck:
@@ -56,7 +62,7 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     ports:
-      - '3306:3306'
+      - "3306:3306"
     command: --default-authentication-plugin=mysql_native_password
     networks:
       - rider_network
@@ -75,9 +81,8 @@ services:
       PMA_PASSWORD: ${MYSQL_PASSWORD}
       UPLOAD_LIMIT: 400M
       MAX_EXECUTION_TIME: 2000
-      MEMORY_LIMIT: 800MB
     ports:
-      - '8080:80'
+      - "8080:80"
     depends_on:
       - db
     networks:
@@ -105,3 +110,4 @@ volumes:
 
 networks:
   rider_network:
+    driver: bridge
