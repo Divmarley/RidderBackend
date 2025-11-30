@@ -1,5 +1,3 @@
- 
-
 services:
   nginx:
     image: nginx:latest
@@ -8,11 +6,11 @@ services:
       - "443:443"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./certs:/etc/nginx/certs:ro
+      - ./nginx/certbot:/var/www/certbot
+      - ./certs:/etc/letsencrypt
       - static_volume:/code/static
       - media_volume:/code/media
       - ./nginx/logs:/var/log/nginx
-      
     depends_on:
       - web
     networks:
@@ -21,13 +19,14 @@ services:
 
   web:
     build: .
+    command: gunicorn driverapp.wsgi:application --bind 0.0.0.0:8000
     environment:
-      - DJANGO_SETTINGS_MODULE=driverapp.settings
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_HOST=db
-      - REDIS_URL=redis://redis:6379/0
+      DJANGO_SETTINGS_MODULE: driverapp.settings
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_HOST: db
+      REDIS_URL: redis://redis:6379/0
     volumes:
       - .:/code
       - static_volume:/code/static
@@ -68,17 +67,17 @@ services:
     image: certbot/certbot
     volumes:
       - ./certs:/etc/letsencrypt
-      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/certbot:/var/www/certbot
     entrypoint: >
       sh -c "
-      certbot certonly --webroot --webroot-path=/code \
-      --email your-email@example.com \
-      --agree-tos --no-eff-email \
-      -d www.yawigo224.com -d yawigo224.com"
-    depends_on:
-      - nginx
+      certbot certonly --webroot --webroot-path=/var/www/certbot
+      --email kofikumi64@gmail.com --agree-tos --no-eff-email
+      -d yawigo224.com -d www.yawigo224.com
+      "
     networks:
       - rider_network
+    depends_on:
+      - nginx
 
 volumes:
   mysql_data:
