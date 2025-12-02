@@ -48,7 +48,7 @@ services:
     restart: always
 
   db:
-    image: mysql:8.0
+    image: mysql:latest
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -78,7 +78,7 @@ services:
       MAX_EXECUTION_TIME: 2000
       MEMORY_LIMIT: 800MB
     ports:
-      - "8080:80"
+      - "8080:8080"
     depends_on:
       - db
     networks:
