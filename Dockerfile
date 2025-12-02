@@ -1,17 +1,18 @@
-# Stage 1: Build stage
+# Stage 1: Builder
 FROM python:3.10-slim as builder
 
-# Set environment variables
+# Environment variables
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Install system dependencies
+# Install build dependencies
 RUN apt-get update -y && apt-get install -y \
-    pkg-config \
-    python3-dev \
     build-essential \
+    python3-dev \
     default-libmysqlclient-dev \
-    --no-install-recommends
+    pkg-config \
+    --no-install-recommends \
+ && rm -rf /var/lib/apt/lists/*
 
 # Set work directory
 WORKDIR /code
@@ -20,42 +21,41 @@ WORKDIR /code
 COPY requirements.txt /code/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Stage 2: Production stage
+# Stage 2: Production
 FROM python:3.10-slim
 
-WORKDIR /code
-
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+# Environment variables
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE=driverapp.settings
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    netcat-traditional \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Install MySQL client (optional if you need it in production)
-RUN apt-get update && apt-get install -y default-mysql-client --no-install-recommends
 
 # Set work directory
 WORKDIR /code
 
-# Copy only the necessary libraries from the builder stage
+# Install runtime dependencies
+RUN apt-get update -y && apt-get install -y \
+    netcat-traditional \
+    curl \
+    default-mysql-client \
+    --no-install-recommends \
+ && rm -rf /var/lib/apt/lists/*
+
+# Copy Python packages from builder stage
 COPY --from=builder /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Copy project files
 COPY . /code/
 
-# Copy the entrypoint script
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Copy and set permissions for entrypoint
+COPY entrypoint.sh /code/entrypoint.sh
+RUN chmod +x /code/entrypoint.sh
 
-# Create directories
+# Create necessary directories
 RUN mkdir -p /code/staticfiles /code/media
 
-# Expose the port the app runs on
+# Expose Daphne port
 EXPOSE 8000
 
+# Entrypoint
 ENTRYPOINT ["/code/entrypoint.sh"]
