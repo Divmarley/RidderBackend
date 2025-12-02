@@ -25,6 +25,9 @@ export DJANGO_SETTINGS_MODULE=driverapp.settings
 
 # Apply migrations
 echo "Applying database migrations..."
+python manage.py makemigrations
+
+
 python manage.py migrate --noinput
 
 # Collect static files

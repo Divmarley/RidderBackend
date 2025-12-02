@@ -8,7 +8,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./certs:/etc/nginx/certs:ro       # SSL certificates
+      - ./certs:/etc/nginx/certs:ro
       - static_volume:/code/staticfiles
       - media_volume:/code/media
       - ./nginx/logs:/var/log/nginx
@@ -21,7 +21,7 @@ services:
 
   web:
     build: .
-    command: ./entrypoint.sh   # uses your wait-for-db.sh logic
+    command: /code/entrypoint.sh
     environment:
       DJANGO_SETTINGS_MODULE: driverapp.settings
       MYSQL_HOST: db
@@ -39,6 +39,11 @@ services:
       - "8000"
     env_file:
       - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8000 || exit 1"]
       interval: 10s
@@ -50,7 +55,7 @@ services:
     restart: always
 
   db:
-    image: mysql:8.1   # use MySQL 8.x instead of latest (9.x has breaking changes)
+    image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -60,14 +65,14 @@ services:
       - mysql_data:/var/lib/mysql
     ports:
       - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
     networks:
       - rider_network
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h db -u root -p${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 30s
     restart: always
 
   phpmyadmin:
@@ -76,9 +81,6 @@ services:
       PMA_HOST: db
       PMA_USER: ${MYSQL_USER}
       PMA_PASSWORD: ${MYSQL_PASSWORD}
-      UPLOAD_LIMIT: 400M
-      MAX_EXECUTION_TIME: 2000
-      MEMORY_LIMIT: 800MB
     ports:
       - "8080:8080"
     depends_on:
