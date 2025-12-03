@@ -1,6 +1,9 @@
 version: "3.9"
 
 services:
+  # =========================
+  # NGINX
+  # =========================
   nginx:
     image: nginx:latest
     ports:
@@ -8,7 +11,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./certs:/etc/nginx/certs:ro       # SSL certificates
+      - ./certs:/etc/nginx/certs:ro
       - static_volume:/code/staticfiles
       - media_volume:/code/media
       - ./nginx/logs:/var/log/nginx
@@ -21,6 +24,9 @@ services:
       - rider_network
     restart: always
 
+  # =========================
+  # Django
+  # =========================
   web:
     build: .
     command: /code/entrypoint.sh
@@ -51,6 +57,9 @@ services:
       - rider_network
     restart: always
 
+  # =========================
+  # MySQL
+  # =========================
   db:
     image: mysql:8.0
     environment:
@@ -72,39 +81,57 @@ services:
       retries: 5
     restart: always
 
+  # =========================
+  # phpMyAdmin
+  # =========================
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     environment:
       PMA_HOST: db
       PMA_USER: ${MYSQL_USER}
       PMA_PASSWORD: ${MYSQL_PASSWORD}
-    expose:
-      - "80"
+    ports:
+      - "8080:80"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - rider_network
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  # =========================
+  # Redis
+  # =========================
   redis:
     image: redis:7-alpine
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
     volumes:
       - redis_data:/data
     networks:
       - rider_network
     restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
+# =========================
+# Volumes
+# =========================
 volumes:
   mysql_data:
   static_volume:
   media_volume:
   redis_data:
 
+# =========================
+# Networks
+# =========================
 networks:
   rider_network:
     driver: bridge
