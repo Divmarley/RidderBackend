@@ -1,4 +1,6 @@
-version: "3.9"
+# @format
+
+version: '3.9'
 
 services:
   # =========================
@@ -7,19 +9,17 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      - ./certs:/etc/nginx/certs:ro
-      - static_volume:/code/staticfiles
-      - media_volume:/code/media
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./certs/letsencrypt:/etc/letsencrypt:ro
+      - ./certs/certbot:/var/www/certbot:ro
+      - static_volume:/code/staticfiles:ro
+      - media_volume:/code/media:ro
       - ./nginx/logs:/var/log/nginx
     depends_on:
-      web:
-        condition: service_healthy
-      phpmyadmin:
-        condition: service_healthy
+      - web
     networks:
       - rider_network
     restart: always
@@ -44,11 +44,11 @@ services:
       - static_volume:/code/staticfiles
       - media_volume:/code/media
     expose:
-      - "8000"
+      - '8000'
     env_file:
       - .env
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8000 || exit 1"]
+      test: ['CMD-SHELL', 'curl -f http://localhost:8000 || exit 1']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -70,12 +70,12 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - '3306:3306'
     command: --default-authentication-plugin=mysql_native_password
     networks:
       - rider_network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -91,7 +91,7 @@ services:
       PMA_USER: ${MYSQL_USER}
       PMA_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "8080:80"
+      - '8080:80'
     depends_on:
       db:
         condition: service_healthy
@@ -99,7 +99,7 @@ services:
       - rider_network
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
+      test: ['CMD-SHELL', 'curl -f http://localhost || exit 1']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -115,7 +115,7 @@ services:
       - rider_network
     restart: always
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 3s
       retries: 5
