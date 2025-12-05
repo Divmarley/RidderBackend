@@ -555,7 +555,7 @@ class ChatConsumer(WebsocketConsumer):
  
 		# Get connection made to this  user
 		connections = Connection.objects.filter(
-			receiver=user,
+			receiver=user.id,
 			accepted=False
 		)
 
