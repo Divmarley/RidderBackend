@@ -37,18 +37,18 @@ ALLOWED_HOSTS = ['www.yawigo224.com', 'localhost',"*",'127.0.0.1','localhost','1
 
 CORS_ORIGIN_ALLOW_ALL = True  
 # Allow all origins to access your API
-CORS_ALLOWED_ORIGINS = [
-    "https://www.yawigo224.com",
-    # "http://localhost:3000",  # React Native development server URL
-    "http://127.0.0.1:8080",  # Alternative localhost URL
-    "http://159.65.46.227:8080",  # Alternative localhost URL
-    # Add your production URLs here
-    'http://localhost',
-    # 'http://172.20.10.3:8000',
-    'http://159.65.46.227:8000',
-    # 'https://4cb6-154-161-162-196.ngrok-free.app',
+# CORS_ALLOWED_ORIGINS = [
+#     "https://www.yawigo224.com",
+#     # "http://localhost:3000",  # React Native development server URL
+#     "http://127.0.0.1:8080",  # Alternative localhost URL
+#     "http://159.65.46.227:8080",  # Alternative localhost URL
+#     # Add your production URLs here
+#     'http://localhost',
+#     # 'http://172.20.10.3:8000',
+#     'http://159.65.46.227:8000',
+#     # 'https://4cb6-154-161-162-196.ngrok-free.app',
 
-]
+# ]
 
 # If you want to allow all origins, use the following setting
 CORS_ALLOW_ALL_ORIGINS = True
@@ -91,7 +91,9 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'driverapp.urls'
 
 # Site URL for absolute URLs in emails
-SITE_URL = 'http://localhost:8000'  # Change in production
+# SITE_URL = 'http://localhost:8000'  # Change in production
+SITE_URL = 'https://www.yawigo224.com'
+
 
 TEMPLATES = [
     {
