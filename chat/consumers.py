@@ -559,7 +559,7 @@ class ChatConsumer(WebsocketConsumer):
 			accepted=False
 		)
 
-		print('connections-->>>',connections)
+		print('connections-->>>',connections.receiver__phone)
 		serialized = RequestSerializer(connections, many=True)
 		# Send requests lit back to this userr
 		self.send_group(user.phone, 'request.list', serialized.data)
