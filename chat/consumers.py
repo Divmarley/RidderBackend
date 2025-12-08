@@ -10,7 +10,7 @@ from django.db.models import Q, Exists, OuterRef
 from django.db.models.functions import Coalesce
 
 from accounts.models import CustomUser, VehicleInfo
-from food.models import FoodConnection, FoodMenu, Order, OrderItem, Restaurant
+from food.models import FoodConnection, FoodMenu, Order, OrderItem, Restaurant, generate_order_id
 from food.serializers import FoodMenuSerializer, OrderSerializer
 from ride.models import DriverHistory, RideHistory, TripHistory
 
@@ -131,7 +131,7 @@ class ChatConsumer(WebsocketConsumer):
 		elif data_source == 'thumbnail':
 			self.receive_thumbnail(data)
 		elif data_source == 'create.food.order':
-			logger.debug('hello')
+			 
 			self.receive_order_create(data)
 		elif data_source == 'order.list':
 			self.receive_order_list(data)
@@ -279,6 +279,7 @@ class ChatConsumer(WebsocketConsumer):
 
 	def receive_friend_list(self, data):
 		user = self.scope['user']
+		
 		# Latest message subquery
 		latest_message = Message.objects.filter(
 			connection=OuterRef('id')
@@ -394,13 +395,13 @@ class ChatConsumer(WebsocketConsumer):
 			'message': serialized_message.data,
 			'friend': serialized_friend.data
 		}
-		self.send_group(str(recipient.phone), 'message.send', data)
+		self.send_group(str(recipient.id), 'message.send', data)
 
 	def receive_message_type(self, data):
 		user = self.scope['user']
 		recipient_phone = data.get('phone')
 		data = {
-			'phone': user.phone
+			'phone': str(self.scope['user'].phone)
 		}
 		self.send_group(str(recipient_phone), 'message.type', data)
 
@@ -558,12 +559,10 @@ class ChatConsumer(WebsocketConsumer):
 			receiver=user.id,
 			accepted=False
 		)
-
-		print('connections-->>>',connections)
+ 
 		serialized = RequestSerializer(connections, many=True)
 		# Send requests lit back to this userr
-		print('serialized.data',serialized.data)	
-		self.send_group(user.phone, 'request.list', serialized.data)
+		self.send_group(str(self.scope['user'].id), 'request.list', serialized.data)
 	
 	def receive_search(self, data):
 		query = data.get('query')
@@ -600,7 +599,7 @@ class ChatConsumer(WebsocketConsumer):
 		# serialize results
 		serialized = SearchSerializer(users, many=True)
 		# Send search results back to this user
-		self.send_group(self.scope['user'].phone, 'search', serialized.data)
+		self.send_group(str(self.scope['user'].id), 'search', serialized.data)
   
 	def receive_thumbnail(self, data):
 		user = self.scope['user']
@@ -614,7 +613,7 @@ class ChatConsumer(WebsocketConsumer):
 		# Serialize user
 		serialized = UserSerializer(user)
 		# Send updated user data including new thumbnail 
-		self.send_group(self.scope['user'].phone, 'thumbnail', serialized.data)
+		self.send_group(str(self.scope['user'].id), 'thumbnail', serialized.data)
 
 	def receive_driver_arrived(self, data):
 		phone = data.get('phone') 
@@ -1008,7 +1007,7 @@ class ChatConsumer(WebsocketConsumer):
 				# ).first()
 
 				connection = Connection.objects.filter(
-					sender__phone=user.phone,  
+					sender__phone=str(self.scope['user'].id),  
 				).first()
 
 				print('connection Received riders location--->>>>>>',connection) 
@@ -1243,6 +1242,7 @@ class ChatConsumer(WebsocketConsumer):
 	#--------------------------------------------
 
 	def send_group(self, group, source, data):
+		print(f"Sending to group: {group}, source: {source}, data: {data}")
 		response = {
 			'type': 'broadcast_group',
 			'source': source,

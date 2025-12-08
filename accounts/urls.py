@@ -27,7 +27,7 @@ router.register(r'vehicles-info-by-id', GetDriverVehicleInfoByIdViewSet, basenam
 urlpatterns = [
     path('', HomeView.as_view(), name='index'),
     path('register/', RegisterView.as_view(), name='register'),
-    path('login/', LoginView.as_view(), name='login'),
+    path('login/', LoginAPIView.as_view(), name='login'),
     path('verify-login/', VerifyLoginView.as_view(), name='verify-login'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain'),
@@ -42,5 +42,6 @@ urlpatterns = [
     path('apk-upload/', APKUploadView.as_view(), name='apk-upload'),# Add these to your URL patterns
     path('delete-account/', DeleteUserView.as_view(), name='delete-account'),
     path('delete-account/<int:user_id>/', DeleteAccountByIdView.as_view(), name='delete-account-by-id'),
+    path("forgot-password/", ForgotPasswordView.as_view(), name="forgot-password"),
 
 ]

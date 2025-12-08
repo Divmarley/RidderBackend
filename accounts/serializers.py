@@ -76,56 +76,93 @@ class RiderProfileSerializer(serializers.ModelSerializer):
         model = RiderProfile
         fields = ['id', 'user', 'payment_method', 'preferred_driver_rating','access_token']
 
+from rest_framework import serializers
+from .models import CustomUser
+from django.core.exceptions import ValidationError
+
 class RegisterSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=False, default="")
-    email_phone= serializers.CharField(required=False, allow_blank=True, default="")
-
     
     class Meta:
         model = CustomUser
-        fields = ['email','phone','email_phone', 'name', 'password', 'account_type','is_active']
+        fields = ['email', 'phone', 'name', 'password', 'account_type', 'is_active']
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate(self, attrs):
-        if not attrs.get('email') and not attrs.get('phone'):
+        email = attrs.get('email')
+        phone = attrs.get('phone')
+        
+        if not email and not phone:
             raise serializers.ValidationError("Either email or phone is required.")
+
+        # Check if a user with the same email or phone exists
+        email_phone = email if email else phone
+        if CustomUser.objects.filter(email_phone=email_phone).exists():
+            raise serializers.ValidationError("A user with this email or phone already exists.")
+
         return attrs
 
     def create(self, validated_data):
+        email = validated_data.get('email')
+        phone = validated_data.get('phone')
+        name = validated_data.get('name', '')
+        password = validated_data['password']
+        account_type = validated_data['account_type']
+        is_active = validated_data.get('is_active', True)
+
+        # Set email_phone automatically
+        email_phone = email if email else phone
+
         user = CustomUser.objects.create_user(
-            email=validated_data.get('email'),
-            phone= validated_data.get('phone'),  # Making phone optional
-            email_phone=validated_data.get('email_phone'),  # Making email_phone optional
-            name=validated_data.get('name'),  # Making name optional
-            is_active=validated_data.get('is_active'), 
-            password=validated_data['password'],
-            account_type=validated_data['account_type']
+            email=email,
+            phone=phone,
+            email_phone=email_phone,
+            name=name,
+            password=password,
+            account_type=account_type,
+            is_active=is_active
         )
-        user.generate_verification_code()
-        # if user.account_type == 'driver':
-        #     DriverProfile.objects.create(user=user.id)
-        
+
+        # Generate verification code
+        user.verification_code = user.generate_verification_code()
+        user.save()
+
         return user
 
-import re
-class LoginSerializer(serializers.Serializer):
-    phone = serializers.CharField()
 
-    def validate_phone(self, value):
-        # Sanitize the phone number to remove any invalid characters
-        sanitized_phone = re.sub(r'[^a-zA-Z0-9\-_\.]', '', value)
-        
-        # Ensure the sanitized phone number meets the length requirements
-        if len(sanitized_phone) > 100:
-            raise serializers.ValidationError("Phone number is too long after sanitization.")
-        
-        return sanitized_phone
+import re 
+class LoginSerializer(serializers.Serializer):
+    phone = serializers.CharField(required=False, allow_blank=True)
+    email = serializers.EmailField(required=False, allow_blank=True)
+
+    def validate(self, attrs):
+        phone = attrs.get("phone", "")
+        email = attrs.get("email", "")
+        print("Validating LoginSerializer with phone:", phone, "and email:", email)
+        # Require at least one field
+        if not phone and not email:
+            raise serializers.ValidationError("Provide either phone or email.")
+
+        # Sanitize phone if provided
+        if phone:
+            sanitized_phone = re.sub(r'[^0-9]', '', phone)  # keep only digits
+            if len(sanitized_phone) > 20:
+                raise serializers.ValidationError("Phone number is too long.")
+            
+            attrs["phone"] = sanitized_phone
+
+        return attrs
 
     def create_group_name(self):
-        phone = self.validated_data.get('phone')
-        # Ensure phone number is sanitized
-        sanitized_phone = self.validate_phone(phone)
-        return sanitized_phone
+        """
+        Group name should be based on sanitized phone OR email.
+        """
+        phone = self.validated_data.get("phone")
+        email = self.validated_data.get("email")
+
+        # Prefer phone → fallback to email
+        return phone if phone else email
+
 
 class VerifyLoginSerializer(serializers.Serializer):
     # phone = serializers.CharField()
@@ -263,3 +300,16 @@ class APKUploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = APKUpload
         fields = ['id', 'apk_file', 'version', ]
+
+
+ 
+
+class ForgotPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+    def validate_email(self, value):
+ 
+
+        if not CustomUser.objects.filter(email=value).exists():
+            raise serializers.ValidationError("User with this email does not exist.")
+        return value

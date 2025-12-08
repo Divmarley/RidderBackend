@@ -77,14 +77,35 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
     objects = CustomUserManager()
 
     USERNAME_FIELD = 'email_phone'
-    REQUIRED_FIELDS = ['name', 'account_type','is_aproved']
+    REQUIRED_FIELDS = ['name', 'account_type']
 
     def save(self, *args, **kwargs):
         if not self.email and not self.phone:
-            raise ValueError('The Email or Phone field must be set')
+            raise ValueError("Email or Phone must be set")
+
+        # Auto-generate login identifier
+        if not self.email_phone:
+            self.email_phone = self.email if self.email else self.phone
+
         if not self.verification_code:
             self.verification_code = self.generate_verification_code()
+
         super().save(*args, **kwargs)
+
+    def create_user(self, email=None, phone=None, password=None, account_type=None, **extra_fields):
+        if not email and not phone:
+            raise ValueError("Email or Phone is required")
+
+        email = self.normalize_email(email) if email else None
+
+        extra_fields.setdefault("email_phone", email if email else phone)
+
+        user = self.model(email=email, phone=phone, account_type=account_type, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+
 
     def generate_verification_code(self):
         return ''.join(random.choices(string.digits, k=4))
@@ -247,7 +268,6 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 class PersonalInfo(models.Model):
     driver = models.ForeignKey(CustomUser, related_name="driver_info", on_delete=models.CASCADE)
-    email = models.EmailField(null=True, blank=True)
     name = models.CharField(max_length=100)
     email = models.EmailField(null=True, blank=True)
     phone = models.CharField(max_length=15,null=True, blank=True)

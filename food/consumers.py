@@ -54,6 +54,8 @@ class FoodConsumer(WebsocketConsumer):
             self.receive_food_list(data)
         elif data_source == 'list.orders':
             self.list_orders()
+        elif data_source == 'list.sender.orders':
+            self.list_sender_orders()
         elif data_source == 'update.order.status':
             self.update_order_status(data)
 
@@ -384,18 +386,18 @@ class FoodConsumer(WebsocketConsumer):
         # Send response
         print('Response buyer from restaurant:',response_data )
         self.send_group(
-            connection.buyer.phone, 'request.connect.food', response_data
+            str(connection.buyer.id), 'request.connect.food', response_data
         )
 
         print('Response restaurant from restaurant:', response_data)
         self.send_group(
-            connection.restaurant.phone, 'request.connect.food', response_data
+            str(connection.restaurant.id), 'request.connect.food', response_data
         )
-
+    # this is for resturent ower 
     def list_orders(self):
   
         user = self.scope['user']
-        print('user',user.phone)
+        print('user',user)
         # if not user:
         #     self.send(text_data=json.dumps({
         #         'source': 'list.orders',
@@ -458,9 +460,83 @@ class FoodConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps(response_data))
 
         self.send_group(
-			user.phone , 'list.orders', response_data
+			str(user.id) , 'list.orders', response_data
 		)
 
+    # this is for user sender the use 
+    # def to list all order 
+    # list.sender.orders
+
+    def list_sender_orders(self):
+  
+        user = self.scope['user']
+        print('user',user)
+        # if not user:
+        #     self.send(text_data=json.dumps({
+        #         'source': 'list.orders',
+        #         'error': 'User is not authenticated'
+        #     }))
+        #     return
+
+        # Fetch orders where the user is the sender or receiver
+ 
+        orders = Order.objects.filter(
+            sender__id=user.id
+        ) | Order.objects.filter(sender__id=user.id)
+        # print('list_orders-->>orders',orders)
+        # Prepare serialized orders data with item details
+        orders_data = []
+        for order in orders:
+          
+            # Fetch items related to the order
+            order_items = []
+            for item in order.items.all(): 
+                item_data = {
+                    "order_id": order.order_id,  # Use order.order_id for the order ID
+                    "item_id": item.food_menu.id,  # Corrected here
+                    "quantity": item.quantity,
+                    "name": item.food_menu.name,
+                    "description": item.food_menu.description,
+                    # "image": item.food_menu.image,
+                    "price": float(item.food_menu.price)  # Convert Decimal to float
+
+
+                }
+                # print('item_data',item_data)
+                order_items.append(item_data)
+
+            # Add order details including item data
+            
+            orders_data.append({
+                "id": order.id,
+                "status": order.status,
+                "location": order.location,
+                "total_price": float(order.total_price),  # Convert Decimal to float
+                "items": order_items,
+                "order_id": order.order_id,
+                "connection_id": order.food_connection_id,
+                'created_at':str(order.created_at),
+                'updated_at':str(order.updated_at)
+            })
+            # serialized = OrderSerializer(order_items)
+            # print('Order serialized-->',serialized)
+            
+
+        # Send back the detailed orders list to the client
+        response_data = {
+            'source': 'list.sender.orders',
+            'status': 'success', 
+            "data":orders_data
+        }
+
+        # Send serialized data back to the client
+        self.send(text_data=json.dumps(response_data))
+
+        self.send_group(
+			str(user.id) , 'list.sender.orders', response_data
+		)
+
+    # returns list of all sender's orders
 
     def receive_food_list(self, data):
         user = self.scope['user']

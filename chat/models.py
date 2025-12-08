@@ -3,10 +3,11 @@ from django.contrib.auth import get_user_model
 from accounts.models import CustomUser
  
 class Connection(models.Model):
-    sender = models.ForeignKey(
+    sender = models.OneToOneField(
         CustomUser,
         related_name='sent_connections',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        unique=True
     )
     location = models.JSONField()
     status = models.CharField(max_length=300)

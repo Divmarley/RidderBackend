@@ -2,6 +2,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView,View
+from requests import request
 from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -28,109 +29,62 @@ class HomeView(View):
         }
         return render(request, self.template_name, context)
 
-
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import RegisterSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+ 
 class RegisterView(APIView):
     permission_classes = (AllowAny,)
 
-    def post(self, request): 
+    def post(self, request):
         serializer = RegisterSerializer(data=request.data)
-        
+
         if serializer.is_valid():
             try:
                 user = serializer.save()
 
-                print('user',user)
-
-
-                
-                if not user.email and not user.phone:
-                    return Response(
-                        {'detail': 'Email or phone number is required'}, 
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
-
-                # Send verification email if email is provided
+                # Send verification email if user has email
                 email_sent = False
                 email_error = None
-                if user.email :
-                    # print(" user.email--->>d", user.email)
+                if user.email:
                     email_sent, email_error = send_verification_email(user)
 
-
-                # Generate access token
+                # Generate JWT tokens
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
-                user = serializer.save() 
-                if user.account_type=='driver': 
+
+                # Create DriverOnline instance if user is driver
+                if user.account_type == 'driver':
                     DriverOnline.objects.create(
                         driver=user,
-                        phone=request.data.get('phone'),  # Ensure phone number is part of registration data
-                        location=request.data.get('location'),  # Default location, adjust as needed
-                        latitude=request.data.get('latitude'),     # Default latitude, adjust as needed
-                        longitude=request.data.get('longitude'),   # Default longitude, adjust as needed
+                        phone=user.phone,
+                        location=request.data.get('location', ''),
+                        latitude=request.data.get('latitude', 0.0),
+                        longitude=request.data.get('longitude', 0.0),
                         push_token=request.data.get('push_token'),
-                        ride_type=request.data.get('ride_type'),
-                        # ride_type='Car'  # Ensure phone number is part of registration data
-                        # rideType='Car'
+                        ride_type=request.data.get('ride_type', 'Car')
                     )
-                    
-                # # Create Restaurant instance if the account type is 'restaurants'
-                # elif user.account_type == 'restaurants':
-                #     # Create associated Image, Rating, Details, and Location instances
-                #     image = Image.objects.create(
-                #         uri=request.data.get('image_uri'),
-                #         border_radius=request.data.get('border_radius', 10)
-                #     )
-                    
-                #     rating = Rating.objects.create(
-                #         value=request.data.get('rating_value', 0.0),
-                #         number_of_ratings=request.data.get('number_of_ratings', 0)
-                #     )
-                    
-                #     # details = Details.objects.create(
-                #     #     name=request.data.get('restaurant_name'),
-                #     #     price_range=request.data.get('price_range', '$0 - $100'),
-                #     #     delivery_time=request.data.get('delivery_time', '20-30 mins')
-                #     # )
-                    
-                #     location = Location.objects.create(
-                #         address=request.data.get('address'),
-                #         city=request.data.get('city'),
-                #         country=request.data.get('country'),
-                #         coordinates={
-                #             'latitude': request.data.get('latitude', '0.0'),
-                #             'longitude': request.data.get('longitude', '0.0')
-                #         }
-                #     )
-    
-               
-                # Create response data
+
                 response_data = {
                     'detail': 'User created successfully',
                     'access_token': access_token,
+                    'refresh_token': str(refresh),
                     'verification_code': user.verification_code,
                     'id': user.id
                 }
 
-                # Add email status to response
                 if user.email:
                     response_data['email_status'] = {
                         'sent': email_sent,
                         'error': email_error
                     }
 
-                # Handle account specific setup
-                if user.account_type == 'driver':
-                    # ... your existing driver setup code ...
-                    pass
-                elif user.account_type == 'restaurants':
-                    # ... your existing restaurant setup code ...
-                    pass
-
                 return Response(response_data, status=status.HTTP_201_CREATED)
 
             except Exception as e:
-                print('eee',e)
                 return Response({
                     'detail': 'Registration failed',
                     'error': str(e)
@@ -149,71 +103,177 @@ class TokenObtainView(APIView):
             'access': str(refresh.access_token),
         })
 
-class LoginView(APIView):
-    permission_classes = [AllowAny] 
+
+
+
+class LoginAPIView(APIView):
+
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
-        
+
         if not serializer.is_valid():
-            print(serializer.errors,"serializer.errors")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        phone = request.data.get('phone') 
-        email = request.data.get('email') 
-        verification_code = request.data.get('verification_code')
-        password = request.data.get('password')
+        phone = serializer.validated_data.get("phone")
+        email = serializer.validated_data.get("email")
+        password = request.data.get("password")
 
+        user = None
+
+        # LOGIN WITH EMAIL
         if email:
-            # Login with email and password
             try:
                 user = CustomUser.objects.get(email=email)
-                user = authenticate(request, email=email, password=password)
-                if user is not None:
-                    # Generate access token
-                    refresh = RefreshToken.for_user(user)
-                    access_token = str(refresh.access_token)
-                    return Response({
-                        'detail': 'Login successful',
-                        'access_token': access_token
-                    }, status=status.HTTP_200_OK)
-                else:
-                    return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-            except ObjectDoesNotExist:
+                print("User found with email:", user.password)
+                email_sent, email_error = send_verification_email(user)
+                print(' email_sent, email_error', email_sent, email_error)
+            except CustomUser.DoesNotExist:
+                return Response({"detail": "Email does not exist"}, status=404)
 
-                return Response({'detail': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
-        
+            if not password:
+                return Response({"detail": "Password required for email login"}, status=400)
+
+            if not user.check_password(password):
+                return Response({"detail": "Invalid password"}, status=401)
+
+        # LOGIN WITH PHONE
         elif phone:
-            # Login with phone and verification code
-            
             try:
                 user = CustomUser.objects.get(phone=phone)
-    
-                if verification_code:
-                    # Verify phone number using verification code
-                    if user.verification_code == verification_code:
-                        # Clear verification code after successful verification
-                        user.verification_code = user.generate_verification_code()
-                        
-                        user.save()
-                        return Response({'detail': 'Verification successful','mes':'hi'}, status=status.HTTP_200_OK)
-                    else:
-                        return Response({'detail': 'Invalid verification code'}, status=status.HTTP_400_BAD_REQUEST)
-                else:
-                    # Generate and send verification code
-                    user.generate_verification_code()
-                   
-                    return Response({
-                        'detail': 'Verification code sent',
-                        'verification_code': user.verification_code,
-                        'account_type': user.account_type
+            except CustomUser.DoesNotExist:
+                return Response({"detail": "Phone does not exist"}, status=404)
 
-                    }, status=status.HTTP_200_OK)
-            except ObjectDoesNotExist:
-            
-                return Response({'detail': 'User with this phone number does not exist'}, status=status.HTTP_404_NOT_FOUND)
-        
+            # Phone-only auto-login
+            if password:
+                if not user.check_password(password):
+                    return Response({"detail": "Invalid password"}, status=401)
+
         else:
-            return Response({'detail': 'Please provide either email or phone'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"detail": "Phone or Email required"}, status=400)
+
+        # GENERATE TOKENS
+        refresh = RefreshToken.for_user(user)
+
+        # Fetch correct profile
+        profile = None
+        if user.account_type == "driver":
+            profile = user.driver_profile
+        elif user.account_type == "user":
+            profile = user.rider_profile
+        elif user.account_type == "restaurant":
+            profile = user.restaurant_profile
+        elif user.account_type == "repair":
+            profile = user.repair_profile
+        elif user.account_type == "pharmacy":
+            profile = user.pharmacy_profile
+
+        user_data = UserSerializer(user).data
+
+        return Response({
+            "detail": "Login successful",
+            "user_id": user.id,
+            "user": user_data,
+            "account_type": user.account_type,
+            "access_token": str(refresh.access_token),
+            "refresh_token": str(refresh),
+            "profile_id": profile.id if profile else None,
+            'verification_code': user.verification_code,
+   
+        }, status=200)
+
+# class LoginView(APIView):
+#     permission_classes = [AllowAny] 
+#     def post(self, request):
+#         serializer = LoginSerializer(data=request.data)
+#         print("LoginView request.data",request.data)
+#         print("LoginView serializer.is_valid()", serializer.is_valid())
+#         print("LoginView serializer.errors", serializer.errors)
+
+        
+#         if not serializer.is_valid():
+#             print(serializer.errors,"serializer.errors")
+#             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+#         phone = request.data.get('phone') 
+#         email = request.data.get('email') 
+#         verification_code = request.data.get('verification_code')
+#         password = request.data.get('password')
+
+#         # if email:
+#         #     # Login with email and password
+#         #     try:
+#         #         user = CustomUser.objects.get(email=email)
+#         #         # user = authenticate(request, email=email, password='22455')
+#         #         print('user',user)
+#         #         if user is not None:
+#         #             # Generate access token
+#         #             refresh = RefreshToken.for_user(user)
+#         #             access_token = str(refresh.access_token)
+#         #             return Response({
+#         #                 'detail': 'Login successful',
+#         #                 'access_token': access_token
+#         #             }, status=status.HTTP_200_OK)
+#         #         else:
+#         #             return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+#         #     except ObjectDoesNotExist:
+
+#         #         return Response({'detail': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
+#         if email:
+#             password = request.data.get("password")
+#             print("Password received:", request.data.get("password"))
+#             if not password:
+#                 return Response({"detail": "Password required"}, status=status.HTTP_400_BAD_REQUEST)
+
+#             # Authenticate using Django's built-in auth
+#             user = authenticate(request, username=email, password=password)
+
+#             if user is None:
+#                 return Response({"detail": "Invalid email or password"}, status=status.HTTP_401_UNAUTHORIZED)
+
+#             # Login successful → create tokens
+#             refresh = RefreshToken.for_user(user)
+
+#             return Response({
+#                 "detail": "Login successful",
+#                 "access_token": str(refresh.access_token),
+#                 "refresh_token": str(refresh),
+#                 "user": {
+#                     "id": user.id,
+#                     "email": user.email,
+#                 }
+#             }, status=status.HTTP_200_OK)
+#         elif phone:
+#             # Login with phone and verification code
+            
+#             try:
+#                 user = CustomUser.objects.get(phone=phone)
+    
+#                 if verification_code:
+#                     # Verify phone number using verification code
+#                     if user.verification_code == verification_code:
+#                         # Clear verification code after successful verification
+#                         user.verification_code = user.generate_verification_code()
+                        
+#                         user.save()
+#                         return Response({'detail': 'Verification successful','mes':'hi'}, status=status.HTTP_200_OK)
+#                     else:
+#                         return Response({'detail': 'Invalid verification code'}, status=status.HTTP_400_BAD_REQUEST)
+#                 else:
+#                     # Generate and send verification code
+#                     user.generate_verification_code()
+                   
+#                     return Response({
+#                         'detail': 'Verification code sent',
+#                         'verification_code': user.verification_code,
+#                         'account_type': user.account_type
+
+#                     }, status=status.HTTP_200_OK)
+#             except ObjectDoesNotExist:
+            
+#                 return Response({'detail': 'User with this phone number does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        
+#         else:
+#             return Response({'detail': 'Please provide either email or phone'}, status=status.HTTP_400_BAD_REQUEST)
 
 # class VerifyLoginView(APIView):
 #     permission_classes = [AllowAny]
@@ -604,3 +664,54 @@ class APKUploadView(APIView):
         apk = APKUpload.objects.all()
         serializer = APKUploadSerializer(apk, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+
+import random
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth.hashers import make_password
+
+ 
+from .serializers import ForgotPasswordSerializer
+from .utils import send_temporary_password_email
+
+
+class ForgotPasswordView(APIView):
+    permission_classes = []
+
+    def post(self, request):
+        serializer = ForgotPasswordSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        email = serializer.validated_data["email"]
+        print("ForgotPasswordView email",email)
+
+        try:
+            user = CustomUser.objects.get(email=email)
+
+            # Generate temporary password
+            temp_password = str(random.randint(100000, 999999))
+
+            # Update user password
+            user.password = make_password(temp_password)
+            user.save()
+
+            # Send email
+            send_temporary_password_email(email, temp_password)
+            print('Temporary password sent:', temp_password)
+            return Response(
+
+                {"detail": "Temporary password sent to your email"},
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception as e:
+            print('e')
+            return Response(
+                {"detail": "Failed to process request", "error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
