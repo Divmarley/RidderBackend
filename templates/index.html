@@ -1,15 +1,16 @@
 <!-- @format -->
 
 <!DOCTYPE html>
-{% load static %}
-<html lang="en">
+{% load static i18n %}
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Yawigo - Smart Delivery & Ride Services</title>
+  <title>{% trans "Yawigo - Smart Delivery & Ride Services" %}</title>
   <meta name="description"
-    content="Professional food delivery and ride-hailing services in Ghana. Fast, reliable, and secure.">
+    content="{% trans 'Professional food delivery and ride-hailing services in Ghana. Fast, reliable, and secure.' %}">
 
   <!-- Enhanced Font Loading -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2301,14 +2302,23 @@
       </a>
 
       <ul class="nav-links" id="nav-links">
-        <li><a href="#features">Features</a></li>
-        <li><a href="#reviews">Reviews</a></li>
-        <li><a href="#how-it-works">How it Works</a></li>
-        <li><a href="#download">Download</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="#features">{% trans "Features" %}</a></li>
+        <li><a href="#reviews">{% trans "Reviews" %}</a></li>
+        <li><a href="#how-it-works">{% trans "How it Works" %}</a></li>
+        <li><a href="#download">{% trans "Download" %}</a></li>
+        <li><a href="#contact">{% trans "Contact" %}</a></li>
       </ul>
 
-      <a href="#download" class="nav-cta animate-scale-in animate-delay-1">Get App</a>
+      <a href="#download" class="nav-cta animate-scale-in animate-delay-1">{% trans "Get App" %}</a>
+
+      <form id="language-selector" method="post" action="{% url 'set_language' %}" style="display:flex;align-items:center;gap:8px;">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <select name="language" onchange="this.form.submit()" style="padding:6px;border:1px solid #e5e7eb;border-radius:6px;">
+          <option value="en"{% if LANGUAGE_CODE == 'en' %} selected{% endif %}>English</option>
+          <option value="fr"{% if LANGUAGE_CODE == 'fr' %} selected{% endif %}>Français</option>
+        </select>
+      </form>
 
       <button class="mobile-menu-btn" id="mobile-menu-btn">
         <span></span>
@@ -2345,7 +2355,7 @@
           <circle cx="12" cy="12" r="8" fill="currentColor" />
           <path
             d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-          <text x="12" y="35" text-anchor="middle" fill="currentColor" font-size="8" font-weight="bold">START</text>
+          <text x="12" y="35" text-anchor="middle" fill="currentColor" font-size="8" font-weight="bold">{% trans "START" %}</text>
         </g>
 
         <g class="location-pin waypoint" transform="translate(400,230)" style="animation-delay: 1s;">
@@ -2358,7 +2368,7 @@
           <circle cx="12" cy="12" r="8" fill="currentColor" />
           <path
             d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-          <text x="12" y="35" text-anchor="middle" fill="currentColor" font-size="8" font-weight="bold">END</text>
+          <text x="12" y="35" text-anchor="middle" fill="currentColor" font-size="8" font-weight="bold">{% trans "END" %}</text>
         </g>
 
         <!-- Enhanced Delivery Vehicles -->
@@ -2429,20 +2439,17 @@
 
     <div class="container">
       <div class="hero-content">
-        <h1 class="hero-title animate-fade-in">Smart Delivery & Ride Services in Ghana</h1>
-        <p class="hero-subtitle animate-fade-in animate-delay-1">
-          Experience seamless food delivery and ride-hailing with our professional,
-          reliable, and secure platform designed for modern Ghana.
-        </p>
+        <h1 class="hero-title animate-fade-in">{% trans "Smart Delivery & Ride Services in Ghana" %}</h1>
+        <p class="hero-subtitle animate-fade-in animate-delay-1">{% blocktrans %}Experience seamless food delivery and ride-hailing with our professional, reliable, and secure platform designed for modern Ghana.{% endblocktrans %}</p>
         <div class="hero-buttons animate-fade-in animate-delay-2">
           <a href="#download" class="btn btn-primary animate-bounce">
             <svg viewBox="0 0 24 24" fill="currentColor">
               <path
                 d="M12 16l-5-5h3V3h4v8h3l-5 5zm9-13h-6v1.99h6V19H3V4.99h6V3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
             </svg>
-            Download App
+            {% trans "Download App" %}
           </a>
-          <a href="#features" class="btn btn-secondary">Learn More</a>
+          <a href="#features" class="btn btn-secondary">{% trans "Learn More" %}</a>
         </div>
       </div>
     </div>
@@ -2452,10 +2459,8 @@
   <section id="features" class="features">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title animate-fade-in">Why Choose Yawigo?</h2>
-        <p class="section-subtitle animate-fade-in animate-delay-1">
-          Built with cutting-edge technology to serve you better
-        </p>
+        <h2 class="section-title animate-fade-in">{% trans "Why Choose Yawigo?" %}</h2>
+        <p class="section-subtitle animate-fade-in animate-delay-1">{% trans "Built with cutting-edge technology to serve you better" %}</p>
       </div>
 
       <div class="features-grid">
@@ -2465,10 +2470,8 @@
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
             </svg>
           </div>
-          <h3 class="feature-title">Premium Quality</h3>
-          <p class="feature-description">
-            Verified restaurants and professional drivers ensure top-quality service every time.
-          </p>
+          <h3 class="feature-title">{% trans "Premium Quality" %}</h3>
+          <p class="feature-description">{% trans "Verified restaurants and professional drivers ensure top-quality service every time." %}</p>
         </div>
 
         <div class="feature-card animate-slide-up animate-delay-2">
@@ -2478,10 +2481,8 @@
                 d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
             </svg>
           </div>
-          <h3 class="feature-title">Real-Time Tracking</h3>
-          <p class="feature-description">
-            Track your order or ride in real-time with precise GPS technology and live updates.
-          </p>
+          <h3 class="feature-title">{% trans "Real-Time Tracking" %}</h3>
+          <p class="feature-description">{% trans "Track your order or ride in real-time with precise GPS technology and live updates." %}</p>
         </div>
 
         <div class="feature-card animate-slide-up animate-delay-3">
@@ -2491,10 +2492,8 @@
                 d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
             </svg>
           </div>
-          <h3 class="feature-title">Secure Payments</h3>
-          <p class="feature-description">
-            Multiple payment options with bank-grade security and fraud protection.
-          </p>
+          <h3 class="feature-title">{% trans "Secure Payments" %}</h3>
+          <p class="feature-description">{% trans "Multiple payment options with bank-grade security and fraud protection." %}</p>
         </div>
 
         <div class="feature-card animate-slide-up animate-delay-4">
@@ -2504,10 +2503,8 @@
                 d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
             </svg>
           </div>
-          <h3 class="feature-title">24/7 Support</h3>
-          <p class="feature-description">
-            Round-the-clock customer support to assist you whenever you need help.
-          </p>
+          <h3 class="feature-title">{% trans "24/7 Support" %}</h3>
+          <p class="feature-description">{% trans "Round-the-clock customer support to assist you whenever you need help." %}</p>
         </div>
       </div>
     </div>
@@ -2517,10 +2514,8 @@
   <section id="reviews" class="reviews">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title animate-fade-in">What Our Customers Say</h2>
-        <p class="section-subtitle animate-fade-in animate-delay-1">
-          Real experiences from real customers across Ghana
-        </p>
+        <h2 class="section-title animate-fade-in">{% trans "What Our Customers Say" %}</h2>
+        <p class="section-subtitle animate-fade-in animate-delay-1">{% trans "Real experiences from real customers across Ghana" %}</p>
       </div>
 
       <div class="reviews-grid">
@@ -2717,35 +2712,27 @@
   <section id="how-it-works" class="how-it-works">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title animate-fade-in">How It Works</h2>
-        <p class="section-subtitle animate-fade-in animate-delay-1">
-          Simple steps to get started with Yawigo
-        </p>
+        <h2 class="section-title animate-fade-in">{% trans "How It Works" %}</h2>
+        <p class="section-subtitle animate-fade-in animate-delay-1">{% trans "Simple steps to get started with Yawigo" %}</p>
       </div>
 
       <div class="steps-grid">
         <div class="step animate-slide-up animate-delay-1">
           <div class="step-number">1</div>
-          <h3 class="step-title">Download & Register</h3>
-          <p class="step-description">
-            Download the Yawigo app and create your account in minutes with just your phone number.
-          </p>
+          <h3 class="step-title">{% trans "Download & Register" %}</h3>
+          <p class="step-description">{% trans "Download the Yawigo app and create your account in minutes with just your phone number." %}</p>
         </div>
 
         <div class="step animate-slide-up animate-delay-2">
           <div class="step-number">2</div>
-          <h3 class="step-title">Choose Service</h3>
-          <p class="step-description">
-            Select food delivery or ride service, browse options, and place your order.
-          </p>
+          <h3 class="step-title">{% trans "Choose Service" %}</h3>
+          <p class="step-description">{% trans "Select food delivery or ride service, browse options, and place your order." %}</p>
         </div>
 
         <div class="step animate-slide-up animate-delay-3">
           <div class="step-number">3</div>
-          <h3 class="step-title">Track & Enjoy</h3>
-          <p class="step-description">
-            Track your order in real-time and enjoy fast, reliable service delivered to your door.
-          </p>
+          <h3 class="step-title">{% trans "Track & Enjoy" %}</h3>
+          <p class="step-description">{% trans "Track your order in real-time and enjoy fast, reliable service delivered to your door." %}</p>
         </div>
       </div>
     </div>
@@ -2755,48 +2742,46 @@
   <section id="download" class="download">
     <div class="container">
       <div class="section-header">
-        <h2 class="section-title animate-fade-in">Download Yawigo</h2>
-        <p class="section-subtitle animate-fade-in animate-delay-1">
-          Get the latest version for Android devices
-        </p>
+        <h2 class="section-title animate-fade-in">{% trans "Download Yawigo" %}</h2>
+        <p class="section-subtitle animate-fade-in animate-delay-1">{% trans "Get the latest version for Android devices" %}</p>
       </div>
 
       <div class="download-grid">
         <div class="download-card featured animate-scale-in animate-delay-1">
-          <div class="version-badge">Latest</div>
+          <div class="version-badge">{% trans "Latest" %}</div>
           <h3 class="version-title">Yawigo v3.1.0</h3>
-          <p class="version-date">Released: January 20, 2025</p>
+          <p class="version-date">{% trans "Released:" %} January 20, 2025</p>
           <ul class="version-features">
-            <li>Enhanced GPS tracking</li>
-            <li>New payment methods</li>
-            <li>Improved user interface</li>
-            <li>Bug fixes and performance improvements</li>
-            <li>Multi-language support</li>
+            <li>{% trans "Enhanced GPS tracking" %}</li>
+            <li>{% trans "New payment methods" %}</li>
+            <li>{% trans "Improved user interface" %}</li>
+            <li>{% trans "Bug fixes and performance improvements" %}</li>
+            <li>{% trans "Multi-language support" %}</li>
           </ul>
           <a href="#" class="download-btn">
             <svg viewBox="0 0 24 24">
               <path
                 d="M12 16l-5-5h3V3h4v8h3l-5 5zm9-13h-6v1.99h6V19H3V4.99h6V3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
             </svg>
-            Download APK (28 MB)
+            {% trans "Download APK (28 MB)" %}
           </a>
         </div>
 
         <div class="download-card animate-scale-in animate-delay-2">
           <h3 class="version-title">Yawigo v3.0.5</h3>
-          <p class="version-date">Released: December 15, 2024</p>
+          <p class="version-date">{% trans "Released:" %} December 15, 2024</p>
           <ul class="version-features">
-            <li>Core delivery features</li>
-            <li>Basic ride services</li>
-            <li>Standard payment options</li>
-            <li>Compatible with older devices</li>
+            <li>{% trans "Core delivery features" %}</li>
+            <li>{% trans "Basic ride services" %}</li>
+            <li>{% trans "Standard payment options" %}</li>
+            <li>{% trans "Compatible with older devices" %}</li>
           </ul>
           <a href="#" class="download-btn">
             <svg viewBox="0 0 24 24">
               <path
                 d="M12 16l-5-5h3V3h4v8h3l-5 5zm9-13h-6v1.99h6V19H3V4.99h6V3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
             </svg>
-            Download APK (25 MB)
+            {% trans "Download APK (25 MB)" %}
           </a>
         </div>
       </div>
@@ -2807,10 +2792,8 @@
   <section id="contact" class="contact">
     <div class="container">
       <div class="contact-content">
-        <h2 class="section-title animate-fade-in">Get in Touch</h2>
-        <p class="section-subtitle animate-fade-in animate-delay-1">
-          We're here to help! Reach out to us anytime for support, partnerships, or questions about Yawigo services.
-        </p>
+        <h2 class="section-title animate-fade-in">{% trans "Get in Touch" %}</h2>
+        <p class="section-subtitle animate-fade-in animate-delay-1">{% trans "We're here to help! Reach out to us anytime for support, partnerships, or questions about Yawigo services." %}</p>
 
         <!-- Contact Methods Grid -->
         <div class="contact-info">
@@ -2821,10 +2804,10 @@
                   d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
               </svg>
             </div>
-            <div class="contact-label">Email Support</div>
+            <div class="contact-label">{% trans "Email Support" %}</div>
             <div class="contact-value">
               <a href="mailto:support@yawigo.com">support@yawigo.com</a>
-              <small>Response within 2 hours</small>
+              <small>{% trans "Response within 2 hours" %}</small>
             </div>
           </div>
 
@@ -2835,10 +2818,10 @@
                   d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
               </svg>
             </div>
-            <div class="contact-label">24/7 Hotline</div>
+            <div class="contact-label">{% trans "24/7 Hotline" %}</div>
             <div class="contact-value">
               <a href="tel:+233551234567">+233 55 123 4567</a>
-              <small>Available 24/7</small>
+              <small>{% trans "Available 24/7" %}</small>
             </div>
           </div>
 
@@ -2848,10 +2831,10 @@
                 <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
               </svg>
             </div>
-            <div class="contact-label">Live Chat</div>
+            <div class="contact-label">{% trans "Live Chat" %}</div>
             <div class="contact-value">
-              <a href="#" onclick="window.yawigoChat.toggleChat()">Chat with us now</a>
-              <small>Instant response</small>
+              <a href="#" onclick="window.yawigoChat.toggleChat()">{% trans "Chat with us now" %}</a>
+              <small>{% trans "Instant response" %}</small>
             </div>
           </div>
 
@@ -2862,58 +2845,58 @@
                   d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
               </svg>
             </div>
-            <div class="contact-label">Head Office</div>
+            <div class="contact-label">{% trans "Head Office" %}</div>
             <div class="contact-value">
               123 Independence Avenue<br>
               Accra, Ghana
-              <small>Mon-Fri: 9AM-6PM</small>
+              <small>{% trans "Mon-Fri: 9AM-6PM" %}</small>
             </div>
           </div>
         </div>
 
         <!-- Quick Contact Form -->
         <div class="contact-form-section animate-fade-in animate-delay-3">
-          <h3 class="form-title">Send us a Message</h3>
+          <h3 class="form-title">{% trans "Send us a Message" %}</h3>
           <form class="contact-form" id="contactForm">
             <div class="form-row">
               <div class="form-group">
-                <label for="firstName">First Name</label>
+                <label for="firstName">{% trans "First Name" %}</label>
                 <input type="text" id="firstName" name="firstName" required>
               </div>
               <div class="form-group">
-                <label for="lastName">Last Name</label>
+                <label for="lastName">{% trans "Last Name" %}</label>
                 <input type="text" id="lastName" name="lastName" required>
               </div>
             </div>
 
             <div class="form-row">
               <div class="form-group">
-                <label for="email">Email Address</label>
+                <label for="email">{% trans "Email Address" %}</label>
                 <input type="email" id="email" name="email" required>
               </div>
               <div class="form-group">
-                <label for="phone">Phone Number</label>
+                <label for="phone">{% trans "Phone Number" %}</label>
                 <input type="tel" id="phone" name="phone">
               </div>
             </div>
 
             <div class="form-group">
-              <label for="subject">Subject</label>
+              <label for="subject">{% trans "Subject" %}</label>
               <select id="subject" name="subject" required>
-                <option value="">Select a topic</option>
-                <option value="general">General Inquiry</option>
-                <option value="support">Customer Support</option>
-                <option value="partnership">Partnership</option>
-                <option value="driver">Become a Driver</option>
-                <option value="restaurant">Restaurant Partnership</option>
-                <option value="feedback">Feedback & Suggestions</option>
-                <option value="technical">Technical Issue</option>
+                <option value="">{% trans "Select a topic" %}</option>
+                <option value="general">{% trans "General Inquiry" %}</option>
+                <option value="support">{% trans "Customer Support" %}</option>
+                <option value="partnership">{% trans "Partnership" %}</option>
+                <option value="driver">{% trans "Become a Driver" %}</option>
+                <option value="restaurant">{% trans "Restaurant Partnership" %}</option>
+                <option value="feedback">{% trans "Feedback & Suggestions" %}</option>
+                <option value="technical">{% trans "Technical Issue" %}</option>
               </select>
             </div>
 
             <div class="form-group">
-              <label for="message">Message</label>
-              <textarea id="message" name="message" rows="5" placeholder="Tell us how we can help you..."
+              <label for="message">{% trans "Message" %}</label>
+              <textarea id="message" name="message" rows="5" placeholder="{% trans 'Tell us how we can help you...' %}"
                 required></textarea>
             </div>
 
@@ -2921,64 +2904,60 @@
               <svg viewBox="0 0 24 24">
                 <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
               </svg>
-              Send Message
+              {% trans "Send Message" %}
             </button>
           </form>
         </div>
 
         <!-- FAQ Section -->
         <div class="faq-section animate-fade-in animate-delay-4">
-          <h3 class="faq-title">Frequently Asked Questions</h3>
+          <h3 class="faq-title">{% trans "Frequently Asked Questions" %}</h3>
           <div class="faq-grid">
             <div class="faq-item">
               <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>How do I track my order?</span>
+                <span>{% trans "How do I track my order?" %}</span>
                 <svg class="faq-icon" viewBox="0 0 24 24">
                   <path d="M7 10l5 5 5-5z" />
                 </svg>
               </button>
               <div class="faq-answer">
-                <p>You can track your order in real-time through the Yawigo app. Once your order is confirmed, you'll
-                  see live updates including restaurant preparation time and delivery progress on the map.</p>
+                <p>{% blocktrans %}You can track your order in real-time through the Yawigo app. Once your order is confirmed, you'll see live updates including restaurant preparation time and delivery progress on the map.{% endblocktrans %}</p>
               </div>
             </div>
 
             <div class="faq-item">
               <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>What payment methods do you accept?</span>
+                <span>{% trans "What payment methods do you accept?" %}</span>
                 <svg class="faq-icon" viewBox="0 0 24 24">
                   <path d="M7 10l5 5 5-5z" />
                 </svg>
               </button>
               <div class="faq-answer">
-                <p>We accept Mobile Money (MTN, AirtelTigo, Vodafone), credit/debit cards, cash on delivery, and bank
-                  transfers. All payments are processed securely with encryption.</p>
+                <p>{% blocktrans %}We accept Mobile Money (MTN, AirtelTigo, Vodafone), credit/debit cards, cash on delivery, and bank transfers. All payments are processed securely with encryption.{% endblocktrans %}</p>
               </div>
             </div>
 
             <div class="faq-item">
               <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>How can I become a Yawigo driver?</span>
+                <span>{% trans "How can I become a Yawigo driver?" %}</span>
                 <svg class="faq-icon" viewBox="0 0 24 24">
                   <path d="M7 10l5 5 5-5z" />
                 </svg>
               </button>
               <div class="faq-answer">
-                <p>To become a driver, you need a valid driver's license, vehicle registration, insurance, and
-                  smartphone. Apply through our website or visit our office for registration and vehicle inspection.</p>
+                <p>{% blocktrans %}To become a driver, you need a valid driver's license, vehicle registration, insurance, and smartphone. Apply through our website or visit our office for registration and vehicle inspection.{% endblocktrans %}</p>
               </div>
             </div>
 
             <div class="faq-item">
               <button class="faq-question" onclick="toggleFAQ(this)">
-                <span>Which areas do you serve?</span>
+                <span>{% trans "Which areas do you serve?" %}</span>
                 <svg class="faq-icon" viewBox="0 0 24 24">
                   <path d="M7 10l5 5 5-5z" />
                 </svg>
               </button>
               <div class="faq-answer">
-                <p>We currently serve Accra, Kumasi, Takoradi, Cape Coast, Tema, and Ho. We're rapidly expanding to more
-                  cities across Ghana. Check the app for service availability in your area.</p>
+                <p>{% blocktrans %}We currently serve Accra, Kumasi, Takoradi, Cape Coast, Tema, and Ho. We're rapidly expanding to more cities across Ghana. Check the app for service availability in your area.{% endblocktrans %}</p>
               </div>
             </div>
           </div>
@@ -2986,8 +2965,8 @@
 
         <!-- Social Media Links -->
         <div class="social-section animate-fade-in animate-delay-5">
-          <h3 class="social-title">Follow Us</h3>
-          <p class="social-subtitle">Stay connected for updates, promotions, and news</p>
+          <h3 class="social-title">{% trans "Follow Us" %}</h3>
+          <p class="social-subtitle">{% trans "Stay connected for updates, promotions, and news" %}</p>
           <div class="social-links">
             <a href="#" class="social-link facebook" aria-label="Facebook">
               <svg viewBox="0 0 24 24">
@@ -3023,23 +3002,23 @@
 
         <!-- Operating Hours -->
         <div class="hours-section animate-fade-in animate-delay-6">
-          <h3 class="hours-title">Support Hours</h3>
+          <h3 class="hours-title">{% trans "Support Hours" %}</h3>
           <div class="hours-grid">
             <div class="hours-item">
-              <strong>Customer Support</strong>
-              <span>24/7 Available</span>
+              <strong>{% trans "Customer Support" %}</strong>
+              <span>{% trans "24/7 Available" %}</span>
             </div>
             <div class="hours-item">
-              <strong>Office Hours</strong>
-              <span>Mon-Fri: 9:00 AM - 6:00 PM</span>
+              <strong>{% trans "Office Hours" %}</strong>
+              <span>{% trans "Mon-Fri: 9:00 AM - 6:00 PM" %}</span>
             </div>
             <div class="hours-item">
-              <strong>Live Chat</strong>
-              <span>24/7 Available</span>
+              <strong>{% trans "Live Chat" %}</strong>
+              <span>{% trans "24/7 Available" %}</span>
             </div>
             <div class="hours-item">
-              <strong>Phone Support</strong>
-              <span>24/7 Available</span>
+              <strong>{% trans "Phone Support" %}</strong>
+              <span>{% trans "24/7 Available" %}</span>
             </div>
           </div>
         </div>
@@ -3052,46 +3031,45 @@
     <div class="container">
       <div class="footer-content">
         <div class="footer-section">
-          <h3>About Yawigo</h3>
+          <h3>{% trans "About Yawigo" %}</h3>
           <p>
-            Ghana's leading food delivery and ride-hailing platform,
-            connecting people with reliable services across major cities.
+            {% blocktrans %}Ghana's leading food delivery and ride-hailing platform, connecting people with reliable services across major cities.{% endblocktrans %}
           </p>
         </div>
 
         <div class="footer-section">
-          <h3>Services</h3>
+          <h3>{% trans "Services" %}</h3>
           <ul class="footer-links">
-            <li><a href="#">Food Delivery</a></li>
-            <li><a href="#">Ride Services</a></li>
-            <li><a href="#">Business Solutions</a></li>
-            <li><a href="#">Partner with Us</a></li>
+            <li><a href="#">{% trans "Food Delivery" %}</a></li>
+            <li><a href="#">{% trans "Ride Services" %}</a></li>
+            <li><a href="#">{% trans "Business Solutions" %}</a></li>
+            <li><a href="#">{% trans "Partner with Us" %}</a></li>
           </ul>
         </div>
 
         <div class="footer-section">
-          <h3>Support</h3>
+          <h3>{% trans "Support" %}</h3>
           <ul class="footer-links">
-            <li><a href="#">Help Center</a></li>
-            <li><a href="#">Contact Us</a></li>
-            <li><a href="#">Safety</a></li>
-            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">{% trans "Help Center" %}</a></li>
+            <li><a href="#">{% trans "Contact Us" %}</a></li>
+            <li><a href="#">{% trans "Safety" %}</a></li>
+            <li><a href="#">{% trans "Terms of Service" %}</a></li>
           </ul>
         </div>
 
         <div class="footer-section">
-          <h3>Company</h3>
+          <h3>{% trans "Company" %}</h3>
           <ul class="footer-links">
-            <li><a href="#">About Us</a></li>
-            <li><a href="#">Careers</a></li>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Blog</a></li>
+            <li><a href="#">{% trans "About Us" %}</a></li>
+            <li><a href="#">{% trans "Careers" %}</a></li>
+            <li><a href="#">{% trans "Privacy Policy" %}</a></li>
+            <li><a href="#">{% trans "Blog" %}</a></li>
           </ul>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <p>&copy; 2025 Yawigo. All rights reserved. Made with ❤️ in Ghana.</p>
+        <p>{% blocktrans %}&copy; 2025 Yawigo. All rights reserved. Made with ❤️ in Ghana.{% endblocktrans %}</p>
       </div>
     </div>
   </footer>

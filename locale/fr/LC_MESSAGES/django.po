@@ -1,0 +1,332 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: yawigo\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-16 00:00+0000\n"
+"PO-Revision-Date: 2025-12-16 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+# Navigation
+msgid "Features"
+msgstr "Fonctionnalités"
+
+msgid "Reviews"
+msgstr "Avis"
+
+msgid "How it Works"
+msgstr "Comment ça marche"
+
+msgid "Download"
+msgstr "Télécharger"
+
+msgid "Contact"
+msgstr "Contact"
+
+msgid "Get App"
+msgstr "Obtenir l’application"
+
+msgid "Yawigo - Smart Delivery & Ride Services"
+msgstr "Yawigo - Livraison et services de transport intelligents"
+
+msgid "Professional food delivery and ride-hailing services in Ghana. Fast, reliable, and secure."
+msgstr "Services professionnels de livraison de repas et de transport à la demande au Ghana. Rapide, fiable et sécurisé."
+
+msgid "START"
+msgstr "DÉPART"
+
+msgid "END"
+msgstr "ARRIVÉE"
+
+msgid "Smart Delivery & Ride Services in Ghana"
+msgstr "Livraison et transport intelligents au Ghana"
+
+msgid "Experience seamless food delivery and ride-hailing with our professional, reliable, and secure platform designed for modern Ghana."
+msgstr "Profitez d’une livraison de repas et d’un service de transport fluides avec notre plateforme professionnelle, fiable et sécurisée, conçue pour le Ghana moderne."
+
+msgid "Download App"
+msgstr "Télécharger l’application"
+
+msgid "Learn More"
+msgstr "En savoir plus"
+
+msgid "Why Choose Yawigo?"
+msgstr "Pourquoi choisir Yawigo ?"
+
+msgid "Built with cutting-edge technology to serve you better"
+msgstr "Conçu avec une technologie de pointe pour mieux vous servir"
+
+msgid "Premium Quality"
+msgstr "Qualité supérieure"
+
+msgid "Verified restaurants and professional drivers ensure top-quality service every time."
+msgstr "Des restaurants vérifiés et des chauffeurs professionnels garantissent un service de qualité à chaque fois."
+
+msgid "Real-Time Tracking"
+msgstr "Suivi en temps réel"
+
+msgid "Track your order or ride in real-time with precise GPS technology and live updates."
+msgstr "Suivez votre commande ou votre trajet en temps réel grâce à une technologie GPS précise et des mises à jour en direct."
+
+msgid "Secure Payments"
+msgstr "Paiements sécurisés"
+
+msgid "Multiple payment options with bank-grade security and fraud protection."
+msgstr "Multiples options de paiement avec une sécurité de niveau bancaire et une protection contre la fraude."
+
+msgid "24/7 Support"
+msgstr "Assistance 24/7"
+
+msgid "Round-the-clock customer support to assist you whenever you need help."
+msgstr "Service client disponible 24/7 pour vous aider à tout moment."
+
+msgid "What Our Customers Say"
+msgstr "Ce que disent nos clients"
+
+msgid "Real experiences from real customers across Ghana"
+msgstr "Des expériences réelles de clients partout au Ghana"
+
+msgid "How It Works"
+msgstr "Comment ça marche"
+
+msgid "Simple steps to get started with Yawigo"
+msgstr "Des étapes simples pour commencer avec Yawigo"
+
+msgid "Download & Register"
+msgstr "Télécharger et s’inscrire"
+
+msgid "Download the Yawigo app and create your account in minutes with just your phone number."
+msgstr "Téléchargez l’application Yawigo et créez votre compte en quelques minutes avec votre numéro de téléphone."
+
+msgid "Choose Service"
+msgstr "Choisir un service"
+
+msgid "Select food delivery or ride service, browse options, and place your order."
+msgstr "Choisissez la livraison de repas ou le service de transport, parcourez les options et passez votre commande."
+
+msgid "Track & Enjoy"
+msgstr "Suivre et profiter"
+
+msgid "Track your order in real-time and enjoy fast, reliable service delivered to your door."
+msgstr "Suivez votre commande en temps réel et profitez d’un service rapide et fiable livré à votre porte."
+
+msgid "Download Yawigo"
+msgstr "Télécharger Yawigo"
+
+msgid "Get the latest version for Android devices"
+msgstr "Obtenez la dernière version pour appareils Android"
+
+msgid "Latest"
+msgstr "Dernière version"
+
+msgid "Released:"
+msgstr "Publié :"
+
+msgid "Enhanced GPS tracking"
+msgstr "Suivi GPS amélioré"
+
+msgid "New payment methods"
+msgstr "Nouveaux modes de paiement"
+
+msgid "Improved user interface"
+msgstr "Interface utilisateur améliorée"
+
+msgid "Bug fixes and performance improvements"
+msgstr "Corrections de bugs et améliorations de performances"
+
+msgid "Multi-language support"
+msgstr "Prise en charge multilingue"
+
+msgid "Download APK (28 MB)"
+msgstr "Télécharger l’APK (28 Mo)"
+
+msgid "Download APK (25 MB)"
+msgstr "Télécharger l’APK (25 Mo)"
+
+msgid "Get in Touch"
+msgstr "Contactez-nous"
+
+msgid "We're here to help! Reach out to us anytime for support, partnerships, or questions about Yawigo services."
+msgstr "Nous sommes là pour vous aider ! Contactez-nous à tout moment pour du support, des partenariats ou des questions sur les services Yawigo."
+
+msgid "Email Support"
+msgstr "Support e-mail"
+
+msgid "Response within 2 hours"
+msgstr "Réponse sous 2 heures"
+
+msgid "24/7 Hotline"
+msgstr "Hotline 24/7"
+
+msgid "Available 24/7"
+msgstr "Disponible 24/7"
+
+msgid "Live Chat"
+msgstr "Chat en direct"
+
+msgid "Chat with us now"
+msgstr "Discutez avec nous maintenant"
+
+msgid "Instant response"
+msgstr "Réponse instantanée"
+
+msgid "Head Office"
+msgstr "Siège social"
+
+msgid "Mon-Fri: 9AM-6PM"
+msgstr "Lun-Ven : 9h-18h"
+
+msgid "Send us a Message"
+msgstr "Envoyez-nous un message"
+
+msgid "First Name"
+msgstr "Prénom"
+
+msgid "Last Name"
+msgstr "Nom"
+
+msgid "Email Address"
+msgstr "Adresse e-mail"
+
+msgid "Phone Number"
+msgstr "Numéro de téléphone"
+
+msgid "Subject"
+msgstr "Sujet"
+
+msgid "Select a topic"
+msgstr "Sélectionnez un sujet"
+
+msgid "General Inquiry"
+msgstr "Demande générale"
+
+msgid "Customer Support"
+msgstr "Support client"
+
+msgid "Partnership"
+msgstr "Partenariat"
+
+msgid "Become a Driver"
+msgstr "Devenir chauffeur"
+
+msgid "Restaurant Partnership"
+msgstr "Partenariat restaurant"
+
+msgid "Feedback & Suggestions"
+msgstr "Avis et suggestions"
+
+msgid "Technical Issue"
+msgstr "Problème technique"
+
+msgid "Message"
+msgstr "Message"
+
+msgid "Tell us how we can help you..."
+msgstr "Dites-nous comment nous pouvons vous aider..."
+
+msgid "Send Message"
+msgstr "Envoyer le message"
+
+msgid "Frequently Asked Questions"
+msgstr "Questions fréquentes"
+
+msgid "How do I track my order?"
+msgstr "Comment suivre ma commande ?"
+
+msgid "You can track your order in real-time through the Yawigo app. Once your order is confirmed, you'll see live updates including restaurant preparation time and delivery progress on the map."
+msgstr "Vous pouvez suivre votre commande en temps réel via l’application Yawigo. Une fois votre commande confirmée, vous verrez des mises à jour en direct, y compris le temps de préparation du restaurant et l’avancement de la livraison sur la carte."
+
+msgid "What payment methods do you accept?"
+msgstr "Quels modes de paiement acceptez-vous ?"
+
+msgid "We accept Mobile Money (MTN, AirtelTigo, Vodafone), credit/debit cards, cash on delivery, and bank transfers. All payments are processed securely with encryption."
+msgstr "Nous acceptons Mobile Money (MTN, AirtelTigo, Vodafone), les cartes de crédit/débit, le paiement à la livraison et les virements bancaires. Tous les paiements sont traités de manière sécurisée avec chiffrement."
+
+msgid "How can I become a Yawigo driver?"
+msgstr "Comment devenir chauffeur Yawigo ?"
+
+msgid "To become a driver, you need a valid driver's license, vehicle registration, insurance, and smartphone. Apply through our website or visit our office for registration and vehicle inspection."
+msgstr "Pour devenir chauffeur, vous avez besoin d’un permis de conduire valide, de l’immatriculation du véhicule, d’une assurance et d’un smartphone. Postulez sur notre site web ou rendez-vous dans nos bureaux pour l’inscription et l’inspection du véhicule."
+
+msgid "Which areas do you serve?"
+msgstr "Quelles zones desservez-vous ?"
+
+msgid "We currently serve Accra, Kumasi, Takoradi, Cape Coast, Tema, and Ho. We're rapidly expanding to more cities across Ghana. Check the app for service availability in your area."
+msgstr "Nous desservons actuellement Accra, Kumasi, Takoradi, Cape Coast, Tema et Ho. Nous nous étendons rapidement à d’autres villes au Ghana. Vérifiez la disponibilité du service dans votre région sur l’application."
+
+msgid "Follow Us"
+msgstr "Suivez-nous"
+
+msgid "Stay connected for updates, promotions, and news"
+msgstr "Restez connecté pour les mises à jour, promotions et actualités"
+
+msgid "Support Hours"
+msgstr "Heures d’assistance"
+
+msgid "Office Hours"
+msgstr "Heures de bureau"
+
+msgid "Mon-Fri: 9:00 AM - 6:00 PM"
+msgstr "Lun-Ven : 9h00 - 18h00"
+
+msgid "Phone Support"
+msgstr "Assistance téléphonique"
+
+msgid "About Yawigo"
+msgstr "À propos de Yawigo"
+
+msgid "Ghana's leading food delivery and ride-hailing platform, connecting people with reliable services across major cities."
+msgstr "La principale plateforme de livraison de repas et de transport à la demande au Ghana, reliant les personnes à des services fiables dans les grandes villes."
+
+msgid "Services"
+msgstr "Services"
+
+msgid "Food Delivery"
+msgstr "Livraison de repas"
+
+msgid "Ride Services"
+msgstr "Services de transport"
+
+msgid "Business Solutions"
+msgstr "Solutions pour entreprises"
+
+msgid "Partner with Us"
+msgstr "Devenir partenaire"
+
+msgid "Support"
+msgstr "Support"
+
+msgid "Help Center"
+msgstr "Centre d’aide"
+
+msgid "Contact Us"
+msgstr "Nous contacter"
+
+msgid "Safety"
+msgstr "Sécurité"
+
+msgid "Terms of Service"
+msgstr "Conditions d’utilisation"
+
+msgid "Company"
+msgstr "Entreprise"
+
+msgid "About Us"
+msgstr "À propos de nous"
+
+msgid "Careers"
+msgstr "Carrières"
+
+msgid "Privacy Policy"
+msgstr "Politique de confidentialité"
+
+msgid "Blog"
+msgstr "Blog"
+
+msgid "&copy; 2025 Yawigo. All rights reserved. Made with ❤️ in Ghana."
+msgstr "&copy; 2025 Yawigo. Tous droits réservés. Fait avec ❤️ au Ghana."

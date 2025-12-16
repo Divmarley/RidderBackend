@@ -118,6 +118,8 @@ class ChatConsumer(WebsocketConsumer):
 			self.receive_message_list(data)
 		elif data_source == 'message.send':
 			self.receive_message_send(data)
+		elif data_source == 'advert.send':
+			self.receive_advert_send(data)
 		elif data_source == 'message.type':
 			self.receive_message_type(data)
 		elif data_source == 'request.accept':
@@ -159,7 +161,7 @@ class ChatConsumer(WebsocketConsumer):
 			self.receive_locationUpdate(data)
 		elif data_source == 'user.update':
 			self.receive_userUpdate(data)
-		elif data_source == 'request.cancel':
+		elif data_source == 'request.ride.cancel':
 			self.receive_request_cancel(data)
 		elif data_source == 'location.rider.update':
 			self.receive_rider_location_update(data)
@@ -397,6 +399,55 @@ class ChatConsumer(WebsocketConsumer):
 		}
 		self.send_group(str(recipient.id), 'message.send', data)
 
+	def receive_advert_send(self, data):
+		user = self.scope['user']
+		connectionId = data.get('connectionId')
+		message_text = data.get('message')
+		try:
+			connection = Connection.objects.filter()
+		except Connection.DoesNotExist:
+			print('Error: couldnt find connection')
+			return
+		
+		message = Message.objects.create(
+			connection=connection,
+			user=user,
+			text=message_text
+		)
+
+		# Get recipient friend
+		recipient = connection.sender
+		if connection.sender == user:
+			recipient = connection.receiver
+
+		# Send new message back to sender
+		serialized_message = MessageSerializer(
+			message,
+			context={
+				'user': user
+			}
+		)
+		serialized_friend = UserSerializer(recipient)
+		data = {
+			'message': serialized_message.data,
+			'friend': serialized_friend.data
+		}
+		self.send_group(str(user.id), 'message.send', data)
+
+		# Send new message to receiver
+		serialized_message = MessageSerializer(
+			message,
+			context={
+				'user': recipient
+			}
+		)
+		serialized_friend = UserSerializer(user)
+		data = {
+			'message': serialized_message.data,
+			'friend': serialized_friend.data
+		}
+		self.send_group(str(recipient.id), 'message.send', data)
+
 	def receive_message_type(self, data):
 		user = self.scope['user']
 		recipient_phone = data.get('phone')
@@ -463,7 +514,7 @@ class ChatConsumer(WebsocketConsumer):
 			}
 			self.send_group(
 				other_conn.sender.phone, 
-				'request.cancel', 
+				'request.ride.cancel', 
 				cancel_data
 			)
 		
@@ -519,14 +570,16 @@ class ChatConsumer(WebsocketConsumer):
 		)
 
 	def receive_request_connect(self, data):
-		phone = data.get('phone')
+		print('dataxx',data)
+		driver_id = data.get('driver_id')
 		location = data.get('location')
 		push_token = data.get('push_token')
 		riderPushToken = data.get('riderPushToken')
+		print('receive_request_connect---->>>driver_id',driver_id)
   
 		# Attempt to fetch the receiving user
 		try:
-			receiver = CustomUser.objects.get(phone=phone)
+			receiver = CustomUser.objects.get(id=driver_id)
 		except CustomUser.DoesNotExist:
 			print('Error: User not found') 
 			return
@@ -616,12 +669,12 @@ class ChatConsumer(WebsocketConsumer):
 		self.send_group(str(self.scope['user'].id), 'thumbnail', serialized.data)
 
 	def receive_driver_arrived(self, data):
-		phone = data.get('phone') 
+		id = data.get('id') 
 		connectionId = data.get('connectionId') 
 		# Fetch connection object
 		try:
 			connection = Connection.objects.get(
-				sender__phone=phone,
+				sender__id=id,
 				receiver=self.scope['user'],
 				id=connectionId
 			)
@@ -959,6 +1012,7 @@ class ChatConsumer(WebsocketConsumer):
 			query &= Q(ride_type==ride_type)
 			
 		online_drivers = DriverOnline.objects.filter(is_online=True,ride_type=ride_type).select_related('driver')
+		print('online_drivers',online_drivers)
 		# connection  doesnt exists',online_drivers)
 		# Prepare response data
 		drivers_data = []
@@ -1007,7 +1061,7 @@ class ChatConsumer(WebsocketConsumer):
 				# ).first()
 
 				connection = Connection.objects.filter(
-					sender__phone=str(self.scope['user'].id),  
+					sender__id=str(self.scope['user'].id),  
 				).first()
 
 				print('connection Received riders location--->>>>>>',connection) 
@@ -1024,7 +1078,7 @@ class ChatConsumer(WebsocketConsumer):
 						'speed': speed,
 						'timestamp': timestamp
 					}
-					# print('connection',connection.receiver)
+					print('connectionreceive_rider_location_update',connection.receiver.id)
 					
 					# Send to rider
 					# self.send_group(
@@ -1241,8 +1295,7 @@ class ChatConsumer(WebsocketConsumer):
 	#   Catch/all broadcast to client helpers
 	#--------------------------------------------
 
-	def send_group(self, group, source, data):
-		print(f"Sending to group: {group}, source: {source}, data: {data}")
+	def send_group(self, group, source, data): 
 		response = {
 			'type': 'broadcast_group',
 			'source': source,
@@ -1266,7 +1319,7 @@ class ChatConsumer(WebsocketConsumer):
 		}))
 		
 	def receive_request_cancel(self, data):
-		# print("data",data)
+		print("receive_request_cancel==data",data)
 		connection_id = data.get('connectionId')
 		# 
 		try:
@@ -1279,7 +1332,8 @@ class ChatConsumer(WebsocketConsumer):
 			
 			# Delete the connection
 			connection.delete()
-			
+
+		 
 			# Notify both parties about the cancellation
 			cancel_data = {
 				'id': connection_id,
@@ -1288,8 +1342,8 @@ class ChatConsumer(WebsocketConsumer):
 				"receiver_phone":str(connection.receiver.id)
 			}
 			
-			self.send_group(sender_phone, 'request.cancel', cancel_data)
-			self.send_group(receiver_phone, 'request.cancel', cancel_data)
+			self.send_group(sender_phone, 'request.ride.cancel', cancel_data)
+			self.send_group(receiver_phone, 'request.ride.cancel', cancel_data)
 			
 		except Connection.DoesNotExist:
 			print('Error: Connection not found')

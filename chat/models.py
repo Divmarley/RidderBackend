@@ -7,7 +7,7 @@ class Connection(models.Model):
         CustomUser,
         related_name='sent_connections',
         on_delete=models.CASCADE,
-        unique=True
+        # unique=True
     )
     location = models.JSONField()
     status = models.CharField(max_length=300)

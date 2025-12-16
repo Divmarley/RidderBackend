@@ -26,6 +26,7 @@ def health_check(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('accounts.urls')),
+    path('i18n/', include('django.conf.urls.i18n')),
  
      path('health/', health_check, name='health-check'),
     # path('api/', include('drivers.urls')),
