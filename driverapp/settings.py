@@ -122,24 +122,24 @@ ASGI_APPLICATION = 'driverapp.asgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get("MYSQL_DATABASE", "ridderapp"),
-        'USER': os.environ.get("MYSQL_USER", "rider_user"),
-        'PASSWORD': os.environ.get("MYSQL_PASSWORD", "securepassword"),
-        'HOST': os.environ.get("MYSQL_HOST", "db"),  # 'db' is the Docker service name
-        'PORT': os.environ.get("MYSQL_PORT", "3306"),
-         
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': os.environ.get("MYSQL_DATABASE", "ridderapp"),
+#         'USER': os.environ.get("MYSQL_USER", "rider_user"),
+#         'PASSWORD': os.environ.get("MYSQL_PASSWORD", "securepassword"),
+#         'HOST': os.environ.get("MYSQL_HOST", "db"),  # 'db' is the Docker service name
+#         'PORT': os.environ.get("MYSQL_PORT", "3306"),
+         
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 
 
@@ -237,8 +237,8 @@ CHANNEL_LAYERS = {
 	'default': {
 		'BACKEND': 'channels_redis.core.RedisChannelLayer',
 		'CONFIG': {
-			'hosts': [('redis', 6379)],
-			# 'hosts': [('127.0.0.1', 6379)]
+			# 'hosts': [('redis', 6379)],
+			'hosts': [('127.0.0.1', 6379)]
 		},
        
  
@@ -289,8 +289,8 @@ SIMPLE_JWT = {
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-if DEBUG:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# if DEBUG:
+#     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 MB
