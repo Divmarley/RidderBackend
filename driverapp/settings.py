@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY",'SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "DEBUG")
 
-ALLOWED_HOSTS = ['www.yawigo224.com', 'localhost',"*",'127.0.0.1','localhost','178.128.163.244','167.99.85.186']
+ALLOWED_HOSTS = ['www.yawigo224.com', "*",]
  
 # CSRF_TRUSTED_ORIGINS = ['https://yawigo224.com']
 # SECURE_SSL_REDIRECT = True
@@ -35,7 +35,7 @@ ALLOWED_HOSTS = ['www.yawigo224.com', 'localhost',"*",'127.0.0.1','localhost','1
 # SESSION_COOKIE_SECURE = True
 # CSRF_COOKIE_SECURE = True
 
-CORS_ORIGIN_ALLOW_ALL = True  
+# CORS_ORIGIN_ALLOW_ALL = True  
 # Allow all origins to access your API
 # CORS_ALLOWED_ORIGINS = [
 #     "https://www.yawigo224.com",
@@ -225,7 +225,8 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+ 
+EMAIL_USE_SSL = False
 EMAIL_HOST_USER="kofikumi64@gmail.com"
 EMAIL_HOST_PASSWORD="dhnt llgp jenl gvuz" 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
