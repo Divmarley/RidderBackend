@@ -330,3 +330,213 @@ msgstr "Blog"
 
 msgid "&copy; 2025 Yawigo. All rights reserved. Made with ❤️ in Ghana."
 msgstr "&copy; 2025 Yawigo. Tous droits réservés. Fait avec ❤️ au Ghana."
+
+msgid "Yawigo 224 - Local Ride-Hailing for Guinea"
+msgstr "Yawigo 224 - Transport local pour la Guinée"
+
+msgid "Transportation designed for Guinea"
+msgstr "Le transport pensé pour la Guinée"
+
+msgid "Yawigo 224 is a local ride-hailing solution that connects passengers and drivers through a simple, human-centered experience adapted to Guinean realities."
+msgstr "Yawigo 224 est une solution locale de transport qui connecte passagers et chauffeurs à travers une expérience simple, humaine et adaptée aux réalités guinéennes."
+
+msgid "Our Difference"
+msgstr "Notre différence"
+
+msgid "Built for Guinea, not imported from elsewhere"
+msgstr "Conçu pour la Guinée, et non importé d’ailleurs"
+
+msgid "Works without precise addresses"
+msgstr "Fonctionne sans adresse précise"
+
+msgid "Designed to operate using well-known local landmarks and meeting points."
+msgstr "Conçu pour fonctionner à partir de repères et points de rendez-vous locaux connus."
+
+msgid "Driver-centered platform"
+msgstr "Plateforme centrée sur les chauffeurs"
+
+msgid "Puts drivers at the center with fair policies and human support."
+msgstr "Place les chauffeurs au centre avec des politiques équitables et un accompagnement humain."
+
+msgid "Trust and proximity first"
+msgstr "Priorité à la confiance et à la proximité"
+
+msgid "Built on local knowledge, community trust, and transparency."
+msgstr "Fondé sur la connaissance locale, la confiance communautaire et la transparence."
+
+msgid "Clear and fair pricing"
+msgstr "Tarification claire et équitable"
+
+msgid "Transparent fares adapted to local realities."
+msgstr "Tarifs transparents adaptés aux réalités locales."
+
+msgid "Yawigo 224 is not just a digital taxi — it is a local mobility solution."
+msgstr "Yawigo 224 n’est pas qu’un taxi digital — c’est une solution de mobilité locale."
+
+msgid "Key Feature: Smart Pickup Points"
+msgstr "Fonctionnalité phare : Points de rendez-vous intelligents"
+
+msgid "Choose meeting points like markets, stations, and schools instead of complex addresses."
+msgstr "Choisissez des points de rendez-vous comme marchés, stations et écoles au lieu d’adresses compliquées."
+
+msgid "Simple steps to get started with Yawigo 224"
+msgstr "Des étapes simples pour commencer avec Yawigo 224"
+
+msgid "For Passengers"
+msgstr "Pour les passagers"
+
+msgid "Open the Yawigo 224 app"
+msgstr "Ouvrez l’application Yawigo 224"
+
+msgid "Choose a known pickup point"
+msgstr "Choisissez un point de rendez-vous connu"
+
+msgid "Market, station, school, or landmark"
+msgstr "Marché, station, école ou repère"
+
+msgid "Enter your destination"
+msgstr "Entrez votre destination"
+
+msgid "A nearby driver accepts"
+msgstr "Un chauffeur à proximité accepte"
+
+msgid "Track your trip in real-time"
+msgstr "Suivez votre trajet en temps réel"
+
+msgid "Pay easily and rate the service"
+msgstr "Payez facilement et évaluez le service"
+
+msgid "For Drivers"
+msgstr "Pour les chauffeurs"
+
+msgid "Sign up on Yawigo 224"
+msgstr "Inscrivez-vous sur Yawigo 224"
+
+msgid "Submit your documents"
+msgstr "Soumettez vos documents"
+
+msgid "Get approved by our team"
+msgstr "Obtenez l’approbation de notre équipe"
+
+msgid "Receive nearby ride requests"
+msgstr "Recevez des demandes de course à proximité"
+
+msgid "Work freely"
+msgstr "Travaillez librement"
+
+msgid "Earn money every day"
+msgstr "Gagnez de l’argent chaque jour"
+
+msgid "Yawigo for Passengers"
+msgstr "Yawigo pour les passagers"
+
+msgid "Convenient and reliable urban mobility"
+msgstr "Mobilité urbaine pratique et fiable"
+
+msgid "Quick ride booking"
+msgstr "Réservation rapide de trajet"
+
+msgid "Clear price estimation"
+msgstr "Estimation claire des prix"
+
+msgid "Real-time GPS tracking"
+msgstr "Suivi GPS en temps réel"
+
+msgid "Driver profile visibility"
+msgstr "Visibilité du profil du chauffeur"
+
+msgid "Simple payment"
+msgstr "Paiement simple"
+
+msgid "Ride history"
+msgstr "Historique des trajets"
+
+msgid "Rating after every trip"
+msgstr "Évaluation après chaque trajet"
+
+msgid "Yawigo for Drivers"
+msgstr "Yawigo pour les chauffeurs"
+
+msgid "A fair and human platform"
+msgstr "Une plateforme juste et humaine"
+
+msgid "Fairer commission"
+msgstr "Commission plus équitable"
+
+msgid "Fast payments"
+msgstr "Paiements rapides"
+
+msgid "Flexible working hours"
+msgstr "Horaires de travail flexibles"
+
+msgid "Loyalty bonuses (coming soon)"
+msgstr "Bonus de fidélité (bientôt)"
+
+msgid "Dedicated driver support"
+msgstr "Support dédié aux chauffeurs"
+
+msgid "When drivers are respected, the service is better."
+msgstr "Quand les chauffeurs sont respectés, le service est meilleur."
+
+msgid "Safety & Trust"
+msgstr "Sécurité & Confiance"
+
+msgid "Safety is a top priority at Yawigo 224."
+msgstr "La sécurité est une priorité chez Yawigo 224."
+
+msgid "Verified drivers"
+msgstr "Chauffeurs vérifiés"
+
+msgid "Real-time trip tracking"
+msgstr "Suivi du trajet en temps réel"
+
+msgid "Mutual rating system"
+msgstr "Système d’évaluation mutuelle"
+
+msgid "Local assistance available"
+msgstr "Assistance locale disponible"
+
+msgid "Trip sharing via WhatsApp"
+msgstr "Partage de trajet via WhatsApp"
+
+msgid "Service Areas"
+msgstr "Zones desservies"
+
+msgid "Launch city"
+msgstr "Ville de lancement"
+
+msgid "Conakry"
+msgstr "Conakry"
+
+msgid "Expansion plan"
+msgstr "Plan d’expansion"
+
+msgid "Other districts and cities across Guinea"
+msgstr "Autres quartiers et villes à travers la Guinée"
+
+msgid "Become a Yawigo 224 Driver"
+msgstr "Devenir chauffeur Yawigo 224"
+
+msgid "Join a platform that respects its drivers."
+msgstr "Rejoignez une plateforme qui respecte ses chauffeurs."
+
+msgid "Minimum age: 18"
+msgstr "Âge minimum : 18 ans"
+
+msgid "Valid driver's license"
+msgstr "Permis de conduire valide"
+
+msgid "Vehicle in good condition"
+msgstr "Véhicule en bon état"
+
+msgid "Android smartphone with GPS"
+msgstr "Smartphone Android avec GPS"
+
+msgid "Compliance with Yawigo rules"
+msgstr "Respect des règles Yawigo"
+
+msgid "About Yawigo 224"
+msgstr "À propos de Yawigo 224"
+
+msgid "Yawigo 224 is a Guinean initiative to modernize urban transportation while creating local economic opportunities."
+msgstr "Yawigo 224 est une initiative guinéenne visant à moderniser le transport urbain tout en créant des opportunités économiques locales."
