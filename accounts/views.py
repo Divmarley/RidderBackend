@@ -89,8 +89,17 @@ class RegisterView(APIView):
                     'detail': 'Registration failed',
                     'error': str(e)
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            'detail': 'Invalid registration data',
+            'errors': serializer.errors,
+            'expected_fields': [
+                'email or phone',
+                'password',
+                'account_type',
+                'name (optional)',
+                'is_active (optional)'
+            ]
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 class TokenObtainView(APIView):
     permission_classes = (AllowAny,)

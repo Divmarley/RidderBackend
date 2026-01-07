@@ -82,6 +82,8 @@ from django.core.exceptions import ValidationError
 
 class RegisterSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=False, default="")
+    password = serializers.CharField(write_only=True, required=False)
+    account_type = serializers.ChoiceField(choices=CustomUser.ACCOUNT_TYPE_CHOICES, required=False, default='rider')
     
     class Meta:
         model = CustomUser
@@ -91,9 +93,25 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         email = attrs.get('email')
         phone = attrs.get('phone')
+        password = attrs.get('password')
         
         if not email and not phone:
             raise serializers.ValidationError("Either email or phone is required.")
+
+        # If email is provided, require a password
+        if email and not password:
+            raise serializers.ValidationError("Password is required when email is provided.")
+
+        # Sanitize phone
+        if phone:
+            import re
+            phone_sanitized = re.sub(r'[^0-9]', '', phone)
+            attrs['phone'] = phone_sanitized
+            phone = phone_sanitized
+
+        # Default account_type
+        if not attrs.get('account_type'):
+            attrs['account_type'] = 'rider'
 
         # Check if a user with the same email or phone exists
         email_phone = email if email else phone
@@ -106,9 +124,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         email = validated_data.get('email')
         phone = validated_data.get('phone')
         name = validated_data.get('name', '')
-        password = validated_data['password']
-        account_type = validated_data['account_type']
+        account_type = validated_data.get('account_type', 'rider')
         is_active = validated_data.get('is_active', True)
+        password = validated_data.get('password')
+        if not password:
+            import secrets
+            password = secrets.token_urlsafe(12)
 
         # Set email_phone automatically
         email_phone = email if email else phone
