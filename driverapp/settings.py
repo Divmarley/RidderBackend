@@ -29,7 +29,7 @@ DEBUG = os.environ.get("DEBUG", "DEBUG")
 
 ALLOWED_HOSTS = ['www.yawigo224.com', "*",]
  
-# CSRF_TRUSTED_ORIGINS = ['https://yawigo224.com']
+CSRF_TRUSTED_ORIGINS = ['https://yawigo224.com']
 # SECURE_SSL_REDIRECT = True
 # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # SESSION_COOKIE_SECURE = True
@@ -222,11 +222,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'accounts.CustomUser'
   
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
-EMAIL_USE_TLS = False
+EMAIL_PORT = 587 
 EMAIL_HOST_USER= "kofikumi64@gmail.com"
 EMAIL_HOST_PASSWORD="dhnt llgp jenl gvuz" 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

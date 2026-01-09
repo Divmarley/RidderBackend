@@ -89,6 +89,8 @@ class RegisterView(APIView):
                     'detail': 'Registration failed',
                     'error': str(e)
                 }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        print("serializer.errors",serializer.errors)
         return Response({
             'detail': 'Invalid registration data',
             'errors': serializer.errors,
